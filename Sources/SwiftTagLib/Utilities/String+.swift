@@ -1,6 +1,8 @@
 import Foundation
 
 extension String {
+    /// a C char array arrives natively as a tuple, this reflects it back
+    /// to an array then forms a String.
     public init?(mirroringCChar mirror: Mirror) {
         let charArray = mirror.children.compactMap { $0.value as? CChar }
 

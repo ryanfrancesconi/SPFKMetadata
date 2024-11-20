@@ -7,10 +7,6 @@ public typealias ID3FrameDictionary = [ID3v2Frame: String]
 public struct ID3Metadata {
     private var dictionary = ID3FrameDictionary()
 
-    // id3
-    // wave info
-    // wave bext
-
     public subscript(key: ID3v2Frame) -> String? {
         get { dictionary[key] }
         set {
