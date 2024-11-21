@@ -1,6 +1,6 @@
 
 import Foundation
-import SwiftTagLibC
+import SPFKMetadataC
 
 public typealias ID3FrameDictionary = [ID3v2Frame: String]
 

@@ -4,7 +4,7 @@ extension NSError {
     internal convenience init(
         description: String,
         code: Int = 1,
-        domain: String = "SwiftTagLib"
+        domain: String = "SPFKMetadata"
     ) {
         let userInfo: [String: Any] = [NSLocalizedDescriptionKey: description]
 

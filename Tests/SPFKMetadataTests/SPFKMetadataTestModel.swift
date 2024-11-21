@@ -1,17 +1,17 @@
 import Foundation
 
-protocol SwiftTagLibTestModel: AnyObject {
+protocol SPFKMetadataTestModel: AnyObject {
     //
 }
 
-extension SwiftTagLibTestModel {
+extension SPFKMetadataTestModel {
     var testBundle: URL {
         let bundleURL = Bundle(for: Self.self).bundleURL
 
         return bundleURL
             .appending(component: "Contents")
             .appending(component: "Resources")
-            .appending(component: "SwiftTagLib_SwiftTagLibTests.bundle")
+            .appending(component: "SPFKMetadata_SPFKMetadataTests.bundle")
     }
 
     func getResource(named name: String) -> URL {

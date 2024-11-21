@@ -1,13 +1,13 @@
 import Foundation
-@testable import SwiftTagLib
-@testable import SwiftTagLibC
+@testable import SPFKMetadata
+@testable import SPFKMetadataC
 import Testing
 
 /*
  swift test -Xswiftc -cxx-interoperability-mode=default
  */
 
-class ParseFileTests: SwiftTagLibTestModel {
+class ParseFileTests: SPFKMetadataTestModel {
     @Test func parseMP3() async throws {
         let url = getResource(named: "id3.mp3")
 

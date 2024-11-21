@@ -4,16 +4,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwiftTagLib",
+    name: "SPFKMetadata",
     platforms: [
         .macOS(.v11)
     ],
     products: [
         .library(
-            name: "SwiftTagLib",
+            name: "SPFKMetadata",
             targets: [
-                "SwiftTagLib",
-                "SwiftTagLibC"
+                "SPFKMetadata",
+                "SPFKMetadataC"
             ]
         ),
     ],
@@ -22,16 +22,16 @@ let package = Package(
 
         // SWIFT
         .target(
-            name: "SwiftTagLib",
+            name: "SPFKMetadata",
             dependencies: [
-                .target(name: "SwiftTagLibC"),
+                .target(name: "SPFKMetadataC"),
             ],
             swiftSettings: [.interoperabilityMode(.Cxx)]
         ),
         
         // C++
         .target(
-            name: "SwiftTagLibC",
+            name: "SPFKMetadataC",
             dependencies: [
                 .target(name: "tag"),
                 .target(name: "libsndfile")
@@ -51,10 +51,10 @@ let package = Package(
         ),
     
         .testTarget(
-            name: "SwiftTagLibTests",
+            name: "SPFKMetadataTests",
             dependencies: [
-                "SwiftTagLib",
-                "SwiftTagLibC"
+                "SPFKMetadata",
+                "SPFKMetadataC"
             ],
             resources: [
                 .process("Resources")

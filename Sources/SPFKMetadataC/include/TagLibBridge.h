@@ -39,8 +39,6 @@ extern NSString *const kTaglibWrapperFileTypeMP3;
 
 + (nullable NSString *)detectStreamType:(NSString *)path;
 
-// -
-+ (nullable SFBroadcastInfo *)parseBroadcastInfo:(NSString *)path;
 
 
 @end

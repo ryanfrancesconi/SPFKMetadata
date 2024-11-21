@@ -9,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) SF_BROADCAST_INFO info;
 
++ (nullable SFBroadcastInfo *)parse:(NSString *)path;
+
 @end
 
 NS_ASSUME_NONNULL_END

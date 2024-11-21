@@ -1,6 +1,6 @@
 
 import Foundation
-import SwiftTagLibC
+import SPFKMetadataC
 
 /// BEXT Wave Chunk - BroadcastExtension
 public struct BroadcastExtensionDescription: Hashable, Codable {

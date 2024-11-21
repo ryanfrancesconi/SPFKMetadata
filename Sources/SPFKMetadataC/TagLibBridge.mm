@@ -1,4 +1,4 @@
-//  TaglibWrapper.mm
+//  TagLibBridge.mm
 //  Created by Ryan Francesconi on 1/2/19.
 //  Copyright © 2019 Ryan Francesconi. All rights reserved.
 
@@ -20,8 +20,6 @@
 #import <tag/tstringlist.h>
 #import <tag/wavfile.h>
 
-#import "sndfile.hh"
-#import "SFBroadcastInfo.h"
 #import "TagLibBridge.h"
 
 using namespace std;
@@ -423,28 +421,6 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 
     bool result = mpegFile->save();
     return result;
-}
-
-+ (SFBroadcastInfo *)parseBroadcastInfo:(nonnull NSString *)path {
-    const char *fname = path.UTF8String;
-    SF_BROADCAST_INFO binfo;
-    SndfileHandle file = SndfileHandle(fname);
-
-    // SF_TRUE if the file contained a Broadcast Extension chunk or SF_FALSE otherwise.
-    int err = file.command(
-        SFC_GET_BROADCAST_INFO,
-        &binfo,
-        sizeof(binfo)
-        );
-
-    if (err == SF_FALSE) {
-        return nil;
-    }
-
-    SFBroadcastInfo *info = [[SFBroadcastInfo alloc] init];
-    info.info = binfo;
-
-    return info;
 }
 
 + (NSString *)detectFileType:(NSString *)path
