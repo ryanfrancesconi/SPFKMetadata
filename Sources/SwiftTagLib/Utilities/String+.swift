@@ -13,6 +13,7 @@ extension String {
         let nullterminated = charArray + [0]
 
         guard let value = String(cString: nullterminated, encoding: .utf8), value != "" else {
+            // just print the numbers as hex
             let fallback = charArray.map { String(format: "%02hhx", $0) }.joined()
             self = fallback
             return

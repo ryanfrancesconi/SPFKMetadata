@@ -18,7 +18,7 @@ class ParseFileTests: SwiftTagLibTestModel {
     }
 
     @Test func parseBEXT() async throws {
-        let url = getResource(named: "bext.wav")
+        let url = getResource(named: "bext_v2.wav")
 
         let metadata = try BEXTMetadata(url: url)
 
