@@ -20,7 +20,7 @@ let package = Package(
     
     targets: [
 
-        // SWIFT
+        // Swift
         .target(
             name: "SPFKMetadata",
             dependencies: [
@@ -62,5 +62,5 @@ let package = Package(
             swiftSettings: [.interoperabilityMode(.Cxx)]
         )
     ],
-    cxxLanguageStandard: .cxx14
+    cxxLanguageStandard: .cxx20
 )

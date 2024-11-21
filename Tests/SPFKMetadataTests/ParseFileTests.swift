@@ -23,5 +23,7 @@ class ParseFileTests: SPFKMetadataTestModel {
         let metadata = try BEXTMetadata(url: url)
 
         Swift.print(metadata)
+
+        #expect(metadata.info.version == 2)
     }
 }

@@ -2,12 +2,14 @@
 #import "sndfile.hh"
 #import "SFBroadcastInfo.h"
 
+
+
 @implementation SFBroadcastInfo
 
-+ (SFBroadcastInfo *)parse:(nonnull NSString *)path {
-    const char *fname = path.UTF8String;
+- (nullable id)initWithPath:(nonnull NSString *)path {
+    const char *cpath = path.UTF8String;
+    SndfileHandle file = SndfileHandle(cpath);
     SF_BROADCAST_INFO binfo;
-    SndfileHandle file = SndfileHandle(fname);
 
     // SF_TRUE if the file contained a Broadcast Extension chunk or SF_FALSE otherwise.
     int err = file.command(
@@ -20,10 +22,10 @@
         return nil;
     }
 
-    SFBroadcastInfo *info = [[SFBroadcastInfo alloc] init];
-    info.info = binfo;
+    self = [super init];
+    self.info = binfo;
 
-    return info;
+    return self;
 }
 
 @end

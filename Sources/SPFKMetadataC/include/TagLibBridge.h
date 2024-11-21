@@ -7,6 +7,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface TagLibBridge : NSObject
+// -
 
     extern NSString * const kTaglibWrapperFileTypeM4A;
 extern NSString *const kTaglibWrapperFileTypeAAC;

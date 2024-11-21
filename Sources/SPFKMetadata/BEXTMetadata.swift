@@ -2,13 +2,13 @@ import Foundation
 import SPFKMetadataC
 
 public struct BEXTMetadata {
-    public private(set) var info: BroadcastExtensionDescription
+    public private(set) var info: BEXTDescription
 
     public init(url: URL) throws {
-        guard let sfinfo = SFBroadcastInfo.parse(url.path) else {
+        guard let sfinfo = SFBroadcastInfo(path: url.path) else {
             throw NSError(description: "Failed to parse \(url.path)")
         }
 
-        info = BroadcastExtensionDescription(info: sfinfo.info)
+        info = BEXTDescription(info: sfinfo.info)
     }
 }
