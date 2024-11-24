@@ -21,3 +21,9 @@ extension SPFKMetadataTestModel {
             .appending(component: name)
     }
 }
+
+extension SPFKMetadataTestModel {
+    var id3: URL { getResource(named: "id3.mp3") }
+    var bext_v1: URL { getResource(named: "bext_v1.wav") }
+    var bext_v2: URL { getResource(named: "bext_v2.wav") }
+}

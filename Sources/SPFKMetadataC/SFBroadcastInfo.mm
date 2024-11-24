@@ -2,8 +2,6 @@
 #import "sndfile.hh"
 #import "SFBroadcastInfo.h"
 
-
-
 @implementation SFBroadcastInfo
 
 - (nullable id)initWithPath:(nonnull NSString *)path {

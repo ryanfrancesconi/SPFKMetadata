@@ -1,6 +1,6 @@
 import Foundation
 
-public enum ID3v2Frame: String, CaseIterable, Codable {
+public enum TagKey: String, CaseIterable, Codable {
     case album
     case bpm
     case composer
@@ -32,8 +32,11 @@ public enum ID3v2Frame: String, CaseIterable, Codable {
     case subtitle
 
     case initialKey
+    case instrumentation // non standard id3
+    case keywords // non standard id3
     case language
     case length
+    case lyrics
     case media
     case mood
     case originalAlbum
@@ -81,6 +84,7 @@ public enum ID3v2Frame: String, CaseIterable, Codable {
     // Apple Itunes proprietary frames
     case podcast
     case podcastCategory
+    case podcastKeywords
     case podcastDesc
     case podcastID
     case podcastURL
@@ -131,10 +135,16 @@ public enum ID3v2Frame: String, CaseIterable, Codable {
             return "TIT3"
         case .initialKey:
             return "TKEY"
+        case .instrumentation:
+            return "TXXX" // non standard
+        case .keywords, .podcastKeywords: // keywords isn't an official tag
+            return "TKWD"
         case .language:
             return "TLAN"
         case .length:
             return "TLEN"
+        case .lyrics:
+            return "USLT"
         case .media:
             return "TMED"
         case .mood:
@@ -228,6 +238,8 @@ public enum ID3v2Frame: String, CaseIterable, Codable {
             return
         }
 
+        Swift.print("🚩 Found unknown taglibKey", taglibKey)
+
         return nil
     }
 
@@ -236,6 +248,8 @@ public enum ID3v2Frame: String, CaseIterable, Codable {
             self = item
             return
         }
+
+        Swift.print("🚩 Found unknown id3Frame", id3Frame)
 
         return nil
     }

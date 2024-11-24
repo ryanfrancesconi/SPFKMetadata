@@ -3,17 +3,17 @@
 #import <Foundation/Foundation.h>
 
 #import "sndfile.h"
+#import "TagFile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface TagLibBridge : NSObject
-// -
 
-    extern NSString * const kTaglibWrapperFileTypeM4A;
-extern NSString *const kTaglibWrapperFileTypeAAC;
-extern NSString *const kTaglibWrapperFileTypeWAVE;
-extern NSString *const kTaglibWrapperFileTypeAIFF;
-extern NSString *const kTaglibWrapperFileTypeMP3;
+    extern NSString * const kFileTypeM4A;
+extern NSString *const kFileTypeAAC;
+extern NSString *const kFileTypeWAVE;
+extern NSString *const kFileTypeAIFF;
+extern NSString *const kFileTypeMP3;
 
 + (nullable NSString *)getTitle:(NSString *)path;
 
@@ -30,6 +30,7 @@ extern NSString *const kTaglibWrapperFileTypeMP3;
 + (bool)setMetadata:(NSString *)path
          dictionary:(NSDictionary *)dictionary;
 
++ (nullable NSMutableDictionary *)parseProperties:(NSString *)path;
 
 + (nullable NSArray *)getMP3Chapters:(NSString *)path;
 
@@ -37,9 +38,7 @@ extern NSString *const kTaglibWrapperFileTypeMP3;
                  array:(NSArray *)dictionary;
 
 + (nullable NSString *)detectFileType:(NSString *)path;
-
 + (nullable NSString *)detectStreamType:(NSString *)path;
-
 
 
 @end

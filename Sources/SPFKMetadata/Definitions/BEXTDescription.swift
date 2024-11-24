@@ -79,6 +79,14 @@ public struct BEXTDescription: Hashable, Codable {
 
     public init() {}
 
+    public init(url: URL) throws {
+        guard let sfinfo = SFBroadcastInfo(path: url.path) else {
+            throw NSError(description: "Failed to parse \(url.path)")
+        }
+
+        self = BEXTDescription(info: sfinfo.info)
+    }
+    
     /// Copy values from the C Struct `SF_BROADCAST_INFO` defined
     /// in sndfile.h
     ///

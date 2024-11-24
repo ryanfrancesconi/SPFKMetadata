@@ -2,12 +2,12 @@
 import Foundation
 import SPFKMetadataC
 
-public typealias ID3FrameDictionary = [ID3v2Frame: String]
+public typealias TagKeyDictionary = [TagKey: String]
 
-public struct ID3Metadata {
-    private var dictionary = ID3FrameDictionary()
+public struct TagProperties {
+    public private(set) var dictionary = TagKeyDictionary()
 
-    public subscript(key: ID3v2Frame) -> String? {
+    public subscript(key: TagKey) -> String? {
         get { dictionary[key] }
         set {
             dictionary[key] = newValue
@@ -15,14 +15,18 @@ public struct ID3Metadata {
     }
 
     public init(url: URL) throws {
-        guard let dict = TagLibBridge.parseMetadata(url.path) else {
+//        guard let file = TagFile(path: url.path), let dict = file.dictionary else {
+//            throw NSError(description: "Failed to parse \(url.path)")
+//        }
+
+        guard let dict = TagLibBridge.parseProperties(url.path) else {
             throw NSError(description: "Failed to parse \(url.path)")
         }
 
         for item in dict {
             guard let key = item.key as? String else { continue }
 
-            guard let frame = ID3v2Frame(taglibKey: key) else {
+            guard let frame = TagKey(taglibKey: key) else {
                 continue
             }
 
@@ -31,13 +35,13 @@ public struct ID3Metadata {
     }
 }
 
-extension ID3Metadata: CustomStringConvertible {
+extension TagProperties: CustomStringConvertible {
     public var description: String {
         let strings = dictionary.map {
-            let key: ID3v2Frame = $0.key
+            let key: TagKey = $0.key
             return "\(key.rawValue) (\(key.id3Frame)) = \($0.value)"
         }
 
-        return strings.sorted().joined(separator: ", ")
+        return strings.sorted().joined(separator: "\n")
     }
 }

@@ -3,27 +3,33 @@ import Foundation
 @testable import SPFKMetadataC
 import Testing
 
-/*
- swift test -Xswiftc -cxx-interoperability-mode=default
- */
-
 class ParseFileTests: SPFKMetadataTestModel {
-    @Test func parseMP3() async throws {
-        let url = getResource(named: "id3.mp3")
-
-        let metadata = try ID3Metadata(url: url)
+    @Test func parseID3MP3() async throws {
+        let metadata = try TagProperties(url: id3)
         Swift.print(metadata)
 
         #expect(metadata[.title] == "Shine On (inst)")
     }
-
-    @Test func parseBEXT() async throws {
-        let url = getResource(named: "bext_v2.wav")
-
-        let metadata = try BEXTMetadata(url: url)
-
+    
+    @Test func parseID3Wave() async throws {
+        let metadata = try TagProperties(url: bext_v2)
         Swift.print(metadata)
 
-        #expect(metadata.info.version == 2)
+        #expect(metadata[.title] == "12345678910 mono 48k")
+    }
+    
+    @Test func parseInfoWave() async throws {
+        let metadata = try TagProperties(url: bext_v1)
+        Swift.print(metadata)
+
+        #expect(metadata[.title] == "bext")
+    }
+
+    @Test func parseBEXT() async throws {
+        let desc = try BEXTDescription(url: bext_v2)
+
+        Swift.print(desc)
+
+        #expect(desc.version == 2)
     }
 }

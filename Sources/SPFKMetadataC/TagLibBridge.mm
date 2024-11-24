@@ -21,26 +21,28 @@
 #import <tag/wavfile.h>
 
 #import "TagLibBridge.h"
+#import "TagFile.h"
 
 using namespace std;
+using namespace TagLib;
 
 @implementation TagLibBridge
 
-NSString *const kTaglibWrapperFileTypeMP3 = @"mp3";
-NSString *const kTaglibWrapperFileTypeM4A = @"m4a";
-NSString *const kTaglibWrapperFileTypeAAC = @"aac";
-NSString *const kTaglibWrapperFileTypeWAVE = @"wav";
-NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
+NSString *const kFileTypeMP3 = @"mp3";
+NSString *const kFileTypeM4A = @"m4a";
+NSString *const kFileTypeAAC = @"aac";
+NSString *const kFileTypeWAVE = @"wav";
+NSString *const kFileTypeAIFF = @"aif";
 
 + (nullable NSString *)getTitle:(NSString *)path
 {
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         return nil;
     }
 
-    TagLib::Tag *tag = fileRef.tag();
+    Tag *tag = fileRef.tag();
 
     if (!tag) {
         return nil;
@@ -54,7 +56,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 + (bool)setTitle:(NSString *)path
            title:(NSString *)title
 {
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         cout << "__C Unable to write title" << endl;
@@ -62,7 +64,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     }
 
     cout << "__C Updating title to: " << title.UTF8String << endl;
-    TagLib::Tag *tag = fileRef.tag();
+    Tag *tag = fileRef.tag();
 
     if (!tag) {
         cout << "__C Unable to write tag" << endl;
@@ -72,7 +74,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     tag->setTitle(title.UTF8String);
 
     // also duplicate the data into the INFO tag if it's a wave file
-    TagLib::RIFF::WAV::File *waveFile = dynamic_cast<TagLib::RIFF::WAV::File *>(fileRef.file());
+    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
 
     // also set InfoTag for wave
     if (waveFile) {
@@ -85,14 +87,14 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 
 + (nullable NSString *)getComment:(NSString *)path
 {
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         cout << "__C FileRef is NULL " << path.UTF8String << endl;
         return nil;
     }
 
-    TagLib::Tag *tag = fileRef.tag();
+    Tag *tag = fileRef.tag();
 
     if (!tag) {
         cout << "__C Tag is NULL" << endl;
@@ -108,7 +110,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 + (bool)setComment:(NSString *)path
            comment:(NSString *)comment
 {
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         cout << "__C Unable to write comment" << endl;
@@ -116,7 +118,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     }
 
     cout << "__C Updating comment to: " << comment.UTF8String << endl;
-    TagLib::Tag *tag = fileRef.tag();
+    Tag *tag = fileRef.tag();
 
     if (!tag) {
         cout << "__C Unable to write tag" << endl;
@@ -130,14 +132,14 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 
 + (nullable NSMutableDictionary *)parseMetadata:(NSString *)path
 {
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         cout << "__C fileRef is NULL " << path.UTF8String << endl;
         return nil;
     }
 
-    TagLib::Tag *tag = fileRef.tag();
+    Tag *tag = fileRef.tag();
 
     if (!tag) {
         cout << "__C Unable to create Tag " << path << endl;
@@ -147,16 +149,16 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     NSString *title = wcharToString(tag->title().toCWString());
     NSString *artist = wcharToString(tag->artist().toCWString());
     NSString *album = wcharToString(tag->album().toCWString());
-    NSString *year = [NSString stringWithFormat:@"%u", tag->year()];
     NSString *comment = wcharToString(tag->comment().toCWString());
-    NSString *track = [NSString stringWithFormat:@"%u", tag->track()];
     NSString *genre = wcharToString(tag->genre().toCWString());
+    NSString *year = [NSString stringWithFormat:@"%u", tag->year()];
+    NSString *track = [NSString stringWithFormat:@"%u", tag->track()];
 
     // nil if not wave
-    TagLib::RIFF::WAV::File *waveFile = dynamic_cast<TagLib::RIFF::WAV::File *>(fileRef.file());
+    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
 
     if (waveFile && waveFile->hasInfoTag()) {
-        TagLib::RIFF::Info::Tag *info = waveFile->InfoTag();
+        RIFF::Info::Tag *info = waveFile->InfoTag();
 
         if (title == nil || [title isEqualToString:@""]) {
             title = wcharToString(info->title().toCWString());
@@ -209,7 +211,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
         [dictionary setValue:genre ? : @"" forKey:@"GENRE"];
     }
 
-    TagLib::PropertyMap tags = fileRef.file()->properties();
+    PropertyMap tags = fileRef.file()->properties();
 
     // debug, print all tags
     // printTags(tags);
@@ -219,8 +221,8 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     // scan through the tag properties where all the other id3 tags will be kept
     // add those as additional keys to the dictionary
     //cout << "-- TAG (properties) --" << endl;
-    for (TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
-        for (TagLib::StringList::ConstIterator j = i->second.begin(); j != i->second.end(); ++j) {
+    for (auto i = tags.begin(); i != tags.end(); ++i) {
+        for (auto j = i->second.begin(); j != i->second.end(); ++j) {
             // cout << i->first << " - " << '"' << *j << '"' << endl;
 
             NSString *key = wcharToString(i->first.toCWString());
@@ -239,14 +241,14 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 + (bool)setMetadata:(NSString *)path
          dictionary:(NSDictionary *)dictionary
 {
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "__C Error: TagLib::FileRef.isNull: Unable to open file:" << path.UTF8String << endl;
+        cout << "__C Error: FileRef.isNull: Unable to open file:" << path.UTF8String << endl;
         return false;
     }
 
-    TagLib::Tag *tag = fileRef.tag();
+    Tag *tag = fileRef.tag();
 
     if (!tag) {
         cout << "__C Unable to create tag" << endl;
@@ -254,10 +256,11 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     }
 
     // also duplicate the data into the INFO tag if it's a wave file
-    TagLib::RIFF::WAV::File *waveFile = dynamic_cast<TagLib::RIFF::WAV::File *>(fileRef.file());
+    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+    bool writeInfo = waveFile && waveFile->hasInfoTag();
 
     // these are the non standard tags
-    TagLib::PropertyMap tags = fileRef.file()->properties();
+    PropertyMap tags = fileRef.file()->properties();
 
     for (NSString *key in [dictionary allKeys]) {
         NSString *value = [dictionary objectForKey:key];
@@ -266,52 +269,63 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
             tag->setTitle(value.UTF8String);             // ID3
 
             // also set InfoTag for wave
-            if (waveFile) {
+            if (writeInfo) {
                 waveFile->InfoTag()->setTitle(value.UTF8String);
             }
         } else if ([key isEqualToString:@"ARTIST"]) {
             tag->setArtist(value.UTF8String);
 
-            if (waveFile) {
+            if (writeInfo) {
                 waveFile->InfoTag()->setArtist(value.UTF8String);
             }
         } else if ([key isEqualToString:@"ALBUM"]) {
             tag->setAlbum(value.UTF8String);
 
-            if (waveFile) {
+            if (writeInfo) {
                 waveFile->InfoTag()->setAlbum(value.UTF8String);
             }
         } else if ([key isEqualToString:@"YEAR"]) {
             tag->setYear(value.intValue);
 
-            if (waveFile) {
+            if (writeInfo) {
                 waveFile->InfoTag()->setYear(value.intValue);
             }
         } else if ([key isEqualToString:@"TRACK"]) {
             tag->setTrack(value.intValue);
 
-            if (waveFile) {
+            if (writeInfo) {
                 waveFile->InfoTag()->setTrack(value.intValue);
             }
         } else if ([key isEqualToString:@"COMMENT"]) {
             tag->setComment(value.UTF8String);
 
-            if (waveFile) {
+            if (writeInfo) {
                 waveFile->InfoTag()->setComment(value.UTF8String);
             }
         } else if ([key isEqualToString:@"GENRE"]) {
             tag->setGenre(value.UTF8String);
 
-            if (waveFile) {
+            if (writeInfo) {
                 waveFile->InfoTag()->setGenre(value.UTF8String);
             }
         } else {
-            TagLib::String tagKey = TagLib::String(key.UTF8String);
-            tags.replace(TagLib::String(key.UTF8String), TagLib::StringList(value.UTF8String));
+            String tagKey = String(key.UTF8String);
+            tags.replace(String(key.UTF8String), StringList(value.UTF8String));
         }
     }
 
     return fileRef.save();
+}
+
++ (nullable NSMutableDictionary *)parseProperties:(NSString *)path
+{
+    TagFile *tagFile = [[TagFile alloc] initWithPath: path];
+    
+    if (!tagFile) {
+        return nil;
+    }
+    
+    return tagFile.dictionary;
 }
 
 /// markers as chapters in mp3 files
@@ -319,19 +333,13 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 {
     NSMutableArray *array = [[NSMutableArray alloc] init];
 
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         return nil;
     }
 
-    TagLib::Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        return nil;
-    }
-
-    TagLib::MPEG::File *mpegFile = dynamic_cast<TagLib::MPEG::File *>(fileRef.file());
+    MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
 
     if (!mpegFile) {
         return nil;
@@ -339,18 +347,18 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 
     // cout << "Parsing MPEG File" << endl;
 
-    TagLib::ID3v2::FrameList chapterList = mpegFile->ID3v2Tag()->frameList("CHAP");
+    ID3v2::FrameList chapterList = mpegFile->ID3v2Tag()->frameList("CHAP");
 
-    for (TagLib::ID3v2::FrameList::ConstIterator it = chapterList.begin();
+    for (ID3v2::FrameList::ConstIterator it = chapterList.begin();
          it != chapterList.end();
          ++it) {
-        TagLib::ID3v2::ChapterFrame *frame = dynamic_cast<TagLib::ID3v2::ChapterFrame *>(*it);
+        ID3v2::ChapterFrame *frame = dynamic_cast<ID3v2::ChapterFrame *>(*it);
 
         if (frame) {
             // cout << "FRAME " << frame->toString() << endl;
 
             if (!frame->embeddedFrameList().isEmpty()) {
-                for (TagLib::ID3v2::FrameList::ConstIterator it = frame->embeddedFrameList().begin(); it != frame->embeddedFrameList().end(); ++it) {
+                for (ID3v2::FrameList::ConstIterator it = frame->embeddedFrameList().begin(); it != frame->embeddedFrameList().end(); ++it) {
                     // the chapter title is a sub frame
                     if ((*it)->frameID() == "TIT2") {
                         // cout << (*it)->frameID() << " = " << (*it)->toString() << endl;
@@ -367,7 +375,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     return array;
 }
 
-//    TagLib::MP4::File *mp4File = dynamic_cast<TagLib::MP4::File *>(fileRef.file());
+//    MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
 
 // only works with mpeg files, takes an array of strings
 // title@1.04
@@ -375,19 +383,13 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 + (bool)setMP3Chapters:(NSString *)path
                  array:(NSArray *)array
 {
-    TagLib::FileRef fileRef(path.UTF8String);
+    FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         return false;
     }
 
-    TagLib::Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        return false;
-    }
-
-    TagLib::MPEG::File *mpegFile = dynamic_cast<TagLib::MPEG::File *>(fileRef.file());
+    MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
 
     if (!mpegFile) {
         cout << "__C TaglibWrapper.setChapters: Not a MPEG File" << endl;
@@ -400,7 +402,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     mpegFile->ID3v2Tag()->removeFrames("CHAP");
 
     // add new CHAP tags
-    TagLib::ID3v2::Header header;
+    ID3v2::Header header;
 
     // expecting NAME@TIME right now
     for (NSString *object in array) {
@@ -408,12 +410,12 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
         NSString *name = [items objectAtIndex:0];         //shows Description
         int time = [[items objectAtIndex:1] intValue];
 
-        TagLib::ID3v2::ChapterFrame *chapter = new TagLib::ID3v2::ChapterFrame(&header, "CHAP");
+        ID3v2::ChapterFrame *chapter = new ID3v2::ChapterFrame(&header, "CHAP");
         chapter->setStartTime(time);
         chapter->setEndTime(time);
 
         // set the chapter title
-        TagLib::ID3v2::TextIdentificationFrame *eF = new TagLib::ID3v2::TextIdentificationFrame("TIT2");
+        ID3v2::TextIdentificationFrame *eF = new ID3v2::TextIdentificationFrame("TIT2");
         eF->setText(name.UTF8String);
         chapter->addEmbeddedFrame(eF);
         mpegFile->ID3v2Tag()->addFrame(chapter);
@@ -433,9 +435,9 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
     }
 
     if ([pathExtension isEqualToString:@"wave"] || [pathExtension isEqualToString:@"bwf"]) {
-        return kTaglibWrapperFileTypeWAVE;
+        return kFileTypeWAVE;
     } else if ([pathExtension isEqualToString:@"aiff"]) {
-        return kTaglibWrapperFileTypeAIFF;
+        return kFileTypeAIFF;
     } else {
         return pathExtension;
     }
@@ -444,7 +446,7 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 + (NSString *)detectStreamType:(NSString *)path
 {
     const char *filepath = path.UTF8String;
-    TagLib::FileStream *stream = new TagLib::FileStream(filepath);
+    FileStream *stream = new FileStream(filepath);
 
     if (!stream->isOpen()) {
         NSLog(@"__C TaglibWrapper.detectStreamType: Unable to open FileStream: %@", path);
@@ -454,14 +456,14 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 
     NSString *value = nil;
 
-    if (TagLib::RIFF::WAV::File::isSupported(stream)) {
-        value = kTaglibWrapperFileTypeWAVE;
-    } else if (TagLib::MP4::File::isSupported(stream)) {
-        value = kTaglibWrapperFileTypeM4A;
-    } else if (TagLib::RIFF::AIFF::File::isSupported(stream)) {
-        value = kTaglibWrapperFileTypeAIFF;
-    } else if (TagLib::MPEG::File::isSupported(stream)) {
-        value = kTaglibWrapperFileTypeMP3;
+    if (RIFF::WAV::File::isSupported(stream)) {
+        value = kFileTypeWAVE;
+    } else if (MP4::File::isSupported(stream)) {
+        value = kFileTypeM4A;
+    } else if (RIFF::AIFF::File::isSupported(stream)) {
+        value = kFileTypeAIFF;
+    } else if (MPEG::File::isSupported(stream)) {
+        value = kFileTypeMP3;
     }
 
     delete stream;
@@ -471,10 +473,10 @@ NSString *const kTaglibWrapperFileTypeAIFF = @"aif";
 
 // MARK: Utilities
 
-void printTags(const TagLib::PropertyMap &tags) {
+void printTags(const PropertyMap &tags) {
     unsigned int longest = 0;
 
-    for (TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
+    for (PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
         if (i->first.size() > longest) {
             longest = i->first.size();
         }
@@ -482,18 +484,11 @@ void printTags(const TagLib::PropertyMap &tags) {
 
     cout << "__C -- TAG (properties) --" << endl;
 
-    for (TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
-        for (TagLib::StringList::ConstIterator j = i->second.begin(); j != i->second.end(); ++j) {
+    for (PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
+        for (StringList::ConstIterator j = i->second.begin(); j != i->second.end(); ++j) {
             cout << left << std::setw(longest) << i->first << " - " << '"' << *j << '"' << endl;
         }
     }
-}
-
-NSString *
-wcharToString(const wchar_t *charText) {
-    return [[NSString alloc] initWithBytes:charText
-                                    length:wcslen(charText) * sizeof(*charText)
-                                  encoding:NSUTF32LittleEndianStringEncoding];
 }
 
 @end
