@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: C interop
+
 extension String {
     /// a C char array arrives natively as a tuple, this reflects it back
     /// to an array then forms a String.

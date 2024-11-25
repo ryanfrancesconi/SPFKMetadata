@@ -4,6 +4,7 @@ import SPFKMetadataC
 
 public typealias TagKeyDictionary = [TagKey: String]
 
+/// A wrapper to TagLib to ease compatibility with Swift
 public struct TagProperties {
     public private(set) var dictionary = TagKeyDictionary()
 
@@ -15,22 +16,21 @@ public struct TagProperties {
     }
 
     public init(url: URL) throws {
-//        guard let file = TagFile(path: url.path), let dict = file.dictionary else {
-//            throw NSError(description: "Failed to parse \(url.path)")
-//        }
-
         guard let dict = TagLibBridge.parseProperties(url.path) else {
-            throw NSError(description: "Failed to parse \(url.path)")
+            throw NSError(description: "Failed to open file or no metadata in: \(url.path)")
         }
 
         for item in dict {
-            guard let key = item.key as? String else { continue }
+            guard let key = item.key as? String,
+                  var value = item.value as? String else { continue }
 
             guard let frame = TagKey(taglibKey: key) else {
                 continue
             }
 
-            dictionary[frame] = String(describing: item.value)
+            value = value.removing(.controlCharacters).trimmed
+
+            dictionary[frame] = value
         }
     }
 }

@@ -3,64 +3,72 @@
 
 import PackageDescription
 
-let package = Package(
-    name: "SPFKMetadata",
-    platforms: [
-        .macOS(.v11)
-    ],
-    products: [
-        .library(
-            name: "SPFKMetadata",
-            targets: [
-                "SPFKMetadata",
-                "SPFKMetadataC"
-            ]
-        ),
-    ],
-    
-    targets: [
+// This package will assume C / Objective-C interoperability as it's more common.
+// C++ could be enabled with:
+// swiftSettings: [.interoperabilityMode(.Cxx)]
 
-        // Swift
-        .target(
-            name: "SPFKMetadata",
-            dependencies: [
-                .target(name: "SPFKMetadataC"),
-            ],
-            swiftSettings: [.interoperabilityMode(.Cxx)]
-        ),
-        
-        // C++
-        .target(
-            name: "SPFKMetadataC",
-            dependencies: [
-                .target(name: "tag"),
-                .target(name: "libsndfile")
-            ],
-            publicHeadersPath: "include",
-            cxxSettings: []
-        ),
-        
-        .binaryTarget(
-            name: "tag",
-            path: "Frameworks/tag.xcframework"
-        ),
-        
-        .binaryTarget(
-            name: "libsndfile",
-            path: "Frameworks/libsndfile.xcframework"
-        ),
+// Swift target
+private let name: String = "SPFKMetadata"
+
+// C/C++ target
+private let nameC: String = "\(name)C"
+
+private let platforms: [PackageDescription.SupportedPlatform]? = [
+    .macOS(.v11),
+    .iOS(.v15)
+]
+
+private let products: [PackageDescription.Product] = [
+    .library(
+        name: name,
+        targets: [name, nameC]
+    )
+]
+
+private let targets: [PackageDescription.Target] = [
+    // Swift
+    .target(
+        name: name,
+        dependencies: [.target(name: nameC)]
+    ),
     
-        .testTarget(
-            name: "SPFKMetadataTests",
-            dependencies: [
-                "SPFKMetadata",
-                "SPFKMetadataC"
-            ],
-            resources: [
-                .process("Resources")
-            ],
-            swiftSettings: [.interoperabilityMode(.Cxx)]
-        )
-    ],
+    // C++
+    .target(
+        name: nameC,
+        dependencies: [
+            .target(name: "tag"),
+            .target(name: "libsndfile")
+        ],
+        publicHeadersPath: "include",
+        cxxSettings: []
+    ),
+    
+    .binaryTarget(
+        name: "tag",
+        path: "Frameworks/tag.xcframework"
+    ),
+    
+    .binaryTarget(
+        name: "libsndfile",
+        path: "Frameworks/libsndfile.xcframework"
+    ),
+
+    .testTarget(
+        name: "\(name)Tests",
+        dependencies: [
+            .byNameItem(name: name, condition: nil),
+            .byNameItem(name: nameC, condition: nil),
+        ],
+        resources: [
+            .process("Resources")
+        ]
+    )
+]
+
+let package = Package(
+    name: name,
+    platforms: platforms,
+    products: products,
+    targets: targets,
     cxxLanguageStandard: .cxx20
 )

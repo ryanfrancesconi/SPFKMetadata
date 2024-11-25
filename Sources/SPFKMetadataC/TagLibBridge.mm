@@ -20,8 +20,8 @@
 #import <tag/tstringlist.h>
 #import <tag/wavfile.h>
 
-#import "TagLibBridge.h"
 #import "TagFile.h"
+#import "TagLibBridge.h"
 
 using namespace std;
 using namespace TagLib;
@@ -130,6 +130,7 @@ NSString *const kFileTypeAIFF = @"aif";
     return result;
 }
 
+// This will be replaced by parseProperties
 + (nullable NSMutableDictionary *)parseMetadata:(NSString *)path
 {
     FileRef fileRef(path.UTF8String);
@@ -151,7 +152,7 @@ NSString *const kFileTypeAIFF = @"aif";
     NSString *album = wcharToString(tag->album().toCWString());
     NSString *comment = wcharToString(tag->comment().toCWString());
     NSString *genre = wcharToString(tag->genre().toCWString());
-    
+
     //
     NSString *year = [NSString stringWithFormat:@"%u", tag->year()];
     NSString *track = [NSString stringWithFormat:@"%u", tag->track()];
@@ -312,7 +313,7 @@ NSString *const kFileTypeAIFF = @"aif";
             }
         } else {
             String tagKey = String(key.UTF8String);
-            tags.replace(String(key.UTF8String), StringList(value.UTF8String));
+            tags.replace(tagKey, StringList(value.UTF8String));
         }
     }
 
@@ -321,12 +322,12 @@ NSString *const kFileTypeAIFF = @"aif";
 
 + (nullable NSMutableDictionary *)parseProperties:(NSString *)path
 {
-    TagFile *tagFile = [[TagFile alloc] initWithPath: path];
-    
+    TagFile *tagFile = [[TagFile alloc] initWithPath:path];
+
     if (!tagFile) {
         return nil;
     }
-    
+
     return tagFile.dictionary;
 }
 
@@ -346,8 +347,6 @@ NSString *const kFileTypeAIFF = @"aif";
     if (!mpegFile) {
         return nil;
     }
-
-    // cout << "Parsing MPEG File" << endl;
 
     ID3v2::FrameList chapterList = mpegFile->ID3v2Tag()->frameList("CHAP");
 
@@ -475,6 +474,13 @@ NSString *const kFileTypeAIFF = @"aif";
 
 // MARK: Utilities
 
+static NSString *
+wcharToString(const wchar_t *charText) {
+    return [[NSString alloc] initWithBytes:charText
+                                    length:wcslen(charText) * sizeof(*charText)
+                                  encoding:NSUTF32LittleEndianStringEncoding];
+}
+
 void printTags(const PropertyMap &tags) {
     unsigned int longest = 0;
 
@@ -486,8 +492,8 @@ void printTags(const PropertyMap &tags) {
 
     cout << "__C -- TAG (properties) --" << endl;
 
-    for (PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
-        for (StringList::ConstIterator j = i->second.begin(); j != i->second.end(); ++j) {
+    for (auto i = tags.begin(); i != tags.end(); ++i) {
+        for (auto j = i->second.begin(); j != i->second.end(); ++j) {
             cout << left << std::setw(longest) << i->first << " - " << '"' << *j << '"' << endl;
         }
     }

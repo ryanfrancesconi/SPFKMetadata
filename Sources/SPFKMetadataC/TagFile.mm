@@ -2,6 +2,10 @@
 
 #import "TagFile.h"
 
+#import <tag/fileref.h>
+#import <tag/tag.h>
+#import <tag/tpropertymap.h>
+
 @implementation TagFile
 
 using namespace TagLib;

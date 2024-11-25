@@ -2,8 +2,6 @@
 #import <CoreAudio/CoreAudio.h>
 #import <Foundation/Foundation.h>
 
-#import "sndfile.h"
-#import "TagFile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
