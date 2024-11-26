@@ -1,3 +1,5 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
+
 import Foundation
 
 /// This doesn't take totally custom frames into account but does handle some common non-standard

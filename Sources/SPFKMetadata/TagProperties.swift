@@ -16,7 +16,7 @@ public struct TagProperties {
     }
 
     public init(url: URL) throws {
-        guard let dict = TagLibBridge.parseProperties(url.path) else {
+        guard let dict = TagLibBridge.getProperties(url.path) else {
             throw NSError(description: "Failed to open file or no metadata in: \(url.path)")
         }
 
@@ -39,7 +39,7 @@ extension TagProperties: CustomStringConvertible {
     public var description: String {
         let strings = dictionary.map {
             let key: TagKey = $0.key
-            return "\(key.rawValue) (\(key.id3Frame)) = \($0.value)"
+            return "\(key.rawValue) (ID3: \(key.id3Frame ?? "????") (INFO: \(key.infoFrame ?? "????")) = \($0.value)"
         }
 
         return strings.sorted().joined(separator: "\n")

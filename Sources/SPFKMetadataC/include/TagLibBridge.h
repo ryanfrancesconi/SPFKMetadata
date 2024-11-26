@@ -1,17 +1,17 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 #import <CoreAudio/CoreAudio.h>
 #import <Foundation/Foundation.h>
 
-
 NS_ASSUME_NONNULL_BEGIN
+
 
 @interface TagLibBridge : NSObject
 
-    extern NSString * const kFileTypeM4A;
-extern NSString *const kFileTypeAAC;
-extern NSString *const kFileTypeWAVE;
-extern NSString *const kFileTypeAIFF;
-extern NSString *const kFileTypeMP3;
++ (bool)setProperties:(NSString *)path
+           dictionary:(NSDictionary *)dictionary;
+
++ (nullable NSMutableDictionary *)getProperties:(NSString *)path;
 
 + (nullable NSString *)getTitle:(NSString *)path;
 
@@ -23,20 +23,12 @@ extern NSString *const kFileTypeMP3;
 + (bool)setComment:(NSString *)path
            comment:(NSString *)comment;
 
-+ (nullable NSMutableDictionary *)parseMetadata:(NSString *)path;
-
-+ (bool)setMetadata:(NSString *)path
-         dictionary:(NSDictionary *)dictionary;
-
-+ (nullable NSMutableDictionary *)parseProperties:(NSString *)path;
+// -
 
 + (nullable NSArray *)getMP3Chapters:(NSString *)path;
 
 + (bool)setMP3Chapters:(NSString *)path
                  array:(NSArray *)dictionary;
-
-+ (nullable NSString *)detectFileType:(NSString *)path;
-+ (nullable NSString *)detectStreamType:(NSString *)path;
 
 
 @end

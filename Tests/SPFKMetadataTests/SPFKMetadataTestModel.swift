@@ -1,3 +1,5 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
+
 import Foundation
 
 protocol SPFKMetadataTestModel: AnyObject {
@@ -26,4 +28,18 @@ extension SPFKMetadataTestModel {
     var id3: URL { getResource(named: "id3.mp3") }
     var bext_v1: URL { getResource(named: "bext_v1.wav") }
     var bext_v2: URL { getResource(named: "bext_v2.wav") }
+}
+
+extension SPFKMetadataTestModel {
+    var bin: URL {
+        var bin = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop")
+
+        bin = bin.appendingPathComponent("SPFKMetadataTests")
+
+        if !FileManager.default.fileExists(atPath: bin.path) {
+            try? FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+        }
+
+        return bin
+    }
 }

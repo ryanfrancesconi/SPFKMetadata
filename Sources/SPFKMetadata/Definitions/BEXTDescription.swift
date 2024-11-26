@@ -1,3 +1,4 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
 import SPFKMetadataC
@@ -80,11 +81,10 @@ public struct BEXTDescription: Hashable, Codable {
     public init() {}
 
     public init(url: URL) throws {
-        guard let sfinfo = SFBroadcastInfo(path: url.path) else {
-            throw NSError(description: "Failed to parse \(url.path)")
-        }
+        
+        let broadcastInfo = SFFile.broadcastInfo(withPath: url.path)
 
-        self = BEXTDescription(info: sfinfo.info)
+        self = BEXTDescription(info: broadcastInfo)
     }
     
     /// Copy values from the C Struct `SF_BROADCAST_INFO` defined

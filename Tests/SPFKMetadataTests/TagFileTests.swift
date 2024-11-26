@@ -6,12 +6,9 @@ import Foundation
 import Testing
 
 class TagFileTests: SPFKMetadataTestModel {
-    
     @Test func testParseID3() async throws {
-        let tagFile = TagFile(path: bext_v2.path)
-        
-        //#expect(tagFile?.title() == "Shine On (inst)")
+        let tagFile = try #require(TagFile(path: bext_v2.path))
 
+        #expect(tagFile.dictionary?["TITLE"] as? String == "ID3: 12345678910 mono 48k")
     }
-    
 }
