@@ -2,6 +2,7 @@
 
 #include <Foundation/Foundation.h>
 #include "sndfile.h"
+#import "BroadcastInfo.h"
 
 // Macro for splitting the format file of SF_INFO into container type
 #define SF_CONTAINER(x) ((x) & SF_FORMAT_TYPEMASK)
@@ -11,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///  Wrapper on the libsndfile for simpler interchange with Swift
 @interface SFFile : NSObject
 
-+ (SF_BROADCAST_INFO)broadcastInfoWithPath:(NSString *)path;
-
 /// get RIFF markers
 + (nullable NSArray *)markersWithPath:(NSString *)path;
 
@@ -20,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
                       markers:(NSArray *)markers;
 
 @end
-
 
 
 NS_ASSUME_NONNULL_END

@@ -1,7 +1,11 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
+import AudioToolbox
 import Foundation
 import SPFKMetadataC
+
+// TBD: if there needs to be a Swift struct representation copy
+// Maintaining this copy for Hashable/Codable conformance
 
 /// BEXT Wave Chunk - BroadcastExtension
 public struct BEXTDescription: Hashable, Codable {
@@ -27,23 +31,23 @@ public struct BEXTDescription: Hashable, Codable {
 
     /// 100x the Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
     /// IE, A value of -3255 = -32.5 LUFS (reference - 9.5 LU)
-    public var loudnessValue: Int16?
+    public var loudnessValue: AUValue?
 
     /// 100x the Loudness Range of the file in LU. (Note: Added in version 2.)
     /// 69 = +0.7 LU
-    public var loudnessRange: Int16?
+    public var loudnessRange: AUValue?
 
     /// 100x the Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
     /// -1247 = -12.5 dB
-    public var maxTruePeakLevel: Int16?
+    public var maxTruePeakLevel: AUValue?
 
     /// 100x the highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
     /// -2625 = -26.3 LUFS (reference - 3.3 LU)
-    public var maxMomentaryLoudness: Int16?
+    public var maxMomentaryLoudness: AUValue?
 
     /// 100x the highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
     /// -3212 = -32.1 LUFS (reference - 9.1 LU)
-    public var maxShortTermLoudness: Int16?
+    public var maxShortTermLoudness: AUValue?
 
     /// the name of the originator / producer of the audio file
     public var originator: String?
@@ -68,75 +72,52 @@ public struct BEXTDescription: Hashable, Codable {
 
     /// Combined 64bit time value of low and high words
     public var timeReference: UInt64? {
-        guard let timeReferenceLow,
-              let timeReferenceHigh
-
-        else {
+        guard let timeReferenceLow, let timeReferenceHigh else {
             return nil
         }
 
-        return UInt64(timeReferenceHigh << 32 | timeReferenceLow)
+        return (UInt64(timeReferenceHigh) << 32) | UInt64(timeReferenceLow)
     }
+
+    public var timeReferenceInSeconds: TimeInterval? {
+        guard let timeReference, let sampleRate else { return nil }
+        return TimeInterval(timeReference) / sampleRate
+    }
+
+    public var sampleRate: Double?
 
     public init() {}
 
-    public init(url: URL) throws {
-        
-        let broadcastInfo = SFFile.broadcastInfo(withPath: url.path)
+    public init?(url: URL) {
+        guard let info = BroadcastInfo(path: url.path) else {
+            return nil
+        }
 
-        self = BEXTDescription(info: broadcastInfo)
+        self = BEXTDescription(info: info)
     }
-    
-    /// Copy values from the C Struct `SF_BROADCAST_INFO` defined
-    /// in sndfile.h
-    ///
-    /// - Parameter info: SF_BROADCAST_INFO
-    public init(info: SF_BROADCAST_INFO) {
-        codingHistory = String(
-            mirroringCChar: Mirror(reflecting: info.coding_history)
-        )
 
-        originator = String(
-            mirroringCChar: Mirror(reflecting: info.originator)
-        )
-
-        originatorReference = String(
-            mirroringCChar: Mirror(reflecting: info.originator_reference)
-        )
-
-        originationDate = String(
-            mirroringCChar: Mirror(reflecting: info.origination_date)
-        )
-
-        originationTime = String(
-            mirroringCChar: Mirror(reflecting: info.origination_time)
-        )
-
-        timeReferenceLow = info.time_reference_low
-        timeReferenceHigh = info.time_reference_high
-
+    public init(info: BroadcastInfo) {
         version = info.version
+        sampleRate = info.sampleRate
 
-        if version >= 1 {
-            umid = String(
-                mirroringCChar: Mirror(reflecting: info.umid)
-            )
+        if version > 1 {
+            umid = info.umid
         }
 
         if version >= 2 {
-            loudnessValue = info.loudness_value
-            loudnessRange = info.loudness_range
-            maxTruePeakLevel = info.max_true_peak_level
-            maxMomentaryLoudness = info.max_momentary_loudness
-            maxShortTermLoudness = info.max_shortterm_loudness
-        }
-    }
-
-    public func timeOrigin(at sampleRate: Double) -> TimeInterval {
-        guard let timeReference else {
-            return 0
+            loudnessValue = info.loudnessValue
+            loudnessRange = info.loudnessRange
+            maxTruePeakLevel = info.maxTruePeakLevel
+            maxMomentaryLoudness = info.maxMomentaryLoudness
+            maxShortTermLoudness = info.maxShortTermLoudness
         }
 
-        return TimeInterval(timeReference) / sampleRate
+        originator = info.originator
+        originationDate = info.originationDate
+        originationTime = info.originationTime
+        originatorReference = info.originatorReference
+
+        timeReferenceLow = info.timeReferenceLow
+        timeReferenceHigh = info.timeReferenceHigh
     }
 }

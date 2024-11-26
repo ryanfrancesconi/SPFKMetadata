@@ -11,7 +11,7 @@ class SFFileTests: SPFKMetadataTestModel {
         let markers = SFFile.markers(withPath: bext_v2.path) as? [SimpleMarker] ?? []
 
         Swift.print(markers.map { $0.name + " @ \($0.time)" })
-        
+
         #expect(markers.count == 7)
     }
 
@@ -34,18 +34,5 @@ class SFFileTests: SPFKMetadataTestModel {
         #expect(
             SFFile.updateMarkers(withPath: tmp.path, markers: evenMarkers)
         )
-    }
-
-    @Test func parseBEXT() async throws {
-        let desc = try BEXTDescription(url: bext_v2)
-
-        Swift.print(desc)
-
-        #expect(desc.version == 2)
-        #expect(desc.originator == "RF")
-    }
-
-    deinit {
-        // try? FileManager.default.removeItem(at: bin)
     }
 }

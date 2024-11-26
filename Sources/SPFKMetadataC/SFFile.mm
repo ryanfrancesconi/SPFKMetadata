@@ -1,30 +1,12 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
+#import "BroadcastInfo.h"
 #import "sndfile.hh"
 #import "spfk_util.h"
 #import "SFFile.h"
 #import "SimpleMarker.h"
 
 @implementation SFFile
-
-+ (int)format:(nonnull NSString *)path {
-    SndfileHandle file = SndfileHandle(path.UTF8String);
-
-    return file.format(); //SF_CONTAINER(file.format());
-}
-
-+ (SF_BROADCAST_INFO)broadcastInfoWithPath:(nonnull NSString *)path {
-    SndfileHandle file = SndfileHandle(path.UTF8String);
-
-    SF_BROADCAST_INFO bext = {};
-
-    // SF_TRUE if the file contained a Broadcast Extension chunk or SF_FALSE otherwise
-    if (file.command(SFC_GET_BROADCAST_INFO, &bext,  sizeof(bext)) != SF_TRUE) {
-        //return SF_NULL;
-    }
-
-    return bext;
-}
 
 + (nullable NSArray *)markersWithPath:(nonnull NSString *)path {
     SndfileHandle file = SndfileHandle(path.UTF8String);
@@ -86,6 +68,7 @@ markersToCues(NSArray *markers, double sampleRate) {
     return cues;
 }
 
+// not working
 + (bool)updateMarkersWithPath:(nonnull NSString *)path markers:(nonnull NSArray *)markers {
     SndfileHandle file = SndfileHandle(path.UTF8String);
     double sampleRate = double(file.samplerate());
