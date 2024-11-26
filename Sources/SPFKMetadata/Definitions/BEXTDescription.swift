@@ -29,27 +29,22 @@ public struct BEXTDescription: Hashable, Codable {
     /// see: https://tech.ebu.ch/docs/r/r098.pdf
     public var codingHistory: String?
 
-    /// 100x the Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
-    /// IE, A value of -3255 = -32.5 LUFS (reference - 9.5 LU)
+    /// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
     public var loudnessValue: AUValue?
 
-    /// 100x the Loudness Range of the file in LU. (Note: Added in version 2.)
-    /// 69 = +0.7 LU
+    /// Loudness Range of the file in LU. (Note: Added in version 2.)
     public var loudnessRange: AUValue?
 
-    /// 100x the Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
-    /// -1247 = -12.5 dB
+    /// Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
     public var maxTruePeakLevel: AUValue?
 
-    /// 100x the highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
-    /// -2625 = -26.3 LUFS (reference - 3.3 LU)
+    /// highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
     public var maxMomentaryLoudness: AUValue?
 
-    /// 100x the highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
-    /// -3212 = -32.1 LUFS (reference - 9.1 LU)
+    /// highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
     public var maxShortTermLoudness: AUValue?
 
-    /// the name of the originator / producer of the audio file
+    /// The name of the originator / producer of the audio file
     public var originator: String?
 
     /// Unambiguous reference allocated by the originating organization

@@ -27,27 +27,22 @@ NS_ASSUME_NONNULL_BEGIN
 /// see: https://tech.ebu.ch/docs/r/r098.pdf
 @property (nonatomic) NSString *codingHistory;
 
-/// 100x the Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
-/// IE, A value of -3255 = -32.5 LUFS (reference - 9.5 LU)
+/// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
 @property (nonatomic) AUValue loudnessValue;
 
-/// 100x the Loudness Range of the file in LU. (Note: Added in version 2.)
-/// 69 = +0.7 LU
+/// Loudness Range of the file in LU. (Note: Added in version 2.)
 @property (nonatomic) AUValue loudnessRange;
 
-/// 100x the Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
-/// -1247 = -12.5 dB
+/// Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
 @property (nonatomic) AUValue maxTruePeakLevel;
 
-/// 100x the highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
-/// -2625 = -26.3 LUFS (reference - 3.3 LU)
+/// highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
 @property (nonatomic) AUValue maxMomentaryLoudness;
 
-/// 100x the highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
-/// -3212 = -32.1 LUFS (reference - 9.1 LU)
+/// highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
 @property (nonatomic) AUValue maxShortTermLoudness;
 
-/// the name of the originator / producer of the audio file
+/// The name of the originator / producer of the audio file
 @property (nonatomic) NSString *originator;
 
 /// Unambiguous reference allocated by the originating organization
