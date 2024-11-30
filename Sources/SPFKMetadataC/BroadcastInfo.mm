@@ -6,7 +6,8 @@
 
 @implementation BroadcastInfo
 
-- (id)init {}
+- (id)init {
+}
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
     SndfileHandle file = SndfileHandle(path.UTF8String);
