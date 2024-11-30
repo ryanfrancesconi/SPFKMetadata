@@ -16,6 +16,7 @@
 #import <tag/tstringlist.h>
 #import <tag/wavfile.h>
 
+#import "SimpleChapterFrame.h"
 #import "TagFile.h"
 #import "TagLibBridge.h"
 
@@ -167,7 +168,8 @@ using namespace TagLib;
 // MARK: -
 
 
-/// markers as chapters in mp3 files
+/// Returns an array of SimpleChapterFrame
+/// - Parameter path: file to open
 + (NSArray *)getMP3Chapters:(NSString *)path
 {
     NSMutableArray *array = [[NSMutableArray alloc] init];
@@ -185,35 +187,32 @@ using namespace TagLib;
         return nil;
     }
 
-    ID3v2::FrameList chapterList = mpegFile->ID3v2Tag()->frameList("CHAP");
+    ID3v2::Tag *tag = mpegFile->ID3v2Tag();
 
-    for (ID3v2::FrameList::ConstIterator it = chapterList.begin();
-         it != chapterList.end();
-         ++it) {
+    ID3v2::FrameList chapterList = tag->frameList("CHAP");
+
+    for (auto it = chapterList.begin(); it != chapterList.end(); ++it) {
         ID3v2::ChapterFrame *frame = dynamic_cast<ID3v2::ChapterFrame *>(*it);
 
-        if (frame && !frame->embeddedFrameList().isEmpty()) {
-            for (ID3v2::FrameList::ConstIterator it = frame->embeddedFrameList().begin(); it != frame->embeddedFrameList().end(); ++it) {
-                // the chapter title is a sub frame
-                if ((*it)->frameID() == "TIT2") {
-                    // Util::log((*it)->frameID() << " = " << (*it)->toString() << endl;
-                    NSString *marker = Util::utf8String((*it)->toString().toCString());
+        NSTimeInterval startTime = NSTimeInterval(frame->startTime()) / 1000;
+        NSTimeInterval endTime = NSTimeInterval(frame->endTime()) / 1000;
 
-                    marker = [marker stringByAppendingString:[NSString stringWithFormat:@"@%d", frame->startTime() / 1000] ];
-                    [array addObject:marker];
-                }
-            }
-        }
+        String elementName = String(frame->elementID());
+
+        cout << elementName << " " << startTime << " " << frame->endTime() << endl;
+
+        const char *name = elementName.toCString();
+        NSString *chapterName = Util::utf8String(name);
+
+        SimpleChapterFrame *chapterFrame = [[SimpleChapterFrame alloc] initWithName:chapterName startTime:startTime endTime:endTime];
+
+        [array addObject:chapterFrame];
     }
 
     return array;
 }
 
-//    MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
-
-// only works with mpeg files, takes an array of strings
-// title@1.04
-// TODO, change to array of marker objects
+// only works with mpeg files, TODO: support mp4
 + (bool)setMP3Chapters:(NSString *)path
                  array:(NSArray *)array
 {
@@ -238,21 +237,19 @@ using namespace TagLib;
     // add new CHAP tags
     ID3v2::Header header;
 
-    // expecting NAME@TIME right now
-    for (NSString *object in array) {
-        NSArray *items = [object componentsSeparatedByString:@"@"];
-        NSString *name = [items objectAtIndex:0];         //shows Description
-
-        int time = [[items objectAtIndex:1] intValue];
-
+    for (SimpleChapterFrame *object in array) {
         ID3v2::ChapterFrame *chapter = new ID3v2::ChapterFrame(&header, "CHAP");
-        chapter->setStartTime(time);
-        chapter->setEndTime(time);
+        chapter->setStartTime(object.startTime * 1000);
+        chapter->setEndTime(object.endTime * 1000);
+
+        String string = String(object.name.UTF8String);
+
+        // chapter->setElementID(string.data());
 
         // set the chapter title
-        ID3v2::TextIdentificationFrame *eF = new ID3v2::TextIdentificationFrame("TIT2");
-        eF->setText(name.UTF8String);
-        chapter->addEmbeddedFrame(eF);
+        ID3v2::TextIdentificationFrame *titleFrame = new ID3v2::TextIdentificationFrame("TIT2");
+        titleFrame->setText(object.name.UTF8String);
+        chapter->addEmbeddedFrame(titleFrame);
         mpegFile->ID3v2Tag()->addFrame(chapter);
     }
 
