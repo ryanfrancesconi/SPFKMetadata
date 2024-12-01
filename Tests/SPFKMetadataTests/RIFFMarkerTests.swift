@@ -5,8 +5,10 @@ import Foundation
 @testable import SPFKMetadataC
 import Testing
 
-@Suite(.serialized) // don't run in parallel as they're using the same file URL
+@Suite(.serialized)
 class RIFFMarkerTests: SPFKMetadataTestModel {
+    lazy var bin: URL = createBin(suite: "RIFFMarkerTests")
+
     @Test func parseMarkers() async throws {
         let markers = RIFFMarker.getAudioFileMarkers(bext_v2) as? [SimpleAudioFileMarker] ?? []
         Swift.print(markers.map { ($0.name ?? "nil") + " @ \($0.time)" })
@@ -14,10 +16,7 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
     }
 
     @Test func writeMarkers() async throws {
-        let input = bext_v2
-        let tmp = bin.appendingPathComponent("Copy of \(bext_v2.lastPathComponent)")
-        try? FileManager.default.removeItem(at: tmp)
-        try FileManager.default.copyItem(at: input, to: tmp)
+        let tmpfile = try copy(to: bin, url: bext_v2)
 
         let markers: [SimpleAudioFileMarker] = [
             SimpleAudioFileMarker(name: "New 1", time: 2, sampleRate: 48000, markerID: 0),
@@ -25,12 +24,12 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
         ]
 
         #expect(
-            RIFFMarker.setAudioFileMarkers(tmp, markers: markers)
+            RIFFMarker.setAudioFileMarkers(tmpfile, markers: markers)
         )
 
-        #expect(FileManager.default.fileExists(atPath: tmp.path))
+        #expect(FileManager.default.fileExists(atPath: tmpfile.path))
 
-        let editedMarkers = RIFFMarker.getAudioFileMarkers(tmp) as? [SimpleAudioFileMarker] ?? []
+        let editedMarkers = RIFFMarker.getAudioFileMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
 
         let names = editedMarkers.compactMap { $0.name }
         let times = editedMarkers.map { $0.time }
@@ -43,16 +42,16 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
     }
 
     @Test func removeMarkers() async throws {
-        let input = bext_v2
-        let tmp = bin.appendingPathComponent("Copy of \(bext_v2.lastPathComponent)")
+        let tmpfile = try copy(to: bin, url: bext_v2)
 
-        try? FileManager.default.removeItem(at: tmp)
-        try FileManager.default.copyItem(at: input, to: tmp)
+        #expect(RIFFMarker.removeAllAudioFileMarkers(tmpfile))
 
-        #expect(RIFFMarker.removeAllAudioFileMarkers(tmp))
-
-        let editedMarkers = RIFFMarker.getAudioFileMarkers(tmp) as? [SimpleAudioFileMarker] ?? []
+        let editedMarkers = RIFFMarker.getAudioFileMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
         Swift.print(editedMarkers.map { ($0.name ?? "nil") + " @ \($0.time)" })
         #expect(editedMarkers.count == 0)
+    }
+
+    deinit {
+        try? FileManager.default.removeItem(at: bin)
     }
 }

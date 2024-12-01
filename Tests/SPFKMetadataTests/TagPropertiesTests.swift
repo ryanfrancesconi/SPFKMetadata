@@ -5,11 +5,19 @@ import Foundation
 @testable import SPFKMetadataC
 import Testing
 
+@Suite(.serialized)
 class TagPropertiesTests: SPFKMetadataTestModel {
+    lazy var bin: URL = createBin(suite: "TagPropertiesTests")
+
     @Test func parseID3MP3() async throws {
         let metadata = try TagProperties(url: id3)
         Swift.print(metadata)
+        #expect(metadata[.title] == "Shine On (inst)")
+    }
 
+    @Test func parseID3MP3_AV() async throws {
+        let metadata = try await TagProperties_AV(url: id3)
+        Swift.print(metadata)
         #expect(metadata[.title] == "Shine On (inst)")
     }
 
@@ -27,7 +35,6 @@ class TagPropertiesTests: SPFKMetadataTestModel {
         #expect(metadata[.title] == "INFO: bext")
     }
 
-
     @Test func parseMetadataTags1() async throws {
         let url = bext_v2 // has both INFO and ID3
 
@@ -41,5 +48,37 @@ class TagPropertiesTests: SPFKMetadataTestModel {
         let dict = try #require(TagLibBridge.getProperties(url.path))
 
         #expect(dict["TITLE"] as? String == "INFO: bext")
+    }
+}
+
+extension TagPropertiesTests {
+    @Test func readWriteTagProperties() async throws {
+        let tmpfile = try copy(to: bin, url: bext_v1)
+
+        var properties = try TagProperties(url: tmpfile)
+        #expect(properties[.title] == "INFO: bext")
+
+        properties[.title] = "New Title"
+
+        try properties.save()
+
+        #expect(properties[.title] == "New Title")
+    }
+
+    @Test func readWriteTagProperties_C() async throws {
+        let tmpfile = try copy(to: bin, url: bext_v1)
+
+        var dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
+        #expect(dict["TITLE"] == "INFO: bext")
+
+        dict["TITLE"] = "New Title"
+
+        let success = TagLibBridge.setProperties(tmpfile.path, dictionary: dict)
+
+        #expect(success)
+
+        dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
+
+        #expect(dict["TITLE"] == "New Title")
     }
 }

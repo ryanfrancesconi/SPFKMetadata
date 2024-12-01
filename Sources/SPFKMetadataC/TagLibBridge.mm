@@ -6,6 +6,7 @@
 
 #import <tag/chapterframe.h>
 #import <tag/fileref.h>
+#import <tag/mp4file.h>
 #import <tag/mpegfile.h>
 #import <tag/rifffile.h>
 #import <tag/tag.h>
@@ -150,13 +151,13 @@ using namespace TagLib;
         return false;
     }
 
-    // these are the non standard tags
     PropertyMap tags = fileRef.file()->properties();
 
     for (NSString *key in [dictionary allKeys]) {
         NSString *value = [dictionary objectForKey:key];
 
         String tagKey = String(key.UTF8String);
+
         tags.replace(tagKey, StringList(value.UTF8String));
     }
 
@@ -170,26 +171,26 @@ using namespace TagLib;
 
 /// Returns an array of SimpleChapterFrame
 /// - Parameter path: file to open
+/// ID3v2 only currently
 + (NSArray *)getMP3Chapters:(NSString *)path
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
-
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
         return nil;
     }
 
-    MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
+    MPEG::File *file = dynamic_cast<MPEG::File *>(fileRef.file());
 
-    if (!mpegFile) {
-        Util::log("getMP3Chapters: Not a MPEG File");
+    if (!file || !file->hasID3v2Tag()) {
+        Util::log("getMP3Chapters: Not a MPEG File or no ID3v2 tag");
         return nil;
     }
 
-    ID3v2::Tag *tag = mpegFile->ID3v2Tag();
-
+    ID3v2::Tag *tag = file->ID3v2Tag();
     ID3v2::FrameList chapterList = tag->frameList("CHAP");
+
+    NSMutableArray *array = [[NSMutableArray alloc] init];
 
     for (auto it = chapterList.begin(); it != chapterList.end(); ++it) {
         ID3v2::ChapterFrame *frame = dynamic_cast<ID3v2::ChapterFrame *>(*it);
@@ -197,12 +198,28 @@ using namespace TagLib;
         NSTimeInterval startTime = NSTimeInterval(frame->startTime()) / 1000;
         NSTimeInterval endTime = NSTimeInterval(frame->endTime()) / 1000;
 
+        // placeholder for title
         String elementName = String(frame->elementID());
 
         cout << elementName << " " << startTime << " " << frame->endTime() << endl;
 
         const char *name = elementName.toCString();
         NSString *chapterName = Util::utf8String(name);
+
+        const ID3v2::FrameList &embeddedFrames = frame->embeddedFrameList();
+
+        if (!embeddedFrames.isEmpty()) {
+            // Look for a title frame in the chapter, if found use that for the title
+            for (auto it = frame->embeddedFrameList().begin(); it != frame->embeddedFrameList().end(); ++it) {
+                auto tit2Frame = dynamic_cast<const ID3v2::TextIdentificationFrame *>(*it);
+
+                // cout << tit2Frame->frameID() << endl;
+
+                if (tit2Frame->frameID() == "TIT2") {
+                    chapterName = Util::utf8String(tit2Frame->toString().toCString());
+                }
+            }
+        }
 
         SimpleChapterFrame *chapterFrame = [[SimpleChapterFrame alloc] initWithName:chapterName startTime:startTime endTime:endTime];
 
@@ -229,9 +246,6 @@ using namespace TagLib;
         return false;
     }
 
-    // parse array
-
-    // remove CHAPter tags
     mpegFile->ID3v2Tag()->removeFrames("CHAP");
 
     // add new CHAP tags
@@ -242,19 +256,84 @@ using namespace TagLib;
         chapter->setStartTime(object.startTime * 1000);
         chapter->setEndTime(object.endTime * 1000);
 
-        String string = String(object.name.UTF8String);
-
-        // chapter->setElementID(string.data());
+        const char *cname = object.name.UTF8String;
+        String string = String(cname);
+        chapter->setElementID(string.data(String::Type::UTF8));
 
         // set the chapter title
         ID3v2::TextIdentificationFrame *titleFrame = new ID3v2::TextIdentificationFrame("TIT2");
-        titleFrame->setText(object.name.UTF8String);
+        titleFrame->setText(cname);
         chapter->addEmbeddedFrame(titleFrame);
         mpegFile->ID3v2Tag()->addFrame(chapter);
     }
 
-    bool result = mpegFile->save();
-    return result;
+    return mpegFile->save();
+}
+
++ (bool)removeMP3Chapters:(NSString *)path {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        return false;
+    }
+
+    MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
+
+    if (!mpegFile) {
+        Util::log("removeMP3Chapters: Not a MPEG File");
+        return false;
+    }
+
+    mpegFile->ID3v2Tag()->removeFrames("CHAP");
+
+    return mpegFile->save();
+}
+
+#pragma mark - experimental
+
++ (NSArray *)getMP4Chapters:(NSString *)path {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        return nil;
+    }
+
+    MP4::File *file = dynamic_cast<MP4::File *>(fileRef.file());
+
+    if (!file || !file->hasMP4Tag()) {
+        Util::log("getMP4Chapters: Not a MP4 File or no MP4 tag");
+        return nil;
+    }
+
+    MP4::Tag *tag = file->tag();
+    PropertyMap tags = tag->properties();
+
+//    for (auto i = tags.begin(); i != tags.end(); ++i) {
+//        for (auto j = i->second.begin(); j != i->second.end(); ++j) {
+//
+//            cout << i->first.toCString() << "=" << j->toCString() << endl;
+//        }
+//    }
+    
+
+    MP4::ItemMap items = tag->itemMap();
+
+    StringList list = tag->complexPropertyKeys();
+
+    if (!list.isEmpty()) {
+        for (auto it = list.begin(); it != list.end(); ++it) {
+//            String key = (*it).first;
+//            MP4::Item value = (*it).second;
+
+            cout << (*it) << endl;
+            
+            // cout << key << "=" << value.toStringList() << endl;
+        }
+    }
+
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+
+    return array;
 }
 
 @end

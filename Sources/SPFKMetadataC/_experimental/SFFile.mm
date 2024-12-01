@@ -1,8 +1,8 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 #import "BroadcastInfo.h"
-#import "sndfile.hh"
-#import "spfk_util.h"
+#import "../sndfile.hh"
+#import "../spfk_util.h"
 #import "SFFile.h"
 #import "SFMarker.h"
 
@@ -46,7 +46,7 @@
     }
 }
 
-// not working
+// not quite working
 + (BOOL)updateMarkersWithPath:(nonnull NSString *)path
 //                       output:(nonnull NSString *)outputPath
                       markers:(nonnull NSArray *)markers {//
@@ -132,12 +132,6 @@ markersToCues(NSArray *markers, double sampleRate) {
         cues.cue_points[i].position = position;
         cues.cue_points[i].sample_offset = position;
         cues.cue_points[i].fcc_chunk = 0;
-        //strncpy(cues.cue_points[i].name, name, maxlength);
-
-//        cues.cue_points[i].name[0] = 'H';
-//        cues.cue_points[i].name[1] = 'i';
-//        cues.cue_points[i].name[2] = '\0';
-
         psf_strlcpy(cues.cue_points[i].name, sizeof(cues.cue_points[i].name), name);
     }
 

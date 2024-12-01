@@ -91,6 +91,8 @@ public enum TagKey: String, CaseIterable, Codable {
     case work
 }
 
+// MARK: - Init
+
 extension TagKey {
     /// TagLib uses an all caps readable string for its keys
     public var taglibKey: String {
@@ -127,4 +129,3 @@ extension TagKey {
         return nil
     }
 }
-

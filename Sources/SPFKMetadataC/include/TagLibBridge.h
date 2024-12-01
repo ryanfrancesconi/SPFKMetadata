@@ -25,10 +25,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 // -
 
++ (nullable NSArray *)getMP4Chapters:(NSString *)path;
 + (nullable NSArray *)getMP3Chapters:(NSString *)path;
 
 + (bool)setMP3Chapters:(NSString *)path
                  array:(NSArray *)dictionary;
+
++ (bool)removeMP3Chapters:(NSString *)path;
 
 
 @end

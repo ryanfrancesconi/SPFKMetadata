@@ -2,23 +2,28 @@
 import Foundation
 import SPFKMetadataC
 
-public typealias TagKeyDictionary = [TagKey: String]
-
 /// A wrapper to TagLib to ease compatibility with Swift
-public struct TagProperties {
-    public private(set) var dictionary = TagKeyDictionary()
+public struct TagProperties: TagPropertiesContainerModel {
+    public var dictionary = TagKeyDictionary()
 
-    public subscript(key: TagKey) -> String? {
-        get { dictionary[key] }
-        set {
-            dictionary[key] = newValue
+    private var tagLibCompatibleDictionary: [String: String] {
+        var dict: [String: String] = .init()
+
+        for item in dictionary {
+            dict[item.key.taglibKey] = item.value
         }
+
+        return dict
     }
+
+    public private(set) var url: URL
 
     public init(url: URL) throws {
         guard let dict = TagLibBridge.getProperties(url.path) else {
             throw NSError(description: "Failed to open file or no metadata in: \(url.path)")
         }
+
+        self.url = url
 
         for item in dict {
             guard let key = item.key as? String,
@@ -33,15 +38,10 @@ public struct TagProperties {
             dictionary[frame] = value
         }
     }
-}
 
-extension TagProperties: CustomStringConvertible {
-    public var description: String {
-        let strings = dictionary.map {
-            let key: TagKey = $0.key
-            return "\(key.rawValue) (ID3: \(key.id3Frame ?? "????") (INFO: \(key.infoFrame ?? "????")) = \($0.value)"
+    public func save() throws {
+        guard TagLibBridge.setProperties(url.path, dictionary: tagLibCompatibleDictionary) else {
+            throw NSError(description: "Failed to update \(url.path)")
         }
-
-        return strings.sorted().joined(separator: "\n")
     }
 }
