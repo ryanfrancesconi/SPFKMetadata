@@ -3,7 +3,7 @@
 import AVFoundation
 import Foundation
 
-// AVFoundation is fine for parsing but not for writing
+/// AVFoundation is fine for parsing but not for writing
 public struct TagProperties_AV: TagPropertiesContainerModel {
     public var dictionary = TagKeyDictionary()
 

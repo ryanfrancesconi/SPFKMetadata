@@ -65,10 +65,4 @@ extension SPFKMetadataTestModel {
         try FileManager.default.copyItem(at: input, to: tmp)
         return tmp
     }
-
-    func getMP3Chapters(in url: URL) -> [ChapterMarker] {
-        let chapters = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
-        Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
-        return chapters
-    }
 }

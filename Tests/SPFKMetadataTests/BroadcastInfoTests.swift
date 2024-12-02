@@ -15,18 +15,15 @@ class BroadcastInfoTests: SPFKMetadataTestModel {
         #expect(desc.version == 2)
         #expect(desc.umid == "")
         #expect(desc.codingHistory == nil)
-
         #expect(desc.originator == "RF")
         #expect(desc.originatorReference == "USIZT00QJVDHQ34QG0000009758431952024-11-2021:29:25")
         #expect(desc.originationDate == "2024-11-2021:29:25") // likely wrong that the time is in here
         #expect(desc.originationTime == "21:29:25")
-
         #expect(desc.loudnessValue == -32.0)
         #expect(desc.loudnessRange == 0) // ?
         #expect(desc.maxTruePeakLevel == -12)
         #expect(desc.maxMomentaryLoudness == -26)
         #expect(desc.maxShortTermLoudness == -32)
-
         #expect(desc.timeReference == 175728049)
         #expect(desc.timeReferenceInSeconds == 3661.0010208333333)
     }

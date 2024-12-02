@@ -9,13 +9,25 @@ import Testing
 class MP3MarkerTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "MP3MarkerTests")
 
+    func getChapters(in url: URL) -> [ChapterMarker] {
+        let chapters = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
+        Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
+        return chapters
+    }
+
     @Test func parseMarkers() async throws {
-        let markers = getMP3Chapters(in: chapters_mp3)
+        let markers = getChapters(in: chapters_mp3)
+        
+        let names = markers.compactMap { $0.name }
+        let times = markers.map { $0.startTime }
+        
         #expect(markers.count == 10)
+        #expect(names == ["ch0", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "ch9"])
+        #expect(times == [0.0, 1.081, 2.087, 3.073, 4.094, 5.081, 6.079, 7.059, 8.083, 9.088])
     }
 
     @Test func parseMarkers2() async throws {
-        let markers = getMP3Chapters(in: toc_many_children)
+        let markers = getChapters(in: toc_many_children)
         #expect(markers.count == 129)
     }
 
@@ -28,9 +40,9 @@ class MP3MarkerTests: SPFKMetadataTestModel {
             ChapterMarker(name: "New 2", startTime: 4, endTime: 6),
         ]
 
-        #expect(MPEGChapterUtil.setMP3Chapters(tmpfile.path(), array: markers))
+        #expect(MPEGChapterUtil.update(tmpfile.path(), chapters: markers))
 
-        let editedMarkers = getMP3Chapters(in: tmpfile)
+        let editedMarkers = getChapters(in: tmpfile)
 
         let names = editedMarkers.compactMap { $0.name }
         let times = editedMarkers.map { $0.startTime }
@@ -44,7 +56,7 @@ class MP3MarkerTests: SPFKMetadataTestModel {
         let tmpfile = try copy(to: bin, url: chapters_mp3)
         #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
-        let chapters = getMP3Chapters(in: tmpfile)
+        let chapters = getChapters(in: tmpfile)
         #expect(chapters.count == 0)
     }
 
