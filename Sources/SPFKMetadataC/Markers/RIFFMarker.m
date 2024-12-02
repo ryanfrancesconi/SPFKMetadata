@@ -9,33 +9,26 @@
 
 /// Get all markers in this file and return an array of `SimpleAudioFileMarker`
 /// @param url URL to parse
-+ (NSArray *)getAudioFileMarkers:(NSURL *)url {
-    // get size of markers property (dictionary)
-    UInt32 propertySize;
-    UInt32 writable;
-
++ (NSArray *)getMarkers:(NSURL *)url {
     AudioFileID fileID;
+    CFURLRef cfurl = CFBridgingRetain(url);
 
-    if (noErr != AudioFileOpenURL((__bridge CFURLRef _Nonnull)url,
-                                  kAudioFileReadPermission,
-                                  0,
-                                  &fileID) ) {
+    if (noErr != AudioFileOpenURL(cfurl, kAudioFileReadPermission, 0, &fileID)) {
         NSLog(@"Failed to open url %@", url);
+        CFRelease(cfurl);
         return NULL;
     }
 
-    if (noErr != AudioFileGetPropertyInfo(fileID,
-                                          kAudioFilePropertyMarkerList,
-                                          &propertySize,
-                                          &writable)) {
+    CFRelease(cfurl);
+    UInt32 propertySize;
+    UInt32 writable;
+
+    if (noErr != AudioFileGetPropertyInfo(fileID, kAudioFilePropertyMarkerList,  &propertySize, &writable)) {
         AudioFileClose(fileID);
         NSLog(@"Failed to get AudioFileID for %@", url);
         return NULL;
     }
 
-    // NSLog(@"NumAudioFileMarkersToNumBytes %i", propertySize);
-
-    // will be 0 if no markers
     if (propertySize <= 0) {
         AudioFileClose(fileID);
         NSLog(@"kAudioFilePropertyMarkerList is invalid %@", url);
@@ -44,10 +37,7 @@
 
     AudioFileMarkerList *markerList = malloc(propertySize);
 
-    if (noErr != AudioFileGetProperty(fileID,
-                                      kAudioFilePropertyMarkerList,
-                                      &propertySize,
-                                      markerList) ) {
+    if (noErr != AudioFileGetProperty(fileID,  kAudioFilePropertyMarkerList,  &propertySize, markerList) ) {
         AudioFileClose(fileID);
         NSLog(@"Failed to get kAudioFilePropertyMarkerList for %@", url);
         return NULL;
@@ -73,7 +63,6 @@
     }
 
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
-
     int i;
 
     for (i = 0; i < count; i++) {
@@ -84,19 +73,11 @@
         safm.time = markerList->mMarkers[i].mFramePosition / format.mSampleRate;
         safm.sampleRate = format.mSampleRate;
 
-        // create a default value in the case of missing names
-        safm.name = [NSString stringWithFormat:@"Marker %d", i + 1];
-
         if (markerList->mMarkers[i].mName != NULL) {
-            char name[512];
-
-            CFStringGetCString(markerList->mMarkers[i].mName,
-                               name,
-                               sizeof(name),
-                               kCFStringEncodingUTF8);
-
-            safm.name = [NSString stringWithUTF8String:name];
-            CFRelease(markerList->mMarkers[i].mName);
+            safm.name = (__bridge NSString *)markerList->mMarkers[i].mName;
+        } else {
+            // create a default value in the case of missing names
+            safm.name = [NSString stringWithFormat:@"Marker %d", i + 1];
         }
 
         // NSLog(@"%@ %lf", safm.name, safm.framePosition);
@@ -116,24 +97,22 @@
 /// Set an array of RIFF markers in the file
 /// @param url `URL` to set markers in
 /// @param markerArray `[SimpleAudioFileMarker]`
-+ (BOOL)setAudioFileMarkers:(NSURL *)url
-                    markers:(NSArray *)markers {
-    // Open file
-
++ (BOOL)update:(NSURL *)url
+       markers:(NSArray *)markers {
     AudioFileID fileID;
+    CFURLRef cfurl = CFBridgingRetain(url);
 
-    if (noErr != AudioFileOpenURL((__bridge CFURLRef _Nonnull)url,
-                                  kAudioFileReadWritePermission,
-                                  0,
-                                  &fileID)) {
+    if (noErr != AudioFileOpenURL(cfurl, kAudioFileReadWritePermission, 0, &fileID)) {
         NSLog(@"Failed to open url %@", url);
+        CFRelease(cfurl);
         return NO;
     }
+
+    CFRelease(cfurl);
 
     size_t count = markers.count;
     UInt32 propertySize = (UInt32)NumAudioFileMarkersToNumBytes(count);
 
-    // will be 0 if no markers
     if (propertySize <= 0) {
         AudioFileClose(fileID);
         NSLog(@"NumAudioFileMarkersToNumBytes is invalid %@", url);
@@ -162,10 +141,7 @@
 
     // NSLog(@"markerList->mNumberMarkers %i", markerList->mNumberMarkers);
 
-    if (noErr != AudioFileSetProperty(fileID,
-                                      kAudioFilePropertyMarkerList,
-                                      propertySize,
-                                      markerList)) {
+    if (noErr != AudioFileSetProperty(fileID,  kAudioFilePropertyMarkerList, propertySize, markerList)) {
         NSLog(@"Failed to set kAudioFilePropertyMarkerList for %@", url);
     }
 
@@ -177,21 +153,21 @@
 
 #pragma mark REMOVE
 
-+ (BOOL)removeAllAudioFileMarkers:(NSURL *)url {
++ (BOOL)removeAll:(NSURL *)url {
     AudioFileID fileID;
+    CFURLRef cfurl = CFBridgingRetain(url);
 
-    if (noErr != AudioFileOpenURL((__bridge CFURLRef _Nonnull)url,
-                                  kAudioFileReadWritePermission,
-                                  0,
-                                  &fileID)) {
+    if (noErr != AudioFileOpenURL(cfurl, kAudioFileReadWritePermission,  0, &fileID)) {
         NSLog(@"Failed to open url %@", url);
+        CFRelease(cfurl);
         return NO;
     }
 
-    size_t count = 0;
-    UInt32 propertySize = (UInt32)NumAudioFileMarkersToNumBytes(count);
+    CFRelease(cfurl);
+
+    UInt32 propertySize = (UInt32)NumAudioFileMarkersToNumBytes(0);
     AudioFileMarkerList *markerList = malloc(propertySize);
-    markerList->mNumberMarkers = (UInt32)count;
+    markerList->mNumberMarkers = 0;
 
     if (noErr != AudioFileSetProperty(fileID,
                                       kAudioFilePropertyMarkerList,

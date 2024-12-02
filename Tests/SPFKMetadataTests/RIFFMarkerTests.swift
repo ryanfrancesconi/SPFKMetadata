@@ -10,8 +10,9 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "RIFFMarkerTests")
 
     @Test func parseMarkers() async throws {
-        let markers = RIFFMarker.getAudioFileMarkers(bext_v2) as? [SimpleAudioFileMarker] ?? []
-        Swift.print(markers.map { ($0.name ?? "nil") + " @ \($0.time)" })
+        let markers = RIFFMarker.getMarkers(bext_v2) as? [SimpleAudioFileMarker] ?? []
+
+        Swift.print(markers.map { ($0.name ?? "nil") + " @ \($0.time) \($0.timecode)" })
         #expect(markers.count == 7)
     }
 
@@ -24,12 +25,12 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
         ]
 
         #expect(
-            RIFFMarker.setAudioFileMarkers(tmpfile, markers: markers)
+            RIFFMarker.update(tmpfile, markers: markers)
         )
 
         #expect(FileManager.default.fileExists(atPath: tmpfile.path))
 
-        let editedMarkers = RIFFMarker.getAudioFileMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
+        let editedMarkers = RIFFMarker.getMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
 
         let names = editedMarkers.compactMap { $0.name }
         let times = editedMarkers.map { $0.time }
@@ -44,9 +45,9 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
     @Test func removeMarkers() async throws {
         let tmpfile = try copy(to: bin, url: bext_v2)
 
-        #expect(RIFFMarker.removeAllAudioFileMarkers(tmpfile))
+        #expect(RIFFMarker.removeAll(tmpfile))
 
-        let editedMarkers = RIFFMarker.getAudioFileMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
+        let editedMarkers = RIFFMarker.getMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
         Swift.print(editedMarkers.map { ($0.name ?? "nil") + " @ \($0.time)" })
         #expect(editedMarkers.count == 0)
     }

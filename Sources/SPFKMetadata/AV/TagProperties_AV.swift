@@ -25,22 +25,22 @@ public struct TagProperties_AV: TagPropertiesContainerModel {
             dictionary[frame] = value
         }
     }
-    
-    // remove when moving version to macOS 12+
 
-    private static func loadValue(for item: AVMetadataItem) async throws -> String? {
-        if #available(macOS 12, iOS 15, *) {
-            return try await item.load(.value) as? String
-        } else {
-            return item.value as? String
-        }
-    }
+    // remove when moving version to macOS 12+
 
     private static func loadID3(from asset: AVURLAsset) async throws -> [AVMetadataItem] {
         if #available(macOS 12, iOS 15, *) {
             return try await asset.loadMetadata(for: .id3Metadata)
         } else {
             return asset.metadata(forFormat: .id3Metadata)
+        }
+    }
+
+    private static func loadValue(for item: AVMetadataItem) async throws -> String? {
+        if #available(macOS 12, iOS 15, *) {
+            return try await item.load(.value) as? String
+        } else {
+            return item.value as? String
         }
     }
 }

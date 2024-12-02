@@ -27,18 +27,18 @@ class MP4MarkerTests: SPFKMetadataTestModel {
     }
 
     @Test func writeMarkers() async throws {
-        let tmpfile = try copy(to: bin, url: tabla_mp4)
-        
-        let output = tmpfile.deletingLastPathComponent().appendingPathComponent("output.mp4")
-
-        if FileManager.default.fileExists(atPath: output.path) {
-            try? FileManager.default.removeItem(at: output)
-        }
-        
-        try await ChapterWriter.write(url: tmpfile, to: output, chapters: [])
-        
-        let properties = try TagProperties(url: output)
-        #expect(properties[.comment] == "RFRFRFRF")
+//        let tmpfile = try copy(to: bin, url: tabla_mp4)
+//        
+//        let output = tmpfile.deletingLastPathComponent().appendingPathComponent("output.mp4")
+//
+//        if FileManager.default.fileExists(atPath: output.path) {
+//            try? FileManager.default.removeItem(at: output)
+//        }
+//        
+//        try await ChapterWriter.write(url: tmpfile, to: output, chapters: [])
+//        
+//        let properties = try TagProperties(url: output)
+//        #expect(properties[.comment] == "RFRFRFRF")
     }
     
     

@@ -4,7 +4,8 @@ import AVFoundation
 import Foundation
 import SPFKMetadataC
 
-/// Parse Chapters, works with a variety of file types
+/// Parse Chapters, works with a variety of file types.
+/// AVFoundation is fine for parsing but not for writing
 public enum ChapterParser {
     public static func parse(url: URL) async throws -> [SimpleChapterFrame] {
         guard FileManager.default.fileExists(atPath: url.path) else {

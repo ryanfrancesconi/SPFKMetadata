@@ -7,7 +7,6 @@
 - (nonnull id)initWithName:(nonnull NSString *)name
                  startTime:(NSTimeInterval)startTime
                    endTime:(NSTimeInterval)endTime
-
 {
     self = [super init];
 
