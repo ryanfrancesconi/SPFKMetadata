@@ -1,14 +1,13 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 #import <Foundation/Foundation.h>
-#import "SimpleAudioFileMarker.h"
+#import "AudioMarker.h"
 
-@implementation SimpleAudioFileMarker
+@implementation AudioMarker
 - (nonnull id)initWithName:(nonnull NSString *)name
                       time:(NSTimeInterval)time
                 sampleRate:(Float64)sampleRate
-                  markerID:(SInt32)markerID
-{
+                  markerID:(SInt32)markerID {
     self = [super init];
 
     _name = name;

@@ -9,14 +9,14 @@ import Testing
 class MP4MarkerTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "MP4MarkerTests")
 
-    func getChapters(in url: URL) async throws -> [SimpleChapterFrame] {
+    func getChapters(in url: URL) async throws -> [ChapterMarker] {
         let chapters = try await ChapterParser.parse(url: url)
         Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
         return chapters
     }
 
-    func getChapters_(in url: URL) async throws -> [SimpleChapterFrame] {
-        let chapters = TagLibBridge.getMP4Chapters(url.path) as? [SimpleChapterFrame] ?? []
+    func getChapters_(in url: URL) async throws -> [ChapterMarker] {
+        let chapters = MPEGChapterUtil.getMP4Chapters(url.path) as? [ChapterMarker] ?? []
         Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
         return chapters
     }

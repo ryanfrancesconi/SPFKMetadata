@@ -1,13 +1,13 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
-#import <tag/fileref.h>
-#import <tag/tag.h>
-#import <tag/tpropertymap.h>
-#import <tag/tfilestream.h>
 #import <tag/aifffile.h>
+#import <tag/fileref.h>
 #import <tag/mp4file.h>
 #import <tag/mpegfile.h>
 #import <tag/rifffile.h>
+#import <tag/tag.h>
+#import <tag/tfilestream.h>
+#import <tag/tpropertymap.h>
 #import <tag/wavfile.h>
 
 #import "spfk_util.h"
@@ -56,7 +56,7 @@ using namespace TagLib;
     return self;
 }
 
-// MARK: - File Type Resolver -- switch to libsndfile format?
+# pragma mark - Util
 
 NSString *const kTagFileTypeMP3 = @"mp3";
 NSString *const kTagFileTypeM4A = @"m4a";
@@ -107,7 +107,6 @@ NSString *const kTagFileTypeAIFF = @"aif";
     }
 
     delete stream;
-
     return value;
 }
 

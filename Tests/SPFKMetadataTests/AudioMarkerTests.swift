@@ -6,11 +6,11 @@ import Foundation
 import Testing
 
 @Suite(.serialized)
-class RIFFMarkerTests: SPFKMetadataTestModel {
+class AudioMarkerTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "RIFFMarkerTests")
 
     @Test func parseMarkers() async throws {
-        let markers = RIFFMarker.getMarkers(bext_v2) as? [SimpleAudioFileMarker] ?? []
+        let markers = AudioMarkerUtil.getMarkers(bext_v2) as? [AudioMarker] ?? []
 
         Swift.print(markers.map { ($0.name ?? "nil") + " @ \($0.time) \($0.timecode)" })
         #expect(markers.count == 7)
@@ -19,18 +19,18 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
     @Test func writeMarkers() async throws {
         let tmpfile = try copy(to: bin, url: bext_v2)
 
-        let markers: [SimpleAudioFileMarker] = [
-            SimpleAudioFileMarker(name: "New 1", time: 2, sampleRate: 48000, markerID: 0),
-            SimpleAudioFileMarker(name: "New 2", time: 4, sampleRate: 48000, markerID: 1),
+        let markers: [AudioMarker] = [
+            AudioMarker(name: "New 1", time: 2, sampleRate: 48000, markerID: 0),
+            AudioMarker(name: "New 2", time: 4, sampleRate: 48000, markerID: 1),
         ]
 
         #expect(
-            RIFFMarker.update(tmpfile, markers: markers)
+            AudioMarkerUtil.update(tmpfile, markers: markers)
         )
 
         #expect(FileManager.default.fileExists(atPath: tmpfile.path))
 
-        let editedMarkers = RIFFMarker.getMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
+        let editedMarkers = AudioMarkerUtil.getMarkers(tmpfile) as? [AudioMarker] ?? []
 
         let names = editedMarkers.compactMap { $0.name }
         let times = editedMarkers.map { $0.time }
@@ -45,9 +45,9 @@ class RIFFMarkerTests: SPFKMetadataTestModel {
     @Test func removeMarkers() async throws {
         let tmpfile = try copy(to: bin, url: bext_v2)
 
-        #expect(RIFFMarker.removeAll(tmpfile))
+        #expect(AudioMarkerUtil.removeAllMarkers(tmpfile))
 
-        let editedMarkers = RIFFMarker.getMarkers(tmpfile) as? [SimpleAudioFileMarker] ?? []
+        let editedMarkers = AudioMarkerUtil.getMarkers(tmpfile) as? [AudioMarker] ?? []
         Swift.print(editedMarkers.map { ($0.name ?? "nil") + " @ \($0.time)" })
         #expect(editedMarkers.count == 0)
     }

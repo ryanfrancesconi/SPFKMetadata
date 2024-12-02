@@ -21,14 +21,14 @@ class MP3MarkerTests: SPFKMetadataTestModel {
 
     @Test func writeMarkers() async throws {
         let tmpfile = try copy(to: bin, url: chapters_mp3)
-        #expect(TagLibBridge.removeMP3Chapters(tmpfile.path))
+        #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
-        let markers: [SimpleChapterFrame] = [
-            SimpleChapterFrame(name: "New 1", startTime: 2, endTime: 4),
-            SimpleChapterFrame(name: "New 2", startTime: 4, endTime: 6),
+        let markers: [ChapterMarker] = [
+            ChapterMarker(name: "New 1", startTime: 2, endTime: 4),
+            ChapterMarker(name: "New 2", startTime: 4, endTime: 6),
         ]
 
-        #expect(TagLibBridge.setMP3Chapters(tmpfile.path(), array: markers))
+        #expect(MPEGChapterUtil.setMP3Chapters(tmpfile.path(), array: markers))
 
         let editedMarkers = getMP3Chapters(in: tmpfile)
 
@@ -42,7 +42,7 @@ class MP3MarkerTests: SPFKMetadataTestModel {
 
     @Test func removeMarkers() async throws {
         let tmpfile = try copy(to: bin, url: chapters_mp3)
-        #expect(TagLibBridge.removeMP3Chapters(tmpfile.path))
+        #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
         let chapters = getMP3Chapters(in: tmpfile)
         #expect(chapters.count == 0)

@@ -1,13 +1,15 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
-#import "RIFFMarker.h"
-#import "SimpleAudioFileMarker.h"
+#import <AudioToolbox/AudioToolbox.h>
 
-@implementation RIFFMarker
+#import "AudioMarker.h"
+#import "AudioMarkerUtil.h"
 
-#pragma mark GET
+@implementation AudioMarkerUtil
 
-/// Get all markers in this file and return an array of `SimpleAudioFileMarker`
+#pragma mark - GET
+
+/// Get all markers in this file and return an array of `AudioMarker`
 /// @param url URL to parse
 + (NSArray *)getMarkers:(NSURL *)url {
     AudioFileID fileID;
@@ -45,7 +47,7 @@
 
     // NSLog(@"# of markers: %d\n", markerList->mNumberMarkers);
 
-    size_t count = markerList->mNumberMarkers;
+    UInt32 count = markerList->mNumberMarkers;
 
     if (count <= 0) {
         AudioFileClose(fileID);
@@ -66,7 +68,7 @@
     int i;
 
     for (i = 0; i < count; i++) {
-        SimpleAudioFileMarker *safm = [[SimpleAudioFileMarker alloc] init];
+        AudioMarker *safm = [[AudioMarker alloc] init];
 
         safm.markerID = markerList->mMarkers[i].mMarkerID;
         safm.type = markerList->mMarkers[i].mType;
@@ -75,6 +77,7 @@
 
         if (markerList->mMarkers[i].mName != NULL) {
             safm.name = (__bridge NSString *)markerList->mMarkers[i].mName;
+            CFRelease(markerList->mMarkers[i].mName);
         } else {
             // create a default value in the case of missing names
             safm.name = [NSString stringWithFormat:@"Marker %d", i + 1];
@@ -92,11 +95,11 @@
     return [array copy];
 }
 
-#pragma mark SET
+#pragma mark - SET
 
 /// Set an array of RIFF markers in the file
 /// @param url `URL` to set markers in
-/// @param markerArray `[SimpleAudioFileMarker]`
+/// @param markerArray `[AudioMarker]`
 + (BOOL)update:(NSURL *)url
        markers:(NSArray *)markers {
     AudioFileID fileID;
@@ -110,8 +113,8 @@
 
     CFRelease(cfurl);
 
-    size_t count = markers.count;
-    UInt32 propertySize = (UInt32)NumAudioFileMarkersToNumBytes(count);
+    size_t inNumMarkers = (size_t)markers.count;
+    UInt32 propertySize = (UInt32)NumAudioFileMarkersToNumBytes(inNumMarkers);
 
     if (propertySize <= 0) {
         AudioFileClose(fileID);
@@ -123,21 +126,22 @@
 
     AudioFileMarkerList *markerList = malloc(propertySize);
 
-    for (int i = 0; i < count; i++) {
-        SimpleAudioFileMarker *safm = (SimpleAudioFileMarker *)[markers objectAtIndex:i];
+    for (int i = 0; i < inNumMarkers; i++) {
+        AudioMarker *safm = (AudioMarker *)[markers objectAtIndex:i];
 
         AudioFileMarker afm = {};
         afm.mName = (__bridge CFStringRef)safm.name;
         afm.mFramePosition = safm.time * safm.sampleRate;
         afm.mMarkerID = i;
         afm.mType = safm.type;
+        afm.mSMPTETime = safm.timecode;
 
         NSLog(@"Adding marker: %@ %f %d %d\n", afm.mName, afm.mFramePosition, afm.mMarkerID, afm.mType);
 
         markerList->mMarkers[i] = afm;
     }
 
-    markerList->mNumberMarkers = (UInt32)count;
+    markerList->mNumberMarkers = (UInt32)inNumMarkers;
 
     // NSLog(@"markerList->mNumberMarkers %i", markerList->mNumberMarkers);
 
@@ -151,9 +155,9 @@
     return YES;
 }
 
-#pragma mark REMOVE
+#pragma mark - REMOVE
 
-+ (BOOL)removeAll:(NSURL *)url {
++ (BOOL)removeAllMarkers:(NSURL *)url {
     AudioFileID fileID;
     CFURLRef cfurl = CFBridgingRetain(url);
 
@@ -169,10 +173,7 @@
     AudioFileMarkerList *markerList = malloc(propertySize);
     markerList->mNumberMarkers = 0;
 
-    if (noErr != AudioFileSetProperty(fileID,
-                                      kAudioFilePropertyMarkerList,
-                                      propertySize,
-                                      markerList)) {
+    if (noErr != AudioFileSetProperty(fileID,  kAudioFilePropertyMarkerList,  propertySize,  markerList)) {
         NSLog(@"AudioFileStreamSetProperty kAudioFilePropertyMarkerList failed");
         AudioFileClose(fileID);
         return NO;

@@ -7,7 +7,7 @@ import SPFKMetadataC
 /// Parse Chapters, works with a variety of file types.
 /// AVFoundation is fine for parsing but not for writing
 public enum ChapterParser {
-    public static func parse(url: URL) async throws -> [SimpleChapterFrame] {
+    public static func parse(url: URL) async throws -> [ChapterMarker] {
         guard FileManager.default.fileExists(atPath: url.path) else {
             throw NSError(description: "failed to open \(url.path)")
         }
@@ -17,11 +17,11 @@ public enum ChapterParser {
         return try await parseChapters(asset: asset)
     }
 
-    private static func parseChapters(asset: AVAsset) async throws -> [SimpleChapterFrame] {
+    private static func parseChapters(asset: AVAsset) async throws -> [ChapterMarker] {
         let languages = asset.availableChapterLocales.map { $0.identifier }
         let timedGroups = asset.chapterMetadataGroups(bestMatchingPreferredLanguages: languages)
 
-        var chapters = [SimpleChapterFrame]()
+        var chapters = [ChapterMarker]()
 
         for i in 0 ..< timedGroups.count {
             let group = timedGroups[i]
@@ -31,7 +31,7 @@ public enum ChapterParser {
             let name = (try? await title(from: group)) ?? "Chapter \(i + 1)"
 
             chapters.append(
-                SimpleChapterFrame(name: name, startTime: cmStart.seconds, endTime: cmEnd.seconds)
+                ChapterMarker(name: name, startTime: cmStart.seconds, endTime: cmEnd.seconds)
             )
         }
 
@@ -54,7 +54,7 @@ public enum ChapterParser {
 
 @available(macOS 10.11, *)
 public enum ChapterWriter {
-    public static func write(url: URL, to output: URL, chapters: [SimpleChapterFrame]) async throws {
+    public static func write(url: URL, to output: URL, chapters: [ChapterMarker]) async throws {
         let asset = AVMutableMovie(url: url)
 //
 //        let languages = asset.availableChapterLocales.map { $0.identifier }

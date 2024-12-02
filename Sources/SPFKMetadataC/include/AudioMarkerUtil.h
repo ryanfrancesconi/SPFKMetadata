@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 
 /// Core Audio based `AudioFileMarker` utility.
-@interface RIFFMarker : NSObject
+@interface AudioMarkerUtil : NSObject
 
 /// Get RIFF markers from file
 /// @param url NSURL to file
@@ -13,13 +13,12 @@
 
 /// Set RIFF markers in the passed in URL
 /// @param url NSURL to file
-/// @param markerArray array of SimpleAudioFileMarker
+/// @param markerArray array of AudioMarker
 + (BOOL)update:(NSURL *)url
        markers:(NSArray *)markers;
 
-
 /// Remove all RIFF markers in file
 /// @param url NSURL to the file
-+ (BOOL)removeAll:(NSURL *)url;
++ (BOOL)removeAllMarkers:(NSURL *)url;
 
 @end

@@ -1,13 +1,12 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
-#import "SimpleChapterFrame.h"
+#import "ChapterMarker.h"
 
-@implementation SimpleChapterFrame
+@implementation ChapterMarker
 
 - (nonnull id)initWithName:(nonnull NSString *)name
                  startTime:(NSTimeInterval)startTime
-                   endTime:(NSTimeInterval)endTime
-{
+                   endTime:(NSTimeInterval)endTime {
     self = [super init];
 
     _name = name;

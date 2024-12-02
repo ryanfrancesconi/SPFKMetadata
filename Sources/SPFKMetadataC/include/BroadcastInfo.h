@@ -1,7 +1,5 @@
 
 #import <Foundation/Foundation.h>
-#import <AudioToolbox/AudioToolbox.h>
-#import "sndfile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,19 +26,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSString *codingHistory;
 
 /// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
-@property (nonatomic) AUValue loudnessValue;
+@property (nonatomic) float loudnessValue;
 
 /// Loudness Range of the file in LU. (Note: Added in version 2.)
-@property (nonatomic) AUValue loudnessRange;
+@property (nonatomic) float loudnessRange;
 
 /// Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
-@property (nonatomic) AUValue maxTruePeakLevel;
+@property (nonatomic) float maxTruePeakLevel;
 
 /// highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
-@property (nonatomic) AUValue maxMomentaryLoudness;
+@property (nonatomic) float maxMomentaryLoudness;
 
 /// highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
-@property (nonatomic) AUValue maxShortTermLoudness;
+@property (nonatomic) float maxShortTermLoudness;
 
 /// The name of the originator / producer of the audio file
 @property (nonatomic) NSString *originator;

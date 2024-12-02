@@ -5,7 +5,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
 @interface TagLibBridge : NSObject
 
 + (bool)setProperties:(NSString *)path
@@ -22,17 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (bool)setComment:(NSString *)path
            comment:(NSString *)comment;
-
-// -
-
-+ (nullable NSArray *)getMP4Chapters:(NSString *)path;
-+ (nullable NSArray *)getMP3Chapters:(NSString *)path;
-
-+ (bool)setMP3Chapters:(NSString *)path
-                 array:(NSArray *)dictionary;
-
-+ (bool)removeMP3Chapters:(NSString *)path;
-
 
 @end
 

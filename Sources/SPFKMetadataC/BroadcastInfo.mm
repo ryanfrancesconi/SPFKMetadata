@@ -39,7 +39,6 @@
     _originationDate = Util::utf8String(bext.origination_date);
     _originationTime = Util::utf8String(bext.origination_time);
     _originatorReference = Util::utf8String(bext.originator_reference);
-
     _timeReferenceLow = bext.time_reference_low;
     _timeReferenceHigh = bext.time_reference_high;
 
