@@ -40,7 +40,12 @@ private let targets: [PackageDescription.Target] = [
             .target(name: "libsndfile")
         ],
         publicHeadersPath: "include",
-        cxxSettings: []
+        cSettings: [
+            .headerSearchPath("include_private")
+        ],
+        cxxSettings: [
+            .headerSearchPath("include_private")
+        ]
     ),
     
     .binaryTarget(

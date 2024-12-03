@@ -12,7 +12,7 @@
 #import <tag/textidentificationframe.h>
 #import <tag/tpropertymap.h>
 
-#import "../spfk_util.h"
+#import <spfk_util.h>
 #import "ChapterMarker.h"
 #import "MPEGChapterUtil.h"
 
