@@ -82,3 +82,24 @@ extension TagPropertiesTests {
         #expect(dict["TITLE"] == "New Title")
     }
 }
+
+// - dev tests
+
+extension TagPropertiesTests {
+    @Test func testParseID3_2() async throws {
+        let path = "/Users/rf/Downloads/sounds 3/packs/app.add.soundpack.activity_wav/Sound Effects/Element/Water/Bubbles/Blow Bubbles Into Metal Pan 02.mp3"
+        let tagFile = try #require(TagFile(path: path))
+        Swift.print(tagFile.dictionary)
+
+        let comment = TagLibBridge.getComment(path)
+        Swift.print(comment)
+    }
+
+    @Test func testParseID3_3() async throws {
+        let path = "/Users/rf/Downloads/sounds 3/packs/app.add.soundpack.activity_wav/Sound Effects/Element/Water/Bubbles/Blow Bubbles Into Metal Pan 02.mp3"
+        let url = URL(fileURLWithPath: path)
+
+        let properties = try await TagPropertiesAV(url: url)
+        Swift.print(properties)
+    }
+}

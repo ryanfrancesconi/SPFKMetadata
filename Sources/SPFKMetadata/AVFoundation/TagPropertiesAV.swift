@@ -17,6 +17,7 @@ public struct TagPropertiesAV: TagPropertiesContainerModel {
                   var value = try await Self.loadValue(for: item) else { continue }
 
             guard let frame = TagKey(id3Frame: key) else {
+                Swift.print("🚩 Found unhandled tag \(key)")
                 continue
             }
 
