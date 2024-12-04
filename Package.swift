@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -72,6 +72,7 @@ private let targets: [PackageDescription.Target] = [
 
 let package = Package(
     name: name,
+    defaultLocalization: "en",
     platforms: platforms,
     products: products,
     targets: targets,

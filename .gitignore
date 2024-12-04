@@ -34,8 +34,7 @@ DerivedData/
 # Generally this file won't matter because we use the latest version of any packages anyway.
 Package.resolved
 
+*.xcuserstate
 xcschememanagement.plist
-
 sync-repo.sh
-
 *.swiftpm
