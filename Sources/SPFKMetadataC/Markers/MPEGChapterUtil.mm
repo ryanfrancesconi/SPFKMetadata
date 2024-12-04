@@ -21,9 +21,9 @@ using namespace TagLib;
 
 @implementation MPEGChapterUtil
 
-/// Returns an array of ChapterMarker
-/// - Parameter path: file to open
+/// Returns an array of `ChapterMarker` via TagLib.
 /// ID3v2 only currently
+/// - Parameter path: file to open
 + (NSArray *)getChapters:(NSString *)path {
     FileRef fileRef(path.UTF8String);
 

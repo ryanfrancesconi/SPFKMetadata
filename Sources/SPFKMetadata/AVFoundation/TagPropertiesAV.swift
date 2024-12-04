@@ -4,7 +4,7 @@ import AVFoundation
 import Foundation
 
 /// AVFoundation is fine for parsing but not for writing
-public struct TagProperties_AV: TagPropertiesContainerModel {
+public struct TagPropertiesAV: TagPropertiesContainerModel {
     public var dictionary = TagKeyDictionary()
 
     public init(url: URL) async throws {

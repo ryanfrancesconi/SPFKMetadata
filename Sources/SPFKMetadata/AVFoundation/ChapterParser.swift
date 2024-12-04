@@ -4,7 +4,8 @@ import AVFoundation
 import Foundation
 import SPFKMetadataC
 
-/// Parse Chapters, works with a variety of file types.
+/// Parse Chapters, works with a variety of file types. In particular
+/// this is the MP4 chapter parser.
 /// AVFoundation is fine for parsing but not for writing
 public enum ChapterParser {
     public static func parse(url: URL) async throws -> [ChapterMarker] {

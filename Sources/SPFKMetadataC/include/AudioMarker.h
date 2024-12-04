@@ -5,8 +5,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-///  Objective C wrapper on the AudioFileMarker C struct for simpler interchange with Swift
-@interface AudioMarker : NSObject // RIFFMarker impl
+///  Objective C wrapper on the `AudioFileMarker` C struct for simpler interchange with Swift.
+@interface AudioMarker : NSObject
 
 @property (nonatomic, nullable) NSString *name;
 @property (nonatomic) NSTimeInterval time;

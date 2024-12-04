@@ -40,7 +40,8 @@ using namespace TagLib;
 
     _dictionary = [[NSMutableDictionary alloc] init];
 
-    // Copy TagLib's PropertyMap into our dictionary using the same keys
+    // Copy TagLib's PropertyMap into our dictionary using the same keys they use.
+    // See TagKey for translations.
     for (auto i = tags.begin(); i != tags.end(); ++i) {
         for (auto j = i->second.begin(); j != i->second.end(); ++j) {
             //

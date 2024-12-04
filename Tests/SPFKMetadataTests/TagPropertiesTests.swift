@@ -16,7 +16,7 @@ class TagPropertiesTests: SPFKMetadataTestModel {
     }
 
     @Test func parseID3MP3_AV() async throws {
-        let metadata = try await TagProperties_AV(url: id3)
+        let metadata = try await TagPropertiesAV(url: id3)
         Swift.print(metadata)
         #expect(metadata[.title] == "Shine On (inst)")
     }

@@ -32,7 +32,7 @@ private let targets: [PackageDescription.Target] = [
         dependencies: [.target(name: nameC)]
     ),
     
-    // C++
+    // C
     .target(
         name: nameC,
         dependencies: [
