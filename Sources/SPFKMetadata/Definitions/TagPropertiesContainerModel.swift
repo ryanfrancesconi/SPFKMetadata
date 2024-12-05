@@ -17,7 +17,7 @@ extension TagPropertiesContainerModel {
     public var description: String {
         let strings = dictionary.map {
             let key: TagKey = $0.key
-            return "\(key.rawValue) (ID3: \(key.id3Frame ?? "????") (INFO: \(key.infoFrame ?? "????")) = \($0.value)"
+            return "\(key.rawValue) (ID3: \(key.id3Frame ?? "????")) (INFO: \(key.infoFrame ?? "????")) = \($0.value)"
         }
 
         return strings.sorted().joined(separator: "\n")
