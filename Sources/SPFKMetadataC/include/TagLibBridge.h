@@ -7,10 +7,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TagLibBridge : NSObject
 
++ (nullable NSMutableDictionary *)getProperties:(NSString *)path;
+
 + (bool)setProperties:(NSString *)path
            dictionary:(NSDictionary *)dictionary;
-
-+ (nullable NSMutableDictionary *)getProperties:(NSString *)path;
 
 + (nullable NSString *)getTitle:(NSString *)path;
 

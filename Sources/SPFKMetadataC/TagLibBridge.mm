@@ -4,7 +4,6 @@
 #import <iostream>
 #import <stdio.h>
 
-#import <tag/chapterframe.h>
 #import <tag/fileref.h>
 #import <tag/mp4file.h>
 #import <tag/mpegfile.h>
@@ -28,99 +27,7 @@ using namespace TagLib;
 
 @implementation TagLibBridge
 
-+ (nullable NSString *)getTitle:(NSString *)path
-{
-    FileRef fileRef(path.UTF8String);
-
-    if (fileRef.isNull()) {
-        return nil;
-    }
-
-    Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        return nil;
-    }
-
-    return Util::utf8String(tag->title().toCString());
-}
-
-+ (bool)setTitle:(NSString *)path
-           title:(NSString *)title
-{
-    FileRef fileRef(path.UTF8String);
-
-    if (fileRef.isNull()) {
-        Util::log("__C Unable to write title");
-        return false;
-    }
-
-    Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        Util::log("__C Unable to write tag");
-        return false;
-    }
-
-    tag->setTitle(title.UTF8String);
-
-    // also duplicate the data into the INFO tag if it's a wave file
-    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
-
-    // also set InfoTag for wave
-    if (waveFile) {
-        waveFile->InfoTag()->setTitle(title.UTF8String);
-    }
-
-    bool result = fileRef.save();
-    return result;
-}
-
-+ (nullable NSString *)getComment:(NSString *)path
-{
-    FileRef fileRef(path.UTF8String);
-
-    if (fileRef.isNull()) {
-        Util::log("__C FileRef is NULL");
-        return nil;
-    }
-
-    Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        Util::log("__C Tag is NULL");
-        return nil;
-    }
-
-    return Util::utf8String(tag->comment().toCString());
-}
-
-// convenience function to update the comment tag in a file
-+ (bool)setComment:(NSString *)path
-           comment:(NSString *)comment
-{
-    FileRef fileRef(path.UTF8String);
-
-    if (fileRef.isNull()) {
-        Util::log("__C Unable to write comment");
-        return false;
-    }
-
-    Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        Util::log("__C Unable to write tag");
-        return false;
-    }
-
-    tag->setComment(comment.UTF8String);
-    return fileRef.save();
-}
-
-// MARK: - All properties
-
-+ (nullable NSMutableDictionary *)getProperties:(NSString *)path
-{
++ (nullable NSMutableDictionary *)getProperties:(NSString *)path {
     TagFile *tagFile = [[TagFile alloc] initWithPath:path];
 
     if (!tagFile) {
@@ -131,8 +38,7 @@ using namespace TagLib;
 }
 
 + (bool)setProperties:(NSString *)path
-           dictionary:(NSDictionary *)dictionary
-{
+           dictionary:(NSDictionary *)dictionary {
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
@@ -158,6 +64,92 @@ using namespace TagLib;
     }
 
     fileRef.setProperties(tags);
+
+    return fileRef.save();
+}
+
++ (nullable NSString *)getTitle:(NSString *)path {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        return nil;
+    }
+
+    Tag *tag = fileRef.tag();
+
+    if (!tag) {
+        return nil;
+    }
+
+    return Util::utf8String(tag->title().toCString());
+}
+
++ (bool)setTitle:(NSString *)path
+           title:(NSString *)title {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        Util::log("__C Unable to write title");
+        return false;
+    }
+
+    Tag *tag = fileRef.tag();
+
+    if (!tag) {
+        Util::log("__C Unable to write tag");
+        return false;
+    }
+
+    tag->setTitle(title.UTF8String);
+
+    // also duplicate the data into the INFO tag if it's a wave file
+    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+
+    // also set InfoTag for wave
+    if (waveFile) {
+        waveFile->InfoTag()->setTitle(title.UTF8String);
+    }
+
+    return fileRef.save();
+}
+
++ (nullable NSString *)getComment:(NSString *)path
+{
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        Util::log("__C FileRef is NULL");
+        return nil;
+    }
+
+    Tag *tag = fileRef.tag();
+
+    if (!tag) {
+        Util::log("__C Tag is NULL");
+        return nil;
+    }
+
+    return Util::utf8String(tag->comment().toCString());
+}
+
+// convenience function to update the comment tag in a file
++ (bool)setComment:(NSString *)path
+           comment:(NSString *)comment {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        Util::log("__C Unable to write comment");
+        return false;
+    }
+
+    Tag *tag = fileRef.tag();
+
+    if (!tag) {
+        Util::log("__C Unable to write tag");
+        return false;
+    }
+
+    tag->setComment(comment.UTF8String);
 
     return fileRef.save();
 }

@@ -2,23 +2,9 @@
 
 import Foundation
 
-/// This doesn't take totally custom frames into account but does handle some common non-standard
-/// ones. TagLib uses an all caps dictionary key for these after they are parsed for
-/// standardization of tags.
-///
-/// Some notes from TagLib:
-///
-/// The 'Title/Songname/Content description' frame is the actual name of
-/// the piece (e.g. "Adagio", "Hurricane Donna").
-///
-/// The 'Subtitle/Description refinement' frame is used for information
-/// directly related to the contents title (e.g. "Op. 16" or "Performed
-/// live at Wembley").
-///
-/// The 'Content group description' frame is used if the sound belongs to
-/// a larger category of sounds/music. For example, classical music is
-/// often sorted in different musical sections (e.g. "Piano Concerto",
-/// "Weather - Hurricane").
+/// This doesn't take custom frames into account but does handle most common non-standard
+/// ones. TagLib uses an all caps dictionary key system.
+/// TagsProperties has a customKeys dictionary for any keys found that aren't documented here.
 public enum TagKey: String, CaseIterable, Codable {
     case album
     case albumArtist //  id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
@@ -80,7 +66,7 @@ public enum TagKey: String, CaseIterable, Codable {
     case radioStation
     case radioStationOwner
     case radioStationWebpage // URL Frame
-    case releaseCountry // wave INFO
+    case releaseCountry // Wave INFO
     case releaseDate
     case remixer // Could also be ARRANGER
     case subtitle
@@ -94,7 +80,7 @@ public enum TagKey: String, CaseIterable, Codable {
 // MARK: - Init
 
 extension TagKey {
-    /// TagLib uses an all caps readable string for its keys
+    /// TagLib uses an all caps readable string for its keys.
     public var taglibKey: String {
         rawValue.uppercased()
     }
@@ -104,8 +90,6 @@ extension TagKey {
             self = item
             return
         }
-
-        Swift.print("🚩 Found unknown taglibKey", taglibKey)
         return nil
     }
 
@@ -115,7 +99,6 @@ extension TagKey {
             return
         }
 
-        Swift.print("🚩 Found unknown id3Frame", id3Frame)
         return nil
     }
 
@@ -125,7 +108,6 @@ extension TagKey {
             return
         }
 
-        Swift.print("🚩 Found unknown infoFrame", infoFrame)
         return nil
     }
 }

@@ -17,12 +17,13 @@ extern NSString *const kTagFileTypeMP3;
 
 @property (nullable, nonatomic) NSMutableDictionary *dictionary;
 
+/// Convert TagLib's PropertyMap of tags into a NSDictionary
+/// - Parameter path: the file to parse
 - (nullable id)initWithPath:(nonnull NSString *)path;
 
 + (nullable NSString *)detectType:(NSString *)path;
 
 @end
-
 
 NS_ASSUME_NONNULL_END
 

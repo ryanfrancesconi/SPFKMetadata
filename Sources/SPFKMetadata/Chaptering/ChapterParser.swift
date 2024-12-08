@@ -5,8 +5,9 @@ import Foundation
 import SPFKMetadataC
 
 /// Parse Chapters, works with a variety of file types. In particular
-/// this is the MP4 chapter parser.
-/// AVFoundation is fine for parsing but not for writing
+/// this is the MP4 chapter parser in SPFKMetadata.
+///
+/// See MPEGChapterUtil.mm for writing mp3 chapters.
 public enum ChapterParser {
     public static func parse(url: URL) async throws -> [ChapterMarker] {
         guard FileManager.default.fileExists(atPath: url.path) else {
@@ -39,6 +40,7 @@ public enum ChapterParser {
         return chapters
     }
 
+    /// return the embedded title frame for this chapter
     private static func title(from group: AVTimedMetadataGroup) async throws -> String? {
         for item in group.items where item.commonKey == .commonKeyTitle {
             if #available(macOS 12, iOS 15, *) {

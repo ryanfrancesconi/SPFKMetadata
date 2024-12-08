@@ -10,29 +10,37 @@ class TagPropertiesTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "TagPropertiesTests")
 
     @Test func parseID3MP3() async throws {
-        let metadata = try TagProperties(url: id3)
-        Swift.print(metadata)
-        #expect(metadata[.title] == "Shine On (inst)")
+        let elapsed = try ContinuousClock().measure {
+            let properties = try TagProperties(url: id3)
+            Swift.print(properties)
+            #expect(properties[.title] == "Shine On (inst)")
+        }
+
+        Swift.print(elapsed) // benchmark
     }
 
     @Test func parseID3MP3_AV() async throws {
-        let metadata = try await TagPropertiesAV(url: id3)
-        Swift.print(metadata)
-        #expect(metadata[.title] == "Shine On (inst)")
+        let elapsed = try await ContinuousClock().measure {
+            let properties = try await TagPropertiesAV(url: id3)
+            Swift.print(properties)
+            #expect(properties[.title] == "Shine On (inst)")
+        }
+
+        Swift.print(elapsed) // benchmark
     }
 
     @Test func parseID3Wave() async throws {
-        let metadata = try TagProperties(url: bext_v2)
-        Swift.print(metadata)
+        let properties = try TagProperties(url: bext_v2)
+        Swift.print(properties)
 
-        #expect(metadata[.title] == "ID3: 12345678910 mono 48k")
+        #expect(properties[.title] == "ID3: 12345678910 mono 48k")
     }
 
     @Test func parseInfoWave() async throws {
-        let metadata = try TagProperties(url: bext_v1)
-        Swift.print(metadata)
+        let properties = try TagProperties(url: bext_v1)
+        Swift.print(properties)
 
-        #expect(metadata[.title] == "INFO: bext")
+        #expect(properties[.title] == "INFO: bext")
     }
 
     @Test func parseMetadataTags1() async throws {
