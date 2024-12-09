@@ -32,7 +32,7 @@
     self.codingHistory = @(bext.coding_history);
 
     if (self.version >= 1 && strlen(bext.umid) > 0) {
-        self.umid = @(bext.umid); // Util::asciiString(bext.umid, 64); //@(bext.umid);
+        self.umid = @(bext.umid); // Util::asciiString(bext.umid, sizeof(bext.umid));
     }
 
     if (self.version >= 2) {
@@ -66,16 +66,17 @@
     //
     SndfileHandle file = SndfileHandle(path.UTF8String, SFM_RDWR);
     SF_BROADCAST_INFO bext = {};
+    memset(&bext, 0, sizeof(bext));
 
     bext.version = info.version;
 
-    const char *umid = [info.umid cStringUsingEncoding:NSASCIIStringEncoding];
-    const char *codingHistory = [info.codingHistory cStringUsingEncoding:NSASCIIStringEncoding];
-    const char *description = [info.bextDescription cStringUsingEncoding:NSASCIIStringEncoding];
-    const char *originator = [info.originator cStringUsingEncoding:NSASCIIStringEncoding];
-    const char *originatorReference = [info.originatorReference cStringUsingEncoding:NSASCIIStringEncoding];
-    const char *originationDate = [info.originationDate cStringUsingEncoding:NSASCIIStringEncoding];
-    const char *originationTime = [info.originationTime cStringUsingEncoding:NSASCIIStringEncoding];
+    const char *umid = Util::asciiCString(info.umid);
+    const char *codingHistory = Util::asciiCString(info.codingHistory);
+    const char *description = Util::asciiCString(info.bextDescription);
+    const char *originator = Util::asciiCString(info.originator);
+    const char *originatorReference = Util::asciiCString(info.originatorReference);
+    const char *originationDate = Util::asciiCString(info.originationDate);
+    const char *originationTime = Util::asciiCString(info.originationTime);
 
     if (codingHistory) {
         size_t chsize = Util::strncpy_validate(bext.coding_history, codingHistory, sizeof(bext.coding_history));

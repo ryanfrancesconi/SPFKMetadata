@@ -56,6 +56,8 @@ namespace Util {
         }
     }
 
+    // Hide these here
+
     static NSString *
     asciiString(const char *s, size_t length) {
         return [
@@ -63,5 +65,10 @@ namespace Util {
                                     length:length
                                   encoding:NSASCIIStringEncoding
         ];
+    }
+
+    static const char *
+    asciiCString(NSString *string) {
+        return [string cStringUsingEncoding:NSASCIIStringEncoding];
     }
 }
