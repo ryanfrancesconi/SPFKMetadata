@@ -81,7 +81,7 @@ using namespace TagLib;
         return nil;
     }
 
-    return Util::utf8String(tag->title().toCString());
+    return @(tag->title().toCString());
 }
 
 + (bool)setTitle:(NSString *)path
@@ -129,7 +129,7 @@ using namespace TagLib;
         return nil;
     }
 
-    return Util::utf8String(tag->comment().toCString());
+    return @(tag->comment().toCString());
 }
 
 // convenience function to update the comment tag in a file

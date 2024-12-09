@@ -12,6 +12,12 @@ public struct BEXTDescription: Hashable, Codable {
     /// BWF Version 0, 1, or 2
     public var version: Int16 = 0
 
+    /// A free description of the sequence.
+    /// To help applications which display only a short description, it is recommended
+    /// that a resume of the description is contained in the first 64 characters
+    /// and the last 192 characters are used for details.
+    public var description: String?
+
     /// UMID (Unique Material Identifier) to standard SMPTE. (Note: Added in version 1.)
     public var umid: String?
 
@@ -30,19 +36,19 @@ public struct BEXTDescription: Hashable, Codable {
     public var codingHistory: String?
 
     /// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
-    public var loudnessValue: AUValue?
+    public var loudnessValue: Float?
 
     /// Loudness Range of the file in LU. (Note: Added in version 2.)
-    public var loudnessRange: AUValue?
+    public var loudnessRange: Float?
 
     /// Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
-    public var maxTruePeakLevel: AUValue?
+    public var maxTruePeakLevel: Float?
 
     /// highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
-    public var maxMomentaryLoudness: AUValue?
+    public var maxMomentaryLoudness: Float?
 
     /// highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
-    public var maxShortTermLoudness: AUValue?
+    public var maxShortTermLoudness: Float?
 
     /// The name of the originator / producer of the audio file
     public var originator: String?
@@ -84,20 +90,23 @@ public struct BEXTDescription: Hashable, Codable {
     public init() {}
 
     public init?(url: URL) {
-        guard let info = BroadcastInfo(path: url.path) else {
+        guard let info = BEXTDescriptionC(path: url.path) else {
             return nil
         }
 
         self = BEXTDescription(info: info)
     }
 
-    public init(info: BroadcastInfo) {
+    public init(info: BEXTDescriptionC) {
         version = info.version
+        codingHistory = info.codingHistory
         sampleRate = info.sampleRate
 
         if version > 1 {
             umid = info.umid
         }
+
+        description = info.bextDescription
 
         if version >= 2 {
             loudnessValue = info.loudnessValue
@@ -114,5 +123,80 @@ public struct BEXTDescription: Hashable, Codable {
 
         timeReferenceLow = info.timeReferenceLow
         timeReferenceHigh = info.timeReferenceHigh
+    }
+}
+
+extension BEXTDescription {
+    /// Returns the objc representation for C portability
+    private var cDescription: BEXTDescriptionC {
+        let info = BEXTDescriptionC()
+
+        info.version = version
+
+        if let codingHistory {
+            info.codingHistory = codingHistory
+        }
+
+        if version >= 1, let umid {
+            info.umid = umid
+        }
+
+        if version >= 2 {
+            if let loudnessValue {
+                info.loudnessValue = loudnessValue
+            }
+
+            if let loudnessRange {
+                info.loudnessRange = loudnessRange
+            }
+
+            if let maxTruePeakLevel {
+                info.maxTruePeakLevel = maxTruePeakLevel
+            }
+
+            if let maxMomentaryLoudness {
+                info.maxMomentaryLoudness = maxMomentaryLoudness
+            }
+
+            if let maxShortTermLoudness {
+                info.maxShortTermLoudness = maxShortTermLoudness
+            }
+        }
+
+        if let description {
+            info.bextDescription = description
+        }
+
+        if let originator {
+            info.originator = originator
+        }
+
+        if let originationDate {
+            info.originationDate = originationDate
+        }
+
+        if let originationTime {
+            info.originationTime = originationTime
+        }
+
+        if let originatorReference {
+            info.originatorReference = originatorReference
+        }
+
+        if let timeReferenceLow {
+            info.timeReferenceLow = timeReferenceLow
+        }
+
+        if let timeReferenceHigh {
+            info.timeReferenceHigh = timeReferenceHigh
+        }
+
+        return info
+    }
+
+    public static func write(bextDescription: BEXTDescription, to url: URL) throws {
+        guard BEXTDescriptionC.write(bextDescription.cDescription, path: url.path) else {
+            throw NSError(description: "Failed to write BEXT chunk to \(url.path)")
+        }
     }
 }

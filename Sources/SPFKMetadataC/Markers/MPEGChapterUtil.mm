@@ -55,7 +55,7 @@ using namespace TagLib;
         // cout << elementName << " " << startTime << " " << frame->endTime() << endl;
 
         const char *name = elementName.toCString();
-        NSString *chapterName = Util::utf8String(name);
+        NSString *chapterName = @(name);
 
         const ID3v2::FrameList &embeddedFrames = frame->embeddedFrameList();
 
@@ -67,7 +67,7 @@ using namespace TagLib;
                 // cout << tit2Frame->frameID() << endl;
 
                 if (tit2Frame->frameID() == "TIT2") {
-                    chapterName = Util::utf8String(tit2Frame->toString().toCString());
+                    chapterName = @(tit2Frame->toString().toCString());
                 }
             }
         }

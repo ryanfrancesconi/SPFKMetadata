@@ -45,8 +45,8 @@ using namespace TagLib;
     for (auto i = tags.begin(); i != tags.end(); ++i) {
         for (auto j = i->second.begin(); j != i->second.end(); ++j) {
             //
-            NSString *key = Util::utf8String(i->first.toCString());
-            NSString *object = Util::utf8String(j->toCString());
+            NSString *key = @(i->first.toCString());
+            NSString *object = @(j->toCString());
 
             if (key != nil && object != nil) {
                 [_dictionary setValue:object ? : @"" forKey:key];

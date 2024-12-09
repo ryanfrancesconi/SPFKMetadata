@@ -5,6 +5,7 @@ import Foundation
 @testable import SPFKMetadataC
 import Testing
 
+@Suite(.serialized)
 class TagFileTests: SPFKMetadataTestModel {
     @Test func testParseID3() async throws {
         let tagFile = try #require(TagFile(path: bext_v2.path))
