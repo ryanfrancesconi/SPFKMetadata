@@ -1,3 +1,4 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 #import <Foundation/Foundation.h>
 #import "BEXTDescriptionC.h"
@@ -35,19 +36,19 @@
     }
 
     if (self.version >= 2) {
-        self.loudnessValue = bext.loudness_value / 100;
-        self.loudnessRange = bext.loudness_range / 100;
-        self.maxTruePeakLevel = bext.max_true_peak_level / 100;
-        self.maxMomentaryLoudness = bext.max_momentary_loudness / 100;
-        self.maxShortTermLoudness = bext.max_shortterm_loudness / 100;
+        self.loudnessValue = ((float)bext.loudness_value) / 100;
+        self.loudnessRange = ((float)bext.loudness_range) / 100;
+        self.maxTruePeakLevel = ((float)bext.max_true_peak_level) / 100;
+        self.maxMomentaryLoudness = ((float)bext.max_momentary_loudness) / 100;
+        self.maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
     }
 
     self.bextDescription = @(bext.description);
     self.originator = @(bext.originator);
 
-    self.originationDate = Util::asciiString(bext.origination_date, 10);
-    self.originationTime =  Util::asciiString(bext.origination_time, 8);
-    self.originatorReference = Util::asciiString(bext.originator_reference, 32);
+    self.originationDate = Util::asciiString(bext.origination_date, sizeof(bext.origination_date));
+    self.originationTime =  Util::asciiString(bext.origination_time, sizeof(bext.origination_time));
+    self.originatorReference = Util::asciiString(bext.originator_reference, sizeof(bext.originator_reference));
 
     self.timeReferenceLow = bext.time_reference_low;
     self.timeReferenceHigh = bext.time_reference_high;
@@ -69,7 +70,6 @@
     bext.version = info.version;
 
     const char *umid = [info.umid cStringUsingEncoding:NSASCIIStringEncoding];
-
     const char *codingHistory = [info.codingHistory cStringUsingEncoding:NSASCIIStringEncoding];
     const char *description = [info.bextDescription cStringUsingEncoding:NSASCIIStringEncoding];
     const char *originator = [info.originator cStringUsingEncoding:NSASCIIStringEncoding];
@@ -78,32 +78,32 @@
     const char *originationTime = [info.originationTime cStringUsingEncoding:NSASCIIStringEncoding];
 
     if (codingHistory) {
-        size_t chsize = strncpy_validate(bext.coding_history, codingHistory, sizeof(bext.coding_history));
+        size_t chsize = Util::strncpy_validate(bext.coding_history, codingHistory, sizeof(bext.coding_history));
         bext.coding_history_size = (uint32_t)chsize;
     }
 
     if (info.version >= 1 && umid) {
-        strncpy_validate(bext.umid, umid, sizeof(bext.umid));
+        Util::strncpy_pad0(bext.umid, umid, sizeof(bext.umid), true);
     }
 
     if (description) {
-        strncpy_validate(bext.description, description, sizeof(bext.description));
+        Util::strncpy_validate(bext.description, description, sizeof(bext.description));
     }
 
     if (originator) {
-        strncpy_validate(bext.originator, originator, sizeof(bext.originator));
+        Util::strncpy_validate(bext.originator, originator, sizeof(bext.originator));
     }
 
     if (originatorReference) {
-        strncpy_validate(bext.originator_reference, originatorReference, sizeof(bext.originator_reference));
+        Util::strncpy_validate(bext.originator_reference, originatorReference, sizeof(bext.originator_reference));
     }
 
     if (originationDate) {
-        strncpy_validate(bext.origination_date, originationDate, sizeof(bext.origination_date));
+        Util::strncpy_pad0(bext.origination_date, originationDate, sizeof(bext.origination_date), false);
     }
 
     if (originationTime) {
-        strncpy_validate(bext.origination_time, originationTime, sizeof(bext.origination_time));
+        Util::strncpy_pad0(bext.origination_time, originationTime, sizeof(bext.origination_time), false);
     }
 
     if (info.version >= 2) {
@@ -124,28 +124,6 @@
     }
 
     return true;
-}
-
-///  If the length of the string is less than n characters the field shall be ended by a null character
-/// - Parameters:
-///   - dest: destination
-///   - src: source
-///   - n: max length of field
-size_t strncpy_validate(char *dest, const char *src, size_t n) {
-    // reserve space for null
-    size_t length = strlen(src) + 1;
-
-    if (length >= n) {
-        // copy exactly n characters
-        strncpy(dest, src, n);
-        return n;
-    } else {
-        strncpy(dest, src, length);
-
-        // add null termination
-        dest [length - 1] = 0;
-        return length;
-    }
 }
 
 @end

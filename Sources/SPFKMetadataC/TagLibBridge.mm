@@ -42,14 +42,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        Util::log("__C Error: FileRef.isNull: Unable to open file");
+        cout << "Error: FileRef.isNull: Unable to open file" << endl;
         return false;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        Util::log("__C Unable to create tag");
+        cout << "Unable to create tag" << endl;
         return false;
     }
 
@@ -89,14 +89,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        Util::log("__C Unable to write title");
+        cout << "Unable to write title" << endl;
         return false;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        Util::log("__C Unable to write tag");
+        cout << "Unable to write tag" << endl;
         return false;
     }
 
@@ -118,14 +118,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        Util::log("__C FileRef is NULL");
+        cout << "FileRef is NULL" << endl;
         return nil;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        Util::log("__C Tag is NULL");
+        cout << "Tag is NULL" << endl;
         return nil;
     }
 
@@ -138,14 +138,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        Util::log("__C Unable to write comment");
+        cout << "Unable to write comment" << endl;
         return false;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        Util::log("__C Unable to write tag");
+        cout << "Unable to write tag" << endl;
         return false;
     }
 

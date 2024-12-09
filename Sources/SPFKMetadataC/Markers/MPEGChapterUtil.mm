@@ -34,7 +34,7 @@ using namespace TagLib;
     MPEG::File *file = dynamic_cast<MPEG::File *>(fileRef.file());
 
     if (!file || !file->hasID3v2Tag()) {
-        Util::log("getMP3Chapters: Not a MPEG File or no ID3v2 tag");
+        cout << "getMP3Chapters: Not a MPEG File or no ID3v2 tag" << endl;
         return nil;
     }
 
@@ -51,8 +51,6 @@ using namespace TagLib;
 
         // placeholder for title
         String elementName = String(frame->elementID());
-
-        // cout << elementName << " " << startTime << " " << frame->endTime() << endl;
 
         const char *name = elementName.toCString();
         NSString *chapterName = @(name);
@@ -91,7 +89,7 @@ using namespace TagLib;
     MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
 
     if (!mpegFile) {
-        Util::log("setMP3Chapters: Not a MPEG File");
+        cout << "setMP3Chapters: Not a MPEG File" << endl;
         return false;
     }
 
@@ -129,7 +127,7 @@ using namespace TagLib;
     MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
 
     if (!mpegFile) {
-        Util::log("removeMP3Chapters: Not a MPEG File");
+        cout << "removeMP3Chapters: Not a MPEG File" << endl;
         return false;
     }
 
