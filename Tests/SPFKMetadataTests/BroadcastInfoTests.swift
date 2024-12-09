@@ -37,13 +37,12 @@ class BroadcastInfoTests: SPFKMetadataTestModel {
         let uuid = "XXXXXX"
 
         var desc = BEXTDescription()
-        desc.version = 2
         desc.description = "A new description"
         desc.umid = uuid
         desc.originator = "Ryan Francesconi"
-        desc.originatorReference = "SPFKSPFKSPFKSPFKSPFKSPFKSPFKSPFK"
-        desc.originationDate = "2011:01:01"
-        desc.originationTime = "01:01:01"
+        desc.originatorReference = "SPFKSPFKSPFKSPFKSPFKSPFKSPFKSPFK_XXXXX" // test truncate
+        desc.originationDate = "2011:01:01__XX"
+        desc.originationTime = "01:01:01__XX"
         desc.codingHistory = "_1234567890_"
         desc.loudnessValue = -90
         desc.loudnessRange = -20

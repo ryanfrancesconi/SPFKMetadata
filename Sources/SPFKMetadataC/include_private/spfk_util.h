@@ -12,7 +12,7 @@ namespace Util {
     static void
     strncpy_0(char *dest, const char *src, size_t n) {
         strncpy(dest, src, n - 1);
-        dest [n - 1] = 0; //'\0';
+        dest [n - 1] = 0;
     }
 
     static NSString *

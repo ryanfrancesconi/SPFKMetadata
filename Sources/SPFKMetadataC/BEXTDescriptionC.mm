@@ -69,6 +69,7 @@
     bext.version = info.version;
 
     const char *umid = [info.umid cStringUsingEncoding:NSASCIIStringEncoding];
+
     const char *codingHistory = [info.codingHistory cStringUsingEncoding:NSASCIIStringEncoding];
     const char *description = [info.bextDescription cStringUsingEncoding:NSASCIIStringEncoding];
     const char *originator = [info.originator cStringUsingEncoding:NSASCIIStringEncoding];
@@ -77,32 +78,32 @@
     const char *originationTime = [info.originationTime cStringUsingEncoding:NSASCIIStringEncoding];
 
     if (codingHistory) {
-        bext.coding_history_size = sizeof(bext.coding_history); //(uint32_t)strlen(bext.coding_history);
-        Util::strncpy_0(bext.coding_history, codingHistory, strlen(bext.coding_history));
+        size_t chsize = strncpy_validate(bext.coding_history, codingHistory, sizeof(bext.coding_history));
+        bext.coding_history_size = (uint32_t)chsize;
     }
 
     if (info.version >= 1 && umid) {
-        Util::strncpy_0(bext.umid, umid, strlen(bext.umid));
+        strncpy_validate(bext.umid, umid, sizeof(bext.umid));
     }
 
     if (description) {
-        Util::strncpy_0(bext.description, description, sizeof(bext.description) + 1);
+        strncpy_validate(bext.description, description, sizeof(bext.description));
     }
 
     if (originator) {
-        Util::strncpy_0(bext.originator, originator, sizeof(bext.originator) + 1);
+        strncpy_validate(bext.originator, originator, sizeof(bext.originator));
     }
 
     if (originatorReference) {
-        Util::strncpy_0(bext.originator_reference, originatorReference, sizeof(bext.originator_reference) + 1);
+        strncpy_validate(bext.originator_reference, originatorReference, sizeof(bext.originator_reference));
     }
 
     if (originationDate) {
-        Util::strncpy_0(bext.origination_date, originationDate, sizeof(bext.origination_date) + 1);
+        strncpy_validate(bext.origination_date, originationDate, sizeof(bext.origination_date));
     }
 
     if (originationTime) {
-        Util::strncpy_0(bext.origination_time, originationTime, sizeof(bext.origination_time) + 1);
+        strncpy_validate(bext.origination_time, originationTime, sizeof(bext.origination_time));
     }
 
     if (info.version >= 2) {
@@ -123,6 +124,28 @@
     }
 
     return true;
+}
+
+///  If the length of the string is less than n characters the field shall be ended by a null character
+/// - Parameters:
+///   - dest: destination
+///   - src: source
+///   - n: max length of field
+size_t strncpy_validate(char *dest, const char *src, size_t n) {
+    // reserve space for null
+    size_t length = strlen(src) + 1;
+
+    if (length >= n) {
+        // copy exactly n characters
+        strncpy(dest, src, n);
+        return n;
+    } else {
+        strncpy(dest, src, length);
+
+        // add null termination
+        dest [length - 1] = 0;
+        return length;
+    }
 }
 
 @end

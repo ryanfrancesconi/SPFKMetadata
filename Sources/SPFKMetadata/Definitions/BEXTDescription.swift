@@ -9,8 +9,8 @@ import SPFKMetadataC
 
 /// BEXT Wave Chunk - BroadcastExtension
 public struct BEXTDescription: Hashable, Codable {
-    /// BWF Version 0, 1, or 2
-    public var version: Int16 = 0
+    /// BWF Version 0, 1, or 2. This will be set based on the content provided.
+    public private(set) var version: Int16 = 0
 
     /// A free description of the sequence.
     /// To help applications which display only a short description, it is recommended
@@ -31,8 +31,6 @@ public struct BEXTDescription: Hashable, Codable {
     /// M=<mono, stereo, dual-mono, joint-stereo>
     /// T=<a free ASCII-text string for in house use. This string should contain no commas (ASCII 2Chex).
     /// Examples of the contents: ID-No; codec type; A/D type>
-    ///
-    /// see: https://tech.ebu.ch/docs/r/r098.pdf
     public var codingHistory: String?
 
     /// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
@@ -128,39 +126,49 @@ public struct BEXTDescription: Hashable, Codable {
 
 extension BEXTDescription {
     /// Returns the objc representation for C portability
-    private var cDescription: BEXTDescriptionC {
+    private func validateAndConvert() -> BEXTDescriptionC {
         let info = BEXTDescriptionC()
 
-        info.version = version
+        func updateVersion(_ requiredVersion: Int16) {
+            if version < requiredVersion {
+                info.version = requiredVersion
+            }
+        }
+
+        info.version = 0
 
         if let codingHistory {
             info.codingHistory = codingHistory
         }
 
-        if version >= 1, let umid {
+        if let umid {
+            updateVersion(1)
             info.umid = umid
         }
 
-        if version >= 2 {
-            if let loudnessValue {
-                info.loudnessValue = loudnessValue
-            }
+        if let loudnessValue {
+            updateVersion(2)
+            info.loudnessValue = loudnessValue
+        }
 
-            if let loudnessRange {
-                info.loudnessRange = loudnessRange
-            }
+        if let loudnessRange {
+            updateVersion(2)
+            info.loudnessRange = loudnessRange
+        }
 
-            if let maxTruePeakLevel {
-                info.maxTruePeakLevel = maxTruePeakLevel
-            }
+        if let maxTruePeakLevel {
+            updateVersion(2)
+            info.maxTruePeakLevel = maxTruePeakLevel
+        }
 
-            if let maxMomentaryLoudness {
-                info.maxMomentaryLoudness = maxMomentaryLoudness
-            }
+        if let maxMomentaryLoudness {
+            updateVersion(2)
+            info.maxMomentaryLoudness = maxMomentaryLoudness
+        }
 
-            if let maxShortTermLoudness {
-                info.maxShortTermLoudness = maxShortTermLoudness
-            }
+        if let maxShortTermLoudness {
+            updateVersion(2)
+            info.maxShortTermLoudness = maxShortTermLoudness
         }
 
         if let description {
@@ -194,8 +202,11 @@ extension BEXTDescription {
         return info
     }
 
+    /// Writes this BEXTDescription to file. The data will be validated before writing.
     public static func write(bextDescription: BEXTDescription, to url: URL) throws {
-        guard BEXTDescriptionC.write(bextDescription.cDescription, path: url.path) else {
+        let cObject = bextDescription.validateAndConvert()
+
+        guard BEXTDescriptionC.write(cObject, path: url.path) else {
             throw NSError(description: "Failed to write BEXT chunk to \(url.path)")
         }
     }
