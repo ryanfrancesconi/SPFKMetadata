@@ -3,9 +3,7 @@
 import Foundation
 import SPFKMetadataC
 
-protocol SPFKMetadataTestModel: AnyObject {
-    //
-}
+protocol SPFKMetadataTestModel: AnyObject {}
 
 extension SPFKMetadataTestModel {
     var testBundle: URL {
@@ -25,6 +23,7 @@ extension SPFKMetadataTestModel {
     }
 }
 
+// Test files
 extension SPFKMetadataTestModel {
     var mp3_id3: URL { getResource(named: "and-oh-how-they-danced.mp3") }
     var wav_bext_v2: URL { getResource(named: "and-oh-how-they-danced.wav") }
@@ -33,12 +32,13 @@ extension SPFKMetadataTestModel {
 }
 
 extension SPFKMetadataTestModel {
+    var defaultURL: URL {
+        FileManager.default.temporaryDirectory.appendingPathComponent("SPFKMetadata")
+    }
+
     func createBin(suite: String, in baseURL: URL? = nil) -> URL {
         // move this to temporary directory when don't need to access files for testing
-        var bin = baseURL ??
-            FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop")
-
-        bin = bin.appendingPathComponent("SPFKMetadata")
+        var bin = baseURL ?? defaultURL
         bin = bin.appendingPathComponent(suite)
 
         if !FileManager.default.fileExists(atPath: bin.path) {
@@ -55,6 +55,10 @@ extension SPFKMetadataTestModel {
         }
 
         return bin
+    }
+
+    func removeBin() {
+        try? FileManager.default.removeItem(at: defaultURL)
     }
 
     func copy(to bin: URL, url input: URL) throws -> URL {

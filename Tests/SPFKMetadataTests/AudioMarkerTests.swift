@@ -8,10 +8,7 @@ import Testing
 @Suite(.serialized)
 class AudioMarkerTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "AudioMarkerTests")
-
-    deinit {
-        // try? FileManager.default.removeItem(at: bin)
-    }
+    deinit { removeBin() }
 
     @Test func parseMarkers() async throws {
         let markers = AudioMarkerUtil.getMarkers(wav_bext_v2) as? [AudioMarker] ?? []

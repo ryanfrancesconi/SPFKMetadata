@@ -8,10 +8,7 @@ import Testing
 @Suite(.serialized)
 class TagLibBridgeTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "TagLibBridgeTests")
-
-    deinit {
-        // try? FileManager.default.removeItem(at: bin)
-    }
+    deinit { removeBin() }
 
     @Test func readWriteTagProperties() async throws {
         let tmpfile = try copy(to: bin, url: wav_bext_v2)

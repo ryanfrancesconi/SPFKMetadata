@@ -7,6 +7,9 @@ import Testing
 
 @Suite(.serialized)
 class BroadcastInfoTests: SPFKMetadataTestModel {
+    lazy var bin: URL = createBin(suite: "BroadcastInfoTests")
+    deinit { removeBin() }
+
     @Test func parseBEXT_v2() async throws {
         let desc = try #require(BEXTDescription(url: wav_bext_v2))
 
@@ -36,7 +39,6 @@ class BroadcastInfoTests: SPFKMetadataTestModel {
     }
 
     @Test func writeBEXT() async throws {
-        lazy var bin: URL = createBin(suite: "BroadcastInfoTests")
         let tmpfile = try copy(to: bin, url: wav_bext_v2)
 
         var desc = BEXTDescription()
@@ -75,10 +77,5 @@ class BroadcastInfoTests: SPFKMetadataTestModel {
         #expect(updated.maxTruePeakLevel == -22)
         #expect(updated.maxShortTermLoudness == -1)
         #expect(updated.maxMomentaryLoudness == -2)
-    }
-
-    @Test func parse_missing_BEXT() async throws {
-        let desc = BEXTDescriptionC(path: "/Users/rf/Desktop/_av/Vocalizations/Element/Human/Sarcasm/12345678910_01.wav")
-        #expect(desc == nil)
     }
 }

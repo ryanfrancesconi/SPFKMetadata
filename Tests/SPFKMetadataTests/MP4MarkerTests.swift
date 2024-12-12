@@ -7,8 +7,6 @@ import Testing
 
 @Suite(.serialized)
 class MP4MarkerTests: SPFKMetadataTestModel {
-    lazy var bin: URL = createBin(suite: "MP4MarkerTests")
-
     func getChapters(in url: URL) async throws -> [ChapterMarker] {
         let chapters = try await ChapterParser.parse(url: url)
         Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })

@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "890394E5-EB03-4C2E-98AE-11A1EFF501BE",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SPFKMetadataTests",
+        "name" : "SPFKMetadataTests"
+      }
+    }
+  ],
+  "version" : 1
+}

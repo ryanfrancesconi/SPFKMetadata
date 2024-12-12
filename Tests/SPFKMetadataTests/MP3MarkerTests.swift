@@ -8,6 +8,7 @@ import Testing
 @Suite(.serialized)
 class MP3MarkerTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "MP3MarkerTests")
+    deinit { removeBin() }
 
     func getChapters(in url: URL) -> [ChapterMarker] {
         let chapters = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
@@ -17,10 +18,10 @@ class MP3MarkerTests: SPFKMetadataTestModel {
 
     @Test func parseMarkers() async throws {
         let markers = getChapters(in: mp3_id3)
-        
+
         let names = markers.compactMap { $0.name }
         let times = markers.map { $0.startTime }
-        
+
         #expect(markers.count == 3)
         #expect(names == ["M0", "M1", "M2"])
         #expect(times == [0.0, 1, 2])
@@ -58,9 +59,5 @@ class MP3MarkerTests: SPFKMetadataTestModel {
 
         let chapters = getChapters(in: tmpfile)
         #expect(chapters.count == 0)
-    }
-
-    deinit {
-        try? FileManager.default.removeItem(at: bin)
     }
 }

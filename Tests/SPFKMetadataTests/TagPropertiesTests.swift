@@ -8,10 +8,7 @@ import Testing
 @Suite(.serialized)
 class TagPropertiesTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "TagPropertiesTests")
-
-    deinit {
-        try? FileManager.default.removeItem(at: bin)
-    }
+    deinit { removeBin()  }
 
     @Test func parseID3MP3() async throws {
         let elapsed = try ContinuousClock().measure {
