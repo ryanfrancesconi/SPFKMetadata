@@ -4,6 +4,7 @@
 #import <iostream>
 #import <stdio.h>
 
+#import <tag/aifffile.h>
 #import <tag/fileref.h>
 #import <tag/mp4file.h>
 #import <tag/mpegfile.h>
@@ -42,7 +43,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Error: FileRef.isNull: Unable to open file" << endl;
+        cout << "Unable to read path:" << path << endl;
         return false;
     }
 
@@ -89,7 +90,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to write title" << endl;
+        cout << "Unable to read path:" << path << endl;
         return false;
     }
 
@@ -132,13 +133,12 @@ using namespace TagLib;
     return @(tag->comment().toCString());
 }
 
-// convenience function to update the comment tag in a file
 + (bool)setComment:(NSString *)path
            comment:(NSString *)comment {
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to write comment" << endl;
+        cout << "Unable to read path:" << path << endl;
         return false;
     }
 
@@ -152,6 +152,65 @@ using namespace TagLib;
     tag->setComment(comment.UTF8String);
 
     return fileRef.save();
+}
+
++ (bool)removeAllTags:(NSString *)path {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        cout << "Unable to read path:" << path << endl;
+        return false;
+    }
+
+    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+    MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
+    MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
+
+    // implementation for strip() is specific to each type of file
+
+    if (waveFile) {
+        waveFile->strip();
+        return fileRef.save();
+    } else if (mp4File) {
+        return mp4File->strip();
+    } else if (mpegFile) {
+        return mpegFile->strip();
+    }
+
+    // unsupported file
+    return false;
+}
+
++ (bool)copyTagsFromPath:(NSString *)path
+                  toPath:(NSString *)toPath {
+    FileRef input(path.UTF8String);
+
+    if (input.isNull()) {
+        cout << "Unable to write comment" << endl;
+        return false;
+    }
+
+    PropertyMap tags = input.file()->properties();
+
+    if (tags.isEmpty()) {
+        return true;
+    }
+
+    if (![self removeAllTags:toPath]) {
+        cout << "Failed to remove tags in" << toPath << endl;
+        return false;
+    }
+
+    FileRef output(toPath.UTF8String);
+
+    if (output.isNull()) {
+        cout << "Unable to read path:" << toPath << endl;
+        return false;
+    }
+
+    output.tag()->setProperties(tags);
+
+    return output.save();
 }
 
 @end

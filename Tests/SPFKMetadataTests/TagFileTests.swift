@@ -8,8 +8,8 @@ import Testing
 @Suite(.serialized)
 class TagFileTests: SPFKMetadataTestModel {
     @Test func testParseID3() async throws {
-        let tagFile = try #require(TagFile(path: bext_v2.path))
+        let tagFile = try #require(TagFile(path: wav_bext_v2.path))
 
-        #expect(tagFile.dictionary?["TITLE"] as? String == "ID3: 12345678910 mono 48k")
+        #expect(tagFile.dictionary?["TITLE"] as? String == "Stonehenge")
     }
 }

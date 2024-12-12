@@ -43,9 +43,8 @@
         self.maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
     }
 
-    self.bextDescription = @(bext.description);
-    self.originator = @(bext.originator);
-
+    self.bextDescription = Util::asciiString(bext.description, sizeof(bext.description));
+    self.originator = Util::asciiString(bext.originator, sizeof(bext.originator));
     self.originationDate = Util::asciiString(bext.origination_date, sizeof(bext.origination_date));
     self.originationTime =  Util::asciiString(bext.origination_time, sizeof(bext.origination_time));
     self.originatorReference = Util::asciiString(bext.originator_reference, sizeof(bext.originator_reference));

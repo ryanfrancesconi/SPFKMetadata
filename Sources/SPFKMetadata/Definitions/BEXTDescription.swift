@@ -4,10 +4,8 @@ import AudioToolbox
 import Foundation
 import SPFKMetadataC
 
-// TBD: if there needs to be a Swift struct representation copy
-// Maintaining this copy for Hashable/Codable conformance
-
-/// BEXT Wave Chunk - BroadcastExtension
+/// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC but with
+/// more friendly syntax.
 public struct BEXTDescription: Hashable, Codable {
     /// BWF Version 0, 1, or 2. This will be set based on the content provided.
     public private(set) var version: Int16 = 0

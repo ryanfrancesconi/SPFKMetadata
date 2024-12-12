@@ -16,6 +16,8 @@ The current state of metadata parsing via Swift means that no one single framewo
 
 ### Swift Package Manager (SPM)
 
+There are two targets in the package: SPFKMetadata and SPFKMetadataC. The first is pure Swift whereas the second is a mixture of Objective C, Objective C++, C and C++.
+
 1. Add SPFKMetadata as a dependency in the usual ways.
    - In a project or framework, in Xcode:
      - Select the menu: **File → Swift Packages → Add Package Dependency...**
@@ -24,10 +26,10 @@ The current state of metadata parsing via Swift means that no one single framewo
      ```swift
      .package(url: "https://github.com/ryanfrancesconi/SPFKMetadata", from: "1.0.0")
      ```
-2. Import the library:
+2. Import the libraries:
    ```swift
    import SPFKMetadata
-   import SPFKMetadataC // If you need any C objects
+   import SPFKMetadataC
    ```
 
 ## About

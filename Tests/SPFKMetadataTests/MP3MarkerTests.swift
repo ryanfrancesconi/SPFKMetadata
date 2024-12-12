@@ -16,14 +16,14 @@ class MP3MarkerTests: SPFKMetadataTestModel {
     }
 
     @Test func parseMarkers() async throws {
-        let markers = getChapters(in: chapters_mp3)
+        let markers = getChapters(in: mp3_id3)
         
         let names = markers.compactMap { $0.name }
         let times = markers.map { $0.startTime }
         
-        #expect(markers.count == 10)
-        #expect(names == ["ch0", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "ch9"])
-        #expect(times == [0.0, 1.081, 2.087, 3.073, 4.094, 5.081, 6.079, 7.059, 8.083, 9.088])
+        #expect(markers.count == 3)
+        #expect(names == ["M0", "M1", "M2"])
+        #expect(times == [0.0, 1, 2])
     }
 
     @Test func parseMarkers2() async throws {
@@ -32,7 +32,7 @@ class MP3MarkerTests: SPFKMetadataTestModel {
     }
 
     @Test func writeMarkers() async throws {
-        let tmpfile = try copy(to: bin, url: chapters_mp3)
+        let tmpfile = try copy(to: bin, url: mp3_id3)
         #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
         let markers: [ChapterMarker] = [
@@ -53,7 +53,7 @@ class MP3MarkerTests: SPFKMetadataTestModel {
     }
 
     @Test func removeMarkers() async throws {
-        let tmpfile = try copy(to: bin, url: chapters_mp3)
+        let tmpfile = try copy(to: bin, url: mp3_id3)
         #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
         let chapters = getChapters(in: tmpfile)

@@ -9,11 +9,15 @@ import Testing
 class TagPropertiesTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "TagPropertiesTests")
 
+    deinit {
+        try? FileManager.default.removeItem(at: bin)
+    }
+
     @Test func parseID3MP3() async throws {
         let elapsed = try ContinuousClock().measure {
-            let properties = try TagProperties(url: id3)
+            let properties = try TagProperties(url: mp3_id3)
             Swift.print(properties)
-            #expect(properties[.title] == "Shine On (inst)")
+            #expect(properties[.title] == "Stonehenge")
         }
 
         Swift.print(elapsed) // benchmark
@@ -21,72 +25,30 @@ class TagPropertiesTests: SPFKMetadataTestModel {
 
     @Test func parseID3MP3_AV() async throws {
         let elapsed = try await ContinuousClock().measure {
-            let properties = try await TagPropertiesAV(url: id3)
+            let properties = try await TagPropertiesAV(url: mp3_id3)
             Swift.print(properties)
-            #expect(properties[.title] == "Shine On (inst)")
+            #expect(properties[.title] == "Stonehenge")
         }
 
         Swift.print(elapsed) // benchmark
     }
 
     @Test func parseID3Wave() async throws {
-        let properties = try TagProperties(url: bext_v2)
+        let properties = try TagProperties(url: wav_bext_v2)
         Swift.print(properties)
 
-        #expect(properties[.title] == "ID3: 12345678910 mono 48k")
+        #expect(properties[.title] == "Stonehenge")
     }
 
-    @Test func parseInfoWave() async throws {
-        let properties = try TagProperties(url: bext_v1)
-        Swift.print(properties)
-
-        #expect(properties[.title] == "INFO: bext")
-    }
-
-    @Test func parseMetadataTags1() async throws {
-        let url = bext_v2 // has both INFO and ID3
-
-        let dict = try #require(TagLibBridge.getProperties(url.path))
-
-        #expect(dict["TITLE"] as? String == "ID3: 12345678910 mono 48k")
-    }
-
-    @Test func parseMetadataTags2() async throws {
-        let url = bext_v1 // only has an INFO tag, no ID3
-        let dict = try #require(TagLibBridge.getProperties(url.path))
-
-        #expect(dict["TITLE"] as? String == "INFO: bext")
-    }
-}
-
-extension TagPropertiesTests {
     @Test func readWriteTagProperties() async throws {
-        let tmpfile = try copy(to: bin, url: bext_v1)
+        let tmpfile = try copy(to: bin, url: wav_bext_v2)
 
         var properties = try TagProperties(url: tmpfile)
-        #expect(properties[.title] == "INFO: bext")
+        #expect(properties[.title] == "Stonehenge")
 
         properties[.title] = "New Title"
-
         try properties.save()
 
         #expect(properties[.title] == "New Title")
-    }
-
-    @Test func readWriteTagProperties_C() async throws {
-        let tmpfile = try copy(to: bin, url: bext_v1)
-
-        var dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
-        #expect(dict["TITLE"] == "INFO: bext")
-
-        dict["TITLE"] = "New Title"
-
-        let success = TagLibBridge.setProperties(tmpfile.path, dictionary: dict)
-
-        #expect(success)
-
-        dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
-
-        #expect(dict["TITLE"] == "New Title")
     }
 }

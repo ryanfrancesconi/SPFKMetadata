@@ -26,13 +26,10 @@ extension SPFKMetadataTestModel {
 }
 
 extension SPFKMetadataTestModel {
-    var id3: URL { getResource(named: "id3.mp3") }
-    var bext_v1: URL { getResource(named: "bext_v1.wav") }
-    var bext_v2: URL { getResource(named: "bext_v2.wav") }
-    var chapters_mp3: URL { getResource(named: "chapters.mp3") }
+    var mp3_id3: URL { getResource(named: "and-oh-how-they-danced.mp3") }
+    var wav_bext_v2: URL { getResource(named: "and-oh-how-they-danced.wav") }
     var tabla_mp4: URL { getResource(named: "tabla.mp4") }
     var toc_many_children: URL { getResource(named: "toc_many_children.mp3") }
-    var mp4_chaptered: URL { getResource(named: "mp4_chaptered.m4a") }
 }
 
 extension SPFKMetadataTestModel {
@@ -41,6 +38,7 @@ extension SPFKMetadataTestModel {
         var bin = baseURL ??
             FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop")
 
+        bin = bin.appendingPathComponent("SPFKMetadata")
         bin = bin.appendingPathComponent(suite)
 
         if !FileManager.default.fileExists(atPath: bin.path) {
