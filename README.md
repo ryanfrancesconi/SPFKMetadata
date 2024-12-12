@@ -11,3 +11,7 @@ SPFKMetadata wraps [TagLib](https://github.com/taglib/taglib) (v2.0.2), [libsndf
 The current state of metadata parsing via Swift means that no one single framework is a do-it-all solution, so this framework covers some missing functionalities from AVFoundation such as RIFF Audio Markers, Chaptering, Broadcast Wave and writing tags to file. SPFKMetadata embeds binary C/C++ xcframeworks and uses an intuitive Swift API to access metadata functions from each. 
 
 ![SPFKMetadata-logo-02-128](https://github.com/user-attachments/assets/3f9b8482-4c5c-43ec-baac-77f4630c1ef9)
+
+## About
+
+Spongefork (SPFK) is the personal software projects of Ryan Francesconi. Dedicated to creative sound manipulation, his first application, Spongefork, was released in 1999 for macOS 7.
