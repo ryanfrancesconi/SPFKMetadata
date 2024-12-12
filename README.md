@@ -6,6 +6,8 @@
 [![Xcode 16+](https://img.shields.io/badge/Xcode-16+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) 
 
 
-SPFKMetadata wraps Core Audio, [TagLib](https://github.com/taglib/taglib) (v2.0.2) and [libsndfile](https://github.com/libsndfile/libsndfile) (v1.2.2) metadata C/C++ frameworks for Swift compatibility. It embeds binary xcframeworks for both libraries and uses an intuitive Swift API to access metadata functions from each. The current state of metadata parsing via Swift means that no one single framework is a do-it-all solution, so this framework covers some missing functionalities from AVFoundation such as RIFF Audio Markers, Chaptering, Broadcast Wave and writing tags to file.
+SPFKMetadata wraps [TagLib](https://github.com/taglib/taglib) (v2.0.2), [libsndfile](https://github.com/libsndfile/libsndfile) (v1.2.2) and Core Audio metadata C/C++ frameworks for Swift compatibility. 
+
+The current state of metadata parsing via Swift means that no one single framework is a do-it-all solution, so this framework covers some missing functionalities from AVFoundation such as RIFF Audio Markers, Chaptering, Broadcast Wave and writing tags to file. SPFKMetadata embeds binary xcframeworks for both libraries and uses an intuitive Swift API to access metadata functions from each. 
 
 ![image](https://github.com/user-attachments/assets/ff2bfd2a-8361-433d-b44c-cc020b1925ae)
