@@ -162,20 +162,25 @@ using namespace TagLib;
         return false;
     }
 
-    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
-    MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
-    MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
+    NSString *fileType = [TagFile detectType:path];
 
     // implementation for strip() is specific to each type of file
 
-    if (waveFile) {
+    if ([fileType isEqualToString:kTagFileTypeWAVE]) {
+        RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
         waveFile->strip();
         return fileRef.save();
-    } else if (mp4File) {
+        //
+    } else if ([fileType isEqualToString:kTagFileTypeM4A] || [fileType isEqualToString:kTagFileTypeMP4]) {
+        MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
         return mp4File->strip();
-    } else if (mpegFile) {
+        //
+    } else if ([fileType isEqualToString:kTagFileTypeMP3]) {
+        MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
         return mpegFile->strip();
     }
+    
+    // handle more types here
 
     // unsupported file
     return false;
@@ -213,6 +218,6 @@ using namespace TagLib;
     return output.save();
 }
 
-// getArtwork, setArtwork -- NSImage / UIImage
+// getArtwork, setArtwork -- CGImage
 
 @end

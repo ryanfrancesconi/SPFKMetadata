@@ -8,6 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kTagFileTypeM4A;
+extern NSString *const kTagFileTypeMP4;
 extern NSString *const kTagFileTypeAAC;
 extern NSString *const kTagFileTypeWAVE;
 extern NSString *const kTagFileTypeAIFF;

@@ -60,6 +60,7 @@ using namespace TagLib;
 # pragma mark - Helpers
 
 NSString *const kTagFileTypeMP3 = @"mp3";
+NSString *const kTagFileTypeMP4 = @"mp4";
 NSString *const kTagFileTypeM4A = @"m4a";
 NSString *const kTagFileTypeAAC = @"aac";
 NSString *const kTagFileTypeWAVE = @"wav";
