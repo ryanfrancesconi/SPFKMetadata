@@ -23,7 +23,7 @@ on:
   - cron: '30 11 * * *'   # once a day @ 11:30am UTC (4:30am PST)
 
 env:
-  SCHEME: "SPFKMetadata"
+  SCHEME: "SPFKMetadata-CI"
 
 jobs:
   macOS:
