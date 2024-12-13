@@ -10,7 +10,7 @@ class TagLibBridgeTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "TagLibBridgeTests")
     deinit { removeBin() }
 
-    @Test func readWriteTagProperties() async throws {
+    @Test func readWriteProperties() async throws {
         let tmpfile = try copy(to: bin, url: wav_bext_v2)
         var dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
         #expect(dict["TITLE"] == "Stonehenge")
@@ -27,7 +27,7 @@ class TagLibBridgeTests: SPFKMetadataTestModel {
         #expect(dict["TITLE"] == "New Title")
     }
 
-    @Test func removeMetadata() async throws {
+    @Test func removeAllTags() async throws {
         let tmpfile = try copy(to: bin, url: mp3_id3)
 
         let success = TagLibBridge.removeAllTags(tmpfile.path)

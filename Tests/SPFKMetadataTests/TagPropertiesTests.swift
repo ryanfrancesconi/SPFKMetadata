@@ -8,23 +8,28 @@ import Testing
 @Suite(.serialized)
 class TagPropertiesTests: SPFKMetadataTestModel {
     lazy var bin: URL = createBin(suite: "TagPropertiesTests")
-    deinit { removeBin()  }
+    deinit { removeBin() }
 
     @Test func parseID3MP3() async throws {
         let elapsed = try ContinuousClock().measure {
             let properties = try TagProperties(url: mp3_id3)
-            Swift.print(properties)
-            #expect(properties[.title] == "Stonehenge")
+            Swift.print(properties.description)
+            verify(dictionary: properties.tags)
         }
 
         Swift.print(elapsed) // benchmark
     }
 
+    private func verify(dictionary: TagKeyDictionary) {
+        #expect(dictionary[.title] == "Stonehenge")
+        #expect(dictionary[.bpm] == "666")
+    }
+
     @Test func parseID3MP3_AV() async throws {
         let elapsed = try await ContinuousClock().measure {
             let properties = try await TagPropertiesAV(url: mp3_id3)
-            Swift.print(properties)
-            #expect(properties[.title] == "Stonehenge")
+            Swift.print(properties.description)
+            verify(dictionary: properties.tags)
         }
 
         Swift.print(elapsed) // benchmark

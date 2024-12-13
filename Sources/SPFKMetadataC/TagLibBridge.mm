@@ -213,4 +213,6 @@ using namespace TagLib;
     return output.save();
 }
 
+// getArtwork, setArtwork -- NSImage / UIImage
+
 @end
