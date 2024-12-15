@@ -14,8 +14,7 @@ private let name: String = "SPFKMetadata"
 private let nameC: String = "\(name)C"
 
 private let platforms: [PackageDescription.SupportedPlatform]? = [
-    .macOS(.v11),
-    .iOS(.v15)
+    .macOS(.v11)
 ]
 
 private let products: [PackageDescription.Product] = [
