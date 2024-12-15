@@ -1,7 +1,7 @@
 # SPFKMetadata
 
 [![build](https://github.com/ryanfrancesconi/SPFKMetadata/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/ryanfrancesconi/SPFKMetadata/actions/workflows/swift.yml)
-![Platforms - macOS 11+ | iOS 15+](https://img.shields.io/badge/platforms-macOS%2011+%20|%20iOS%2015+-lightgrey.svg?style=flat)
+![Platforms - macOS 11+](https://img.shields.io/badge/platforms-macOS%2011+-lightgrey.svg?style=flat)
 [![Swift 5.9-6.0](https://img.shields.io/badge/Swift-5.9–6.0-orange.svg?style=flat)](https://developer.apple.com/swift) 
 [![Xcode 16+](https://img.shields.io/badge/Xcode-16+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) 
 
