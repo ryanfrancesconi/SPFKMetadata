@@ -8,7 +8,7 @@
 
 SPFKMetadata wraps [TagLib](https://github.com/taglib/taglib) (v2.0.2), [libsndfile](https://github.com/libsndfile/libsndfile) (v1.2.2) and Core Audio metadata C/C++ frameworks for Swift compatibility. This library is currently macOS only, though will updated to include iOS soon.
 
-The current state of metadata parsing via Swift means that no one single framework is a do-it-all solution, so this framework covers some missing functionalities from [AVFoundation](https://developer.apple.com/av-foundation/) such as RIFF Audio Markers, Chaptering, Broadcast Wave and writing tags to file. SPFKMetadata embeds arm64/x86_64 xcframeworks for the needed dylibs and uses an intuitive Swift API to access metadata functions from each. While Apple's C++ → Swift interoperability looks promising, it doesn't yet seem ready for integration in which you don't control both sides of the codebase. For this reason, open source frameworks like TagLib and libsndfile need to be wrapped in xcframeworks within a swift package.
+The current state of metadata parsing via Swift means that no one single framework is a do-it-all solution, so this framework covers some missing functionalities from [AVFoundation](https://developer.apple.com/av-foundation/) such as RIFF Audio Markers, Chaptering, Broadcast Wave and writing tags to file. SPFKMetadata embeds arm64/x86_64 xcframeworks for the needed dylibs and uses an intuitive Swift API to access metadata functions from each. While Apple's C++ → Swift interoperability looks promising, it doesn't yet seem ready for integration in which you don't control both sides of the integration. For this reason, open source frameworks like TagLib and libsndfile seem better bridged via Objective C++. I'm sure this will eventually change as Swift moves closer to C++ interoperability.
 
 ![SPFKMetadata-logo-02-128](https://github.com/user-attachments/assets/3f9b8482-4c5c-43ec-baac-77f4630c1ef9)
 
@@ -34,4 +34,4 @@ There are two targets in the package: SPFKMetadata and SPFKMetadataC. The first 
 
 ## About
 
-Spongefork (SPFK) is the personal software projects of [Ryan Francesconi](https://github.com/ryanfrancesconi). Dedicated to creative sound manipulation, his first application, Spongefork, was released in 1999 for macOS 7.
+Spongefork (SPFK) is the personal software projects of [Ryan Francesconi](https://github.com/ryanfrancesconi). Dedicated to creative sound manipulation, his first application, Spongefork, was released in 1999 for macOS 7. Since 2016 he has been the lead macOS developer at [Audio Design Desk](https://add.app).
