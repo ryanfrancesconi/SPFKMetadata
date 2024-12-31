@@ -3,7 +3,7 @@
 import AVFoundation
 import Foundation
 
-/// AVFoundation is fine for parsing tags but they didn't implement usable ways to write them.
+/// AVFoundation is fine for parsing tags but they didn't implement usable ways to write them. (As of yet)
 /// If all you need is reading tags, then this is an example without any further dependencies.
 /// That said, the tradeoff of using AVFoundation is that it's less performant than TagLib.
 /// Since AV is async, that would likely account for some of the performance hit.
@@ -25,8 +25,6 @@ public struct TagPropertiesAV: TagPropertiesContainerModel {
             set(id3Frame: id3Frame, value: value)
         }
     }
-
-    // simplify when moving version to macOS 12+
 
     private static func loadMetadata(from asset: AVURLAsset) async throws -> [AVMetadataItem] {
         if #available(macOS 12, iOS 15, *) {

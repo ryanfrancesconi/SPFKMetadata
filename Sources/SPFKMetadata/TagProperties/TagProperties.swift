@@ -6,6 +6,8 @@ import SPFKMetadataC
 /// A Swift convenience wrapper to TagLibBridge (C++)
 public struct TagProperties: TagPropertiesContainerModel {
     public var tags = TagKeyDictionary()
+    
+    /// Any tags that weren't matched to a `TagKey` value
     public var customTags = [String: String]()
 
     private var tagLibPropertyMap: [String: String] {
@@ -20,6 +22,9 @@ public struct TagProperties: TagPropertiesContainerModel {
 
     public private(set) var url: URL
 
+    
+    /// Create a dictionary from an audio file url
+    /// - Parameter url: the `URL` to parse for metadata
     public init(url: URL) throws {
         guard let dict = TagLibBridge.getProperties(url.path) as? [String: String] else {
             throw NSError(description: "Failed to open file or no metadata in: \(url.path)")
