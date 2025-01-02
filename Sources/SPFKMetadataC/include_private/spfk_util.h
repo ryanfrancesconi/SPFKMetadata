@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import <iostream>
+#import <tag/tstring.h>
 
 namespace Util {
     /**
@@ -72,6 +73,11 @@ namespace Util {
                                     length:len
                                   encoding:NSASCIIStringEncoding
         ];
+    }
+
+    static NSString *
+    utf8NSString(TagLib::String string) {
+        return [[NSString alloc] initWithCString:string.toCString() encoding:NSUTF8StringEncoding];
     }
 
     static const char *

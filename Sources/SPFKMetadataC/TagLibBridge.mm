@@ -225,6 +225,8 @@ using namespace TagLib;
 
 // MARK: - Pictures
 
+// Note: these are TagLib constants
+
 const String pictureKey("PICTURE");
 const String dataKey("data");
 const String mimeTypeKey("mimeType");
@@ -292,8 +294,7 @@ const String pictureTypeKey("pictureType");
         return nil;
     }
 
-    NSString *mimeType = [[NSString alloc] initWithCString:pictureMimeType.toCString() encoding:NSUTF8StringEncoding];
-
+    NSString *mimeType = Util::utf8NSString(pictureMimeType);
     UTType *utType = [UTType typeWithMIMEType:mimeType];
 
     if (!utType) {
@@ -301,10 +302,13 @@ const String pictureTypeKey("pictureType");
         return nil;
     }
 
-    NSString *desc = [[NSString alloc] initWithCString:pictureDescription.toCString() encoding:NSUTF8StringEncoding];
-    NSString *pict = [[NSString alloc] initWithCString:pictureType.toCString() encoding:NSUTF8StringEncoding];
+    NSString *desc = Util::utf8NSString(pictureDescription);
+    NSString *pict = Util::utf8NSString(pictureType);
 
-    TagPicture *tagPicture = [[TagPicture alloc] initWithImage:imageRef utType:utType pictureDescription:desc pictureType:pict];
+    TagPicture *tagPicture = [[TagPicture alloc] initWithImage:imageRef
+                                                        utType:utType
+                                            pictureDescription:desc
+                                                   pictureType:pict];
 
     return tagPicture;
 }
@@ -342,13 +346,10 @@ const String pictureTypeKey("pictureType");
     map.insert(mimeTypeKey, String(value, String::Type::UTF8));
 
     CFMutableDataRef mutableData = CFDataCreateMutable(NULL, 0);
-
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData(
-        mutableData,
-        (__bridge CFStringRef)picture.utType.identifier,
-        1,
-        NULL
-        );
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(mutableData,
+                                                                         (__bridge CFStringRef)picture.utType.identifier,
+                                                                         1,
+                                                                         NULL);
 
     CGImageDestinationAddImage(destination, picture.cgImage, nil);
 
@@ -359,17 +360,17 @@ const String pictureTypeKey("pictureType");
 
     NSData *nsData = (__bridge NSData *)mutableData;
 
-    if (nsData) {
-        char buffer[nsData.length];
-        [nsData getBytes:buffer length:nsData.length];
-
-        ByteVector data = ByteVector(buffer, int(nsData.length));
-
-        map.insert("data", data);
+    if (!nsData) {
+        cout << "data is nil" << endl;
+        return false;
     }
 
-    tag->setComplexProperties(pictureKey, { map });
+    char buffer[nsData.length];
+    [nsData getBytes:buffer length:nsData.length];
+    ByteVector data = ByteVector(buffer, int(nsData.length));
+    map.insert("data", data);
 
+    tag->setComplexProperties(pictureKey, { map });
     fileRef.save();
 
     return true;
