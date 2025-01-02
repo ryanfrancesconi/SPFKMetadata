@@ -4,7 +4,7 @@
 #import <iostream>
 #import <tag/tstring.h>
 
-namespace Util {
+namespace StringUtil {
     /**
        If the length of the string is less than n characters, add null byte.
        returns the size written.

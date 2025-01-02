@@ -10,7 +10,7 @@
 #import <tag/tpropertymap.h>
 #import <tag/wavfile.h>
 
-#import "spfk_util.h"
+#import "StringUtil.h"
 #import "TagFile.h"
 
 @implementation TagFile

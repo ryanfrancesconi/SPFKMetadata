@@ -26,7 +26,7 @@
 #import "TagLibBridge.h"
 #import "TagPicture.h"
 
-#import "spfk_util.h"
+#import "StringUtil.h"
 
 using namespace std;
 using namespace TagLib;
@@ -294,7 +294,7 @@ const String pictureTypeKey("pictureType");
         return nil;
     }
 
-    NSString *mimeType = Util::utf8NSString(pictureMimeType);
+    NSString *mimeType = StringUtil::utf8NSString(pictureMimeType);
     UTType *utType = [UTType typeWithMIMEType:mimeType];
 
     if (!utType) {
@@ -302,8 +302,8 @@ const String pictureTypeKey("pictureType");
         return nil;
     }
 
-    NSString *desc = Util::utf8NSString(pictureDescription);
-    NSString *pict = Util::utf8NSString(pictureType);
+    NSString *desc = StringUtil::utf8NSString(pictureDescription);
+    NSString *pict = StringUtil::utf8NSString(pictureType);
 
     TagPicture *tagPicture = [[TagPicture alloc] initWithImage:imageRef
                                                         utType:utType
@@ -332,17 +332,17 @@ const String pictureTypeKey("pictureType");
     VariantMap map;
 
     if (picture.pictureDescription) {
-        const char *value = Util::utf8CString(picture.pictureDescription);
+        const char *value = StringUtil::utf8CString(picture.pictureDescription);
         map.insert(descriptionKey, String(value, String::Type::UTF8));
     }
 
     if (picture.pictureType) {
-        const char *value = Util::utf8CString(picture.pictureType);
+        const char *value = StringUtil::utf8CString(picture.pictureType);
         map.insert(pictureTypeKey, String(value, String::Type::UTF8));
     }
 
     NSString *mimeType = picture.utType.preferredMIMEType;
-    const char *value = Util::utf8CString(mimeType);
+    const char *value = StringUtil::utf8CString(mimeType);
     map.insert(mimeTypeKey, String(value, String::Type::UTF8));
 
     CFMutableDataRef mutableData = CFDataCreateMutable(NULL, 0);
