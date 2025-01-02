@@ -32,8 +32,8 @@ namespace Util {
     }
 
     /**
-     If a string is < n, pad with character 0 -- for UMID bext spec which
-     says to fill the remaining size with 0s.
+       If a string is < n, pad with character 0 -- for UMID bext spec which
+       says to fill the remaining size with 0s.
      */
     static void
     strncpy_pad0(char *dest, const char *src, size_t n, bool terminate) {
@@ -57,18 +57,16 @@ namespace Util {
         }
     }
 
-
     /**
-     A string is null terminated in the bext chunk if it is less than the full size,
-     otherwise it isn't. This will clamp to maxLength to make sure it doesn't keep
-     reading towards the next null byte which would overflow into a subsequent
-     field in the bext data.
+       A string is null terminated in the bext chunk if it is less than the full size,
+       otherwise it isn't. This will clamp to maxLength to make sure it doesn't keep
+       reading towards the next null byte which would overflow into a subsequent
+       field in the bext data.
      */
     static NSString *
     asciiString(const char *s, size_t maxLength) {
-        
         size_t len = MIN(maxLength, strlen(s));
-        
+
         return [
             [NSString alloc] initWithBytes:s
                                     length:len
@@ -79,5 +77,10 @@ namespace Util {
     static const char *
     asciiCString(NSString *string) {
         return [string cStringUsingEncoding:NSASCIIStringEncoding];
+    }
+
+    static const char *
+    utf8CString(NSString *string) {
+        return [string cStringUsingEncoding:NSUTF8StringEncoding];
     }
 }
