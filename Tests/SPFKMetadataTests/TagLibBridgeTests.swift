@@ -7,7 +7,7 @@ import Testing
 
 @Suite(.serialized)
 class TagLibBridgeTests: SPFKMetadataTestModel {
-    var deleteBin = false
+    var deleteBin = true
 
     lazy var bin: URL = createBin(suite: "TagLibBridgeTests")
     deinit { if deleteBin { removeBin() } }
@@ -77,18 +77,15 @@ class TagLibBridgeTests: SPFKMetadataTestModel {
         let tmpfile = try copy(to: bin, url: mp3_id3)
         let imageURL = sharksandwich
 
-        let utType = try #require(
-            UTType(filenameExtension: imageURL.pathExtension)
-        )
-
         let tagPicture = try #require(
             TagPicture(
                 url: imageURL,
-                utType: utType,
                 pictureDescription: "Shit Sandwich",
                 pictureType: "Back Cover"
             )
         )
+
+        #expect(tagPicture.utType == .jpeg)
 
         Swift.print(tagPicture.cgImage)
 

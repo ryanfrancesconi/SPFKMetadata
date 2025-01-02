@@ -26,14 +26,13 @@
 }
 
 - (nullable id)initWithURL:(NSURL *)url
-                    utType:(UTType *)utType
         pictureDescription:(NSString *)pictureDescription
                pictureType:(NSString *)pictureType
 {
     self = [super init];
 
     _pictureDescription = pictureDescription;
-    _utType = utType;
+    _utType = [UTType typeWithFilenameExtension:url.pathExtension];
     _pictureType = pictureType;
 
     if (_pictureType == nil) {
@@ -42,9 +41,9 @@
 
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData((CFDataRef)[NSData dataWithContentsOfURL:url]);
 
-    if (utType == UTTypeJPEG) {
+    if (_utType == UTTypeJPEG) {
         _cgImage = CGImageCreateWithJPEGDataProvider(dataProvider, NULL, true, kCGRenderingIntentDefault);
-    } else if (utType == UTTypePNG) {
+    } else if (_utType == UTTypePNG) {
         _cgImage = CGImageCreateWithPNGDataProvider(dataProvider, NULL, true, kCGRenderingIntentDefault);
     } else {
         NSLog(@"Image must be either JPEG or PNG");

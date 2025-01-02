@@ -13,19 +13,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSString *pictureType;
 @property (nonatomic, strong, nonnull) UTType *utType;
 
-/// Create a TagPicture from a CGImage
+/// Creates a `TagPicture` from a `CGImage`
 - (nonnull id)initWithImage:(CGImageRef)cgImage
                      utType:(UTType *)utType
          pictureDescription:(NSString *)pictureDescription
                 pictureType:(NSString *)pictureType;
 
-/// Create a TagPicture from either a JPEG or PNG
-/// - Parameters:
-///   - url: url to the image file
-///   - pictureDescription: Description of the image to be embedded
-///   - pictureType: Cover Image, etc
+/// Creates a `TagPicture` from either a JPEG or PNG `URL`.
+/// No other file types are supported.
 - (nullable id)initWithURL:(NSURL *)url
-                    utType:(UTType *)utType
         pictureDescription:(NSString *)pictureDescription
                pictureType:(NSString *)pictureType;
 
