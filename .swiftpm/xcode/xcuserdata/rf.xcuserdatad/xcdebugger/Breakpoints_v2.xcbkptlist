@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C9B18581-9915-4D5C-AFB2-DF0131A857E2"
-            shouldBeEnabled = "No"
+            uuid = "B3C39BCE-3A1D-4DDC-85E2-A632CFA6AEAE"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Sources/SPFKMetadataC/Markers/AudioMarkerUtil.m"
+            filePath = "Sources/SPFKMetadataC/TagLibBridge.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
-            landmarkName = "+update:markers:"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
+            landmarkName = "+getPicture:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

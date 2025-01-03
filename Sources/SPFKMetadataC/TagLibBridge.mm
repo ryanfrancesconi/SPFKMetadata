@@ -4,6 +4,10 @@
 #import <iostream>
 #import <stdio.h>
 
+#import <CoreGraphics/CGImage.h>
+#import <ImageIO/CGImageDestination.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
 #import <tag/aifffile.h>
 #import <tag/fileref.h>
 #import <tag/mp4file.h>
@@ -20,8 +24,9 @@
 #import "ChapterMarker.h"
 #import "TagFile.h"
 #import "TagLibBridge.h"
+#import "TagPicture.h"
 
-#import "spfk_util.h"
+#import "StringUtil.h"
 
 using namespace std;
 using namespace TagLib;
@@ -119,7 +124,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "FileRef is NULL" << endl;
+        cout << "FileRef isNull" << endl;
         return nil;
     }
 
@@ -179,7 +184,7 @@ using namespace TagLib;
         MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
         return mpegFile->strip();
     }
-    
+
     // handle more types here
 
     // unsupported file
@@ -218,6 +223,163 @@ using namespace TagLib;
     return output.save();
 }
 
-// getArtwork, setArtwork -- CGImage
+// MARK: - Pictures
+
+// Note: these are TagLib constants
+
+const String pictureKey("PICTURE");
+const String dataKey("data");
+const String mimeTypeKey("mimeType");
+const String descriptionKey("description");
+const String pictureTypeKey("pictureType");
+
++ (TagPicture *)getPicture:(nonnull NSString *)path {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        cout << "FileRef isNull" << endl;
+        return nil;
+    }
+
+    Tag *tag = fileRef.tag();
+
+    if (!tag) {
+        cout << "Unable to read tag" << endl;
+        return nil;
+    }
+
+    auto pictures = tag->complexProperties(pictureKey);
+
+    if (pictures.size() == 0) {
+        return nil;
+    }
+
+    // take the first picture only
+    auto picture = pictures.front();
+
+    String pictureMimeType = picture.value(mimeTypeKey).value<String>();
+    NSString *mimeType = StringUtil::utf8NSString(pictureMimeType);
+    UTType *utType = [UTType typeWithMIMEType:mimeType];
+
+    if (!utType) {
+        cout << "Failed to determine UTType" << endl;
+        return nil;
+    }
+
+    ByteVector pictureData = picture.value(dataKey).toByteVector();
+    String pictureDescription = picture.value(descriptionKey).value<String>();
+    String pictureType = picture.value(pictureTypeKey).value<String>();
+
+    NSData *nsData = [[NSData alloc] initWithBytes:pictureData.data() length:pictureData.size()];
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData((__bridge CFDataRef)nsData);
+
+    CGImageRef imageRef = nil;
+
+    if (utType == UTTypeJPEG) {
+        imageRef = CGImageCreateWithJPEGDataProvider(
+            dataProvider,
+            NULL,
+            true,
+            kCGRenderingIntentDefault
+            );
+    } else if (utType == UTTypePNG) {
+        imageRef = CGImageCreateWithPNGDataProvider(
+            dataProvider,
+            NULL,
+            true,
+            kCGRenderingIntentDefault
+            );
+    }
+
+    CFRelease(dataProvider);
+
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+
+    bool validSize = width > 0 && height > 0;
+
+    if (!imageRef) {
+        cout << "Failed to create CGImageRef" << endl;
+        return nil;
+    }
+
+    if (!validSize) {
+        cout << "Invalid size returned for image" << endl;
+        return nil;
+    }
+
+    NSString *desc = StringUtil::utf8NSString(pictureDescription);
+    NSString *pict = StringUtil::utf8NSString(pictureType);
+
+    TagPicture *tagPicture = [[TagPicture alloc] initWithImage:imageRef
+                                                        utType:utType
+                                            pictureDescription:desc
+                                                   pictureType:pict];
+
+    return tagPicture;
+}
+
++ (bool)setPicture:(nonnull NSString *)path picture:(nonnull TagPicture *)picture {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        cout << "FileRef isNull" << endl;
+
+        return false;
+    }
+
+    Tag *tag = fileRef.tag();
+
+    if (!tag) {
+        cout << "Unable to read tag" << endl;
+        return false;
+    }
+
+    VariantMap map;
+
+    if (picture.pictureDescription) {
+        const char *value = StringUtil::utf8CString(picture.pictureDescription);
+        map.insert(descriptionKey, String(value, String::Type::UTF8));
+    }
+
+    if (picture.pictureType) {
+        const char *value = StringUtil::utf8CString(picture.pictureType);
+        map.insert(pictureTypeKey, String(value, String::Type::UTF8));
+    }
+
+    NSString *mimeType = picture.utType.preferredMIMEType;
+    const char *value = StringUtil::utf8CString(mimeType);
+    map.insert(mimeTypeKey, String(value, String::Type::UTF8));
+
+    CFMutableDataRef mutableData = CFDataCreateMutable(NULL, 0);
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(mutableData,
+                                                                         (__bridge CFStringRef)picture.utType.identifier,
+                                                                         1,
+                                                                         NULL);
+
+    CGImageDestinationAddImage(destination, picture.cgImage, nil);
+
+    if (!CGImageDestinationFinalize(destination)) {
+        cout << "CGImageDestinationFinalize failed" << endl;
+        return false;
+    }
+
+    NSData *nsData = (__bridge NSData *)mutableData;
+
+    if (!nsData) {
+        cout << "data is nil" << endl;
+        return false;
+    }
+
+    char buffer[nsData.length];
+    [nsData getBytes:buffer length:nsData.length];
+    ByteVector data = ByteVector(buffer, int(nsData.length));
+    map.insert(dataKey, data);
+
+    tag->setComplexProperties(pictureKey, { map });
+    fileRef.save();
+
+    return true;
+}
 
 @end

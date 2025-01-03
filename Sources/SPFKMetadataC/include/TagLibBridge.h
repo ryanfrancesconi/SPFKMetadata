@@ -3,6 +3,8 @@
 #import <CoreAudio/CoreAudio.h>
 #import <Foundation/Foundation.h>
 
+#import "TagPicture.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface TagLibBridge : NSObject
@@ -29,6 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (bool)copyTagsFromPath:(NSString *)path
                   toPath:(NSString *)toPath;
+
++ (nullable TagPicture *)getPicture:(NSString *)path;
+
++ (bool)setPicture:(NSString *)path
+           picture:(TagPicture *)picture;
 
 @end
 

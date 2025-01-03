@@ -29,6 +29,7 @@ extension SPFKMetadataTestModel {
     var wav_bext_v2: URL { getResource(named: "and-oh-how-they-danced.wav") }
     var tabla_mp4: URL { getResource(named: "tabla.mp4") }
     var toc_many_children: URL { getResource(named: "toc_many_children.mp3") }
+    var sharksandwich: URL { getResource(named: "sharksandwich.jpg") }
 }
 
 extension SPFKMetadataTestModel {

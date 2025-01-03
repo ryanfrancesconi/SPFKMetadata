@@ -10,6 +10,9 @@ class TagFileTests: SPFKMetadataTestModel {
     @Test func testParseID3() async throws {
         let tagFile = try #require(TagFile(path: wav_bext_v2.path))
 
-        #expect(tagFile.dictionary?["TITLE"] as? String == "Stonehenge")
+        // this is the TagLib properties map
+        #expect(
+            tagFile.dictionary?["TITLE"] as? String == "Stonehenge"
+        )
     }
 }

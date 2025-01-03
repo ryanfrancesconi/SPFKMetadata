@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 #import "BEXTDescriptionC.h"
 #import "sndfile.hh"
-#import "spfk_util.h"
+#import "StringUtil.h"
 
 @implementation BEXTDescriptionC
 
@@ -43,11 +43,11 @@
         self.maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
     }
 
-    self.bextDescription = Util::asciiString(bext.description, sizeof(bext.description));
-    self.originator = Util::asciiString(bext.originator, sizeof(bext.originator));
-    self.originationDate = Util::asciiString(bext.origination_date, sizeof(bext.origination_date));
-    self.originationTime =  Util::asciiString(bext.origination_time, sizeof(bext.origination_time));
-    self.originatorReference = Util::asciiString(bext.originator_reference, sizeof(bext.originator_reference));
+    self.bextDescription = StringUtil::asciiString(bext.description, sizeof(bext.description));
+    self.originator = StringUtil::asciiString(bext.originator, sizeof(bext.originator));
+    self.originationDate = StringUtil::asciiString(bext.origination_date, sizeof(bext.origination_date));
+    self.originationTime =  StringUtil::asciiString(bext.origination_time, sizeof(bext.origination_time));
+    self.originatorReference = StringUtil::asciiString(bext.originator_reference, sizeof(bext.originator_reference));
 
     self.timeReferenceLow = bext.time_reference_low;
     self.timeReferenceHigh = bext.time_reference_high;
@@ -69,41 +69,41 @@
 
     bext.version = info.version;
 
-    const char *umid = Util::asciiCString(info.umid);
-    const char *codingHistory = Util::asciiCString(info.codingHistory);
-    const char *description = Util::asciiCString(info.bextDescription);
-    const char *originator = Util::asciiCString(info.originator);
-    const char *originatorReference = Util::asciiCString(info.originatorReference);
-    const char *originationDate = Util::asciiCString(info.originationDate);
-    const char *originationTime = Util::asciiCString(info.originationTime);
+    const char *umid = StringUtil::asciiCString(info.umid);
+    const char *codingHistory = StringUtil::asciiCString(info.codingHistory);
+    const char *description = StringUtil::asciiCString(info.bextDescription);
+    const char *originator = StringUtil::asciiCString(info.originator);
+    const char *originatorReference = StringUtil::asciiCString(info.originatorReference);
+    const char *originationDate = StringUtil::asciiCString(info.originationDate);
+    const char *originationTime = StringUtil::asciiCString(info.originationTime);
 
     if (codingHistory) {
-        size_t chsize = Util::strncpy_validate(bext.coding_history, codingHistory, sizeof(bext.coding_history));
+        size_t chsize = StringUtil::strncpy_validate(bext.coding_history, codingHistory, sizeof(bext.coding_history));
         bext.coding_history_size = (uint32_t)chsize;
     }
 
     if (info.version >= 1 && umid) {
-        Util::strncpy_pad0(bext.umid, umid, sizeof(bext.umid), true);
+        StringUtil::strncpy_pad0(bext.umid, umid, sizeof(bext.umid), true);
     }
 
     if (description) {
-        Util::strncpy_validate(bext.description, description, sizeof(bext.description));
+        StringUtil::strncpy_validate(bext.description, description, sizeof(bext.description));
     }
 
     if (originator) {
-        Util::strncpy_validate(bext.originator, originator, sizeof(bext.originator));
+        StringUtil::strncpy_validate(bext.originator, originator, sizeof(bext.originator));
     }
 
     if (originatorReference) {
-        Util::strncpy_validate(bext.originator_reference, originatorReference, sizeof(bext.originator_reference));
+        StringUtil::strncpy_validate(bext.originator_reference, originatorReference, sizeof(bext.originator_reference));
     }
 
     if (originationDate) {
-        Util::strncpy_pad0(bext.origination_date, originationDate, sizeof(bext.origination_date), false);
+        StringUtil::strncpy_pad0(bext.origination_date, originationDate, sizeof(bext.origination_date), false);
     }
 
     if (originationTime) {
-        Util::strncpy_pad0(bext.origination_time, originationTime, sizeof(bext.origination_time), false);
+        StringUtil::strncpy_pad0(bext.origination_time, originationTime, sizeof(bext.origination_time), false);
     }
 
     if (info.version >= 2) {
