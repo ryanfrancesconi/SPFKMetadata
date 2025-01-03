@@ -374,7 +374,7 @@ const String pictureTypeKey("pictureType");
     char buffer[nsData.length];
     [nsData getBytes:buffer length:nsData.length];
     ByteVector data = ByteVector(buffer, int(nsData.length));
-    map.insert("data", data);
+    map.insert(dataKey, data);
 
     tag->setComplexProperties(pictureKey, { map });
     fileRef.save();
