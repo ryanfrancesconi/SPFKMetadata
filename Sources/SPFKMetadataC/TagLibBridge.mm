@@ -249,15 +249,24 @@ const String pictureTypeKey("pictureType");
     }
 
     auto pictures = tag->complexProperties(pictureKey);
-    
+
     if (pictures.size() == 0) {
         return nil;
     }
-    
+
+    // take the first picture only
     auto picture = pictures.front();
 
-    ByteVector pictureData = picture.value(dataKey).toByteVector();
     String pictureMimeType = picture.value(mimeTypeKey).value<String>();
+    NSString *mimeType = StringUtil::utf8NSString(pictureMimeType);
+    UTType *utType = [UTType typeWithMIMEType:mimeType];
+
+    if (!utType) {
+        cout << "Failed to determine UTType" << endl;
+        return nil;
+    }
+
+    ByteVector pictureData = picture.value(dataKey).toByteVector();
     String pictureDescription = picture.value(descriptionKey).value<String>();
     String pictureType = picture.value(pictureTypeKey).value<String>();
 
@@ -266,14 +275,14 @@ const String pictureTypeKey("pictureType");
 
     CGImageRef imageRef = nil;
 
-    if (pictureMimeType == "image/jpeg") {
+    if (utType == UTTypeJPEG) {
         imageRef = CGImageCreateWithJPEGDataProvider(
             dataProvider,
             NULL,
             true,
             kCGRenderingIntentDefault
             );
-    } else if (pictureMimeType == "image/png") {
+    } else if (utType == UTTypePNG) {
         imageRef = CGImageCreateWithPNGDataProvider(
             dataProvider,
             NULL,
@@ -296,14 +305,6 @@ const String pictureTypeKey("pictureType");
 
     if (!validSize) {
         cout << "Invalid size returned for image" << endl;
-        return nil;
-    }
-
-    NSString *mimeType = StringUtil::utf8NSString(pictureMimeType);
-    UTType *utType = [UTType typeWithMIMEType:mimeType];
-
-    if (!utType) {
-        cout << "Failed to determine UTType" << endl;
         return nil;
     }
 
