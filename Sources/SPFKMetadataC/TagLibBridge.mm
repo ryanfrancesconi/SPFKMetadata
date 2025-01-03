@@ -249,6 +249,11 @@ const String pictureTypeKey("pictureType");
     }
 
     auto pictures = tag->complexProperties(pictureKey);
+    
+    if (pictures.size() == 0) {
+        return nil;
+    }
+    
     auto picture = pictures.front();
 
     ByteVector pictureData = picture.value(dataKey).toByteVector();

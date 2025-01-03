@@ -7,7 +7,7 @@ import Testing
 
 @Suite(.serialized)
 class TagLibBridgeTests: SPFKMetadataTestModel {
-    var deleteBin = true
+    var deleteBin = false
 
     lazy var bin: URL = createBin(suite: "TagLibBridgeTests")
     deinit { if deleteBin { removeBin() } }
@@ -71,6 +71,12 @@ class TagLibBridgeTests: SPFKMetadataTestModel {
         try cgImage.export(type: exportType, to: url)
 
         Swift.print(tagPicture.cgImage)
+    }
+
+    @Test func getPictureFail() async throws {
+        let source = toc_many_children
+        let tagPicture = TagLibBridge.getPicture(source.path)
+        #expect(tagPicture == nil)
     }
 
     @Test func setPicture() async throws {
