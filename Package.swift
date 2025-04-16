@@ -25,6 +25,7 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private let dependencies: [PackageDescription.Package.Dependency] = [
+    //.package(path: "../SPFKUtils")
     .package(url: "https://github.com/ryanfrancesconi/SPFKUtils", branch: "main"),
 ]
 
