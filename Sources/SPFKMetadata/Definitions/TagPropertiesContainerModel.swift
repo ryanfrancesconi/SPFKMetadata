@@ -1,7 +1,7 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
-import SPFKUtils
+internal import OTCore
 
 public typealias TagKeyDictionary = [TagKey: String]
 
