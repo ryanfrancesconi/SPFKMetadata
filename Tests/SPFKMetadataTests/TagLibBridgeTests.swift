@@ -93,7 +93,7 @@ class TagLibBridgeTests: SPFKMetadataTestModel {
 
         #expect(tagPicture.utType == .jpeg)
 
-        Swift.print(tagPicture.cgImage)
+        Swift.print(tmpfile.path, tagPicture.cgImage)
 
         let result = TagLibBridge.setPicture(tmpfile.path, picture: tagPicture)
         #expect(result)

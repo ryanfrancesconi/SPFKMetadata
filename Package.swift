@@ -14,7 +14,7 @@ private let name: String = "SPFKMetadata"
 private let nameC: String = "\(name)C"
 
 private let platforms: [PackageDescription.SupportedPlatform]? = [
-    .macOS(.v11)
+    .macOS(.v12)
 ]
 
 private let products: [PackageDescription.Product] = [
@@ -24,11 +24,18 @@ private let products: [PackageDescription.Product] = [
     )
 ]
 
+private let dependencies: [PackageDescription.Package.Dependency] = [
+    .package(url: "https://github.com/ryanfrancesconi/SPFKUtils", branch: "main"),
+]
+
 private let targets: [PackageDescription.Target] = [
     // Swift
     .target(
         name: name,
-        dependencies: [.target(name: nameC)]
+        dependencies: [
+            .target(name: nameC),
+            .byNameItem(name: "SPFKUtils", condition: nil)
+        ]
     ),
     
     // C
@@ -74,6 +81,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: platforms,
     products: products,
+    dependencies: dependencies,
     targets: targets,
     cxxLanguageStandard: .cxx20
 )

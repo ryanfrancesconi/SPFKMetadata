@@ -3,6 +3,7 @@
 import AVFoundation
 import Foundation
 import SPFKMetadataC
+import SPFKUtils
 
 /// Parse Chapters, works with a variety of file types. In particular
 /// this is the MP4 chapter parser in SPFKMetadata.

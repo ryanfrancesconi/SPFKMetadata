@@ -3,6 +3,7 @@
 #import <iomanip>
 #import <iostream>
 #import <stdio.h>
+#import <vector>
 
 #import <CoreGraphics/CGImage.h>
 #import <ImageIO/CGImageDestination.h>
@@ -225,7 +226,7 @@ using namespace TagLib;
 
 // MARK: - Pictures
 
-// Note: these are TagLib constants
+// NOTE: these are TagLib constants
 
 const String pictureKey("PICTURE");
 const String dataKey("data");
@@ -352,10 +353,12 @@ const String pictureTypeKey("pictureType");
     map.insert(mimeTypeKey, String(value, String::Type::UTF8));
 
     CFMutableDataRef mutableData = CFDataCreateMutable(NULL, 0);
-    CGImageDestinationRef destination = CGImageDestinationCreateWithData(mutableData,
-                                                                         (__bridge CFStringRef)picture.utType.identifier,
-                                                                         1,
-                                                                         NULL);
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(
+        mutableData,
+        (__bridge CFStringRef)picture.utType.identifier,
+        1,
+        NULL
+        );
 
     CGImageDestinationAddImage(destination, picture.cgImage, nil);
 
@@ -371,15 +374,24 @@ const String pictureTypeKey("pictureType");
         return false;
     }
 
-    char buffer[nsData.length];
-    [nsData getBytes:buffer length:nsData.length];
-    ByteVector data = ByteVector(buffer, int(nsData.length));
+    vector<char> vector = copyToVector(nsData);
+
+    ByteVector data = ByteVector(vector.data(), int(vector.size()));
     map.insert(dataKey, data);
 
     tag->setComplexProperties(pictureKey, { map });
     fileRef.save();
 
     return true;
+}
+
+vector<char> copyToVector(NSData *data) {
+    const char *bytes = (const char *)[data bytes];
+    NSUInteger length = [data length];
+
+    vector<char> vec(length);
+    copy(bytes, bytes + length, vec.begin());
+    return vec;
 }
 
 @end

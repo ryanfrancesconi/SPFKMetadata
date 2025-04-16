@@ -3,6 +3,7 @@
 import AudioToolbox
 import Foundation
 import SPFKMetadataC
+import SPFKUtils
 
 /// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC but with
 /// more friendly syntax.
