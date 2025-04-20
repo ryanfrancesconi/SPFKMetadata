@@ -7,7 +7,7 @@ import Foundation
 import Testing
 
 @Suite(.serialized)
-class MP4MarkerTests: TestCaseModel {
+class MP4MarkerTests: BinTestCase {
     func getChapters(in url: URL) async throws -> [ChapterMarker] {
         let chapters = try await ChapterParser.parse(url: url)
         Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
@@ -15,7 +15,7 @@ class MP4MarkerTests: TestCaseModel {
     }
 
     @Test func parseMarkers() async throws {
-        let markers = try await getChapters(in: tabla_mp4)
+        let markers = try await getChapters(in: resources.tabla_mp4)
         let names = markers.compactMap { $0.name }
         let times = markers.map { $0.startTime }
 

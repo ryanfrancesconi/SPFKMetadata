@@ -7,12 +7,10 @@ import Foundation
 import Testing
 
 @Suite(.serialized)
-class BroadcastInfoTests: TestCaseModel {
-    lazy var bin: URL = createBin(suite: "BroadcastInfoTests")
-    deinit { removeBin() }
+class BroadcastInfoTests: BinTestCase {
 
     @Test func parseBEXT_v2() async throws {
-        let desc = try #require(BEXTDescription(url: wav_bext_v2))
+        let desc = try #require(BEXTDescription(url: resources.wav_bext_v2))
 
         Swift.print(desc)
 
@@ -40,7 +38,7 @@ class BroadcastInfoTests: TestCaseModel {
     }
 
     @Test func writeBEXT() async throws {
-        let tmpfile = try copy(to: bin, url: wav_bext_v2)
+        let tmpfile = try copyToBin(url: resources.wav_bext_v2)
 
         var desc = BEXTDescription()
         desc.description = "A new description"

@@ -7,14 +7,9 @@ import Foundation
 import Testing
 
 @Suite(.serialized)
-class TagLibBridgeTests: TestCaseModel {
-    var deleteBin = false
-
-    lazy var bin: URL = createBin(suite: "TagLibBridgeTests")
-    deinit { if deleteBin { removeBin() } }
-
+class TagLibBridgeTests: BinTestCase {
     @Test func readWriteProperties() async throws {
-        let tmpfile = try copy(to: bin, url: wav_bext_v2)
+        let tmpfile = try copyToBin(url: resources.wav_bext_v2)
         var dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
         #expect(dict["TITLE"] == "Stonehenge")
 
@@ -31,7 +26,7 @@ class TagLibBridgeTests: TestCaseModel {
     }
 
     @Test func removeAllTags() async throws {
-        let tmpfile = try copy(to: bin, url: mp3_id3)
+        let tmpfile = try copyToBin(url: resources.mp3_id3)
 
         let success = TagLibBridge.removeAllTags(tmpfile.path)
         #expect(success)
@@ -41,9 +36,9 @@ class TagLibBridgeTests: TestCaseModel {
     }
 
     @Test func copyMetadata() async throws {
-        let source = mp3_id3
-        let destination = tabla_mp4
-        let tmpfile = try copy(to: bin, url: destination)
+        let source = resources.mp3_id3
+        let destination = resources.tabla_mp4
+        let tmpfile = try copyToBin(url: destination)
 
         let success = TagLibBridge.copyTags(fromPath: source.path, toPath: tmpfile.path)
         #expect(success)
@@ -53,7 +48,7 @@ class TagLibBridgeTests: TestCaseModel {
     }
 
     @Test func getPicture() async throws {
-        let source = mp3_id3
+        let source = resources.mp3_id3
 
         let tagPicture = try #require(TagLibBridge.getPicture(source.path))
         let desc = try #require(tagPicture.pictureDescription)
@@ -75,14 +70,16 @@ class TagLibBridgeTests: TestCaseModel {
     }
 
     @Test func getPictureFail() async throws {
-        let source = toc_many_children
+        let source = resources.toc_many_children
+        #expect(source.exists)
+        
         let tagPicture = TagLibBridge.getPicture(source.path)
         #expect(tagPicture == nil)
     }
 
     @Test func setPicture() async throws {
-        let tmpfile = try copy(to: bin, url: mp3_id3)
-        let imageURL = sharksandwich
+        let tmpfile = try copyToBin(url: resources.mp3_id3)
+        let imageURL = resources.sharksandwich
 
         let tagPicture = try #require(
             TagPicture(

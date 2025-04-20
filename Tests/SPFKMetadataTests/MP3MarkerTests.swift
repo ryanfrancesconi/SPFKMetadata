@@ -7,10 +7,7 @@ import Foundation
 import Testing
 
 @Suite(.serialized)
-class MP3MarkerTests: TestCaseModel {
-    lazy var bin: URL = createBin(suite: "MP3MarkerTests")
-    deinit { removeBin() }
-
+class MP3MarkerTests: BinTestCase {
     func getChapters(in url: URL) -> [ChapterMarker] {
         let chapters = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
         Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
@@ -18,7 +15,7 @@ class MP3MarkerTests: TestCaseModel {
     }
 
     @Test func parseMarkers() async throws {
-        let markers = getChapters(in: mp3_id3)
+        let markers = getChapters(in: resources.mp3_id3)
 
         let names = markers.compactMap { $0.name }
         let times = markers.map { $0.startTime }
@@ -29,12 +26,12 @@ class MP3MarkerTests: TestCaseModel {
     }
 
     @Test func parseMarkers2() async throws {
-        let markers = getChapters(in: toc_many_children)
+        let markers = getChapters(in: resources.toc_many_children)
         #expect(markers.count == 129)
     }
 
     @Test func writeMarkers() async throws {
-        let tmpfile = try copy(to: bin, url: mp3_id3)
+        let tmpfile = try copyToBin(url: resources.mp3_id3)
         #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
         let markers: [ChapterMarker] = [
@@ -55,7 +52,7 @@ class MP3MarkerTests: TestCaseModel {
     }
 
     @Test func removeMarkers() async throws {
-        let tmpfile = try copy(to: bin, url: mp3_id3)
+        let tmpfile = try copyToBin(url: resources.mp3_id3)
         #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
         let chapters = getChapters(in: tmpfile)
