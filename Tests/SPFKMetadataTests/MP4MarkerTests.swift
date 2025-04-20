@@ -3,10 +3,11 @@
 import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
+@testable import SPFKTesting
 import Testing
 
 @Suite(.serialized)
-class MP4MarkerTests: SPFKMetadataTestModel {
+class MP4MarkerTests: TestCaseModel {
     func getChapters(in url: URL) async throws -> [ChapterMarker] {
         let chapters = try await ChapterParser.parse(url: url)
         Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })

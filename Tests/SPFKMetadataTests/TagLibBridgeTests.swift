@@ -3,10 +3,11 @@
 import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
+@testable import SPFKTesting
 import Testing
 
 @Suite(.serialized)
-class TagLibBridgeTests: SPFKMetadataTestModel {
+class TagLibBridgeTests: TestCaseModel {
     var deleteBin = false
 
     lazy var bin: URL = createBin(suite: "TagLibBridgeTests")

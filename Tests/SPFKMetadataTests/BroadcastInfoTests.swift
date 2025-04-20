@@ -3,10 +3,11 @@
 import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
+@testable import SPFKTesting
 import Testing
 
 @Suite(.serialized)
-class BroadcastInfoTests: SPFKMetadataTestModel {
+class BroadcastInfoTests: TestCaseModel {
     lazy var bin: URL = createBin(suite: "BroadcastInfoTests")
     deinit { removeBin() }
 
