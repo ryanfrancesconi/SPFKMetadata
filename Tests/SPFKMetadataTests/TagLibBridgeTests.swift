@@ -4,12 +4,13 @@ import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
 @testable import SPFKTesting
+import SPFKUtils
 import Testing
 
 @Suite(.serialized)
 class TagLibBridgeTests: BinTestCase {
     @Test func readWriteProperties() async throws {
-        let tmpfile = try copyToBin(url: resources.wav_bext_v2)
+        let tmpfile = try copyToBin(url: BundleResources.shared.wav_bext_v2)
         var dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
         #expect(dict["TITLE"] == "Stonehenge")
 
@@ -26,7 +27,7 @@ class TagLibBridgeTests: BinTestCase {
     }
 
     @Test func removeAllTags() async throws {
-        let tmpfile = try copyToBin(url: resources.mp3_id3)
+        let tmpfile = try copyToBin(url: BundleResources.shared.mp3_id3)
 
         let success = TagLibBridge.removeAllTags(tmpfile.path)
         #expect(success)
@@ -36,8 +37,8 @@ class TagLibBridgeTests: BinTestCase {
     }
 
     @Test func copyMetadata() async throws {
-        let source = resources.mp3_id3
-        let destination = resources.tabla_mp4
+        let source = BundleResources.shared.mp3_id3
+        let destination = BundleResources.shared.tabla_mp4
         let tmpfile = try copyToBin(url: destination)
 
         let success = TagLibBridge.copyTags(fromPath: source.path, toPath: tmpfile.path)
@@ -48,7 +49,7 @@ class TagLibBridgeTests: BinTestCase {
     }
 
     @Test func getPicture() async throws {
-        let source = resources.mp3_id3
+        let source = BundleResources.shared.mp3_id3
 
         let tagPicture = try #require(TagLibBridge.getPicture(source.path))
         let desc = try #require(tagPicture.pictureDescription)
@@ -70,16 +71,16 @@ class TagLibBridgeTests: BinTestCase {
     }
 
     @Test func getPictureFail() async throws {
-        let source = resources.toc_many_children
+        let source = BundleResources.shared.toc_many_children
         #expect(source.exists)
-        
+
         let tagPicture = TagLibBridge.getPicture(source.path)
         #expect(tagPicture == nil)
     }
 
     @Test func setPicture() async throws {
-        let tmpfile = try copyToBin(url: resources.mp3_id3)
-        let imageURL = resources.sharksandwich
+        let tmpfile = try copyToBin(url: BundleResources.shared.mp3_id3)
+        let imageURL = BundleResources.shared.sharksandwich
 
         let tagPicture = try #require(
             TagPicture(

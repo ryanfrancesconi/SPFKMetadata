@@ -4,6 +4,7 @@ import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
 @testable import SPFKTesting
+import SPFKUtils
 import Testing
 
 @Suite(.serialized)
@@ -15,7 +16,7 @@ class MP4MarkerTests: BinTestCase {
     }
 
     @Test func parseMarkers() async throws {
-        let markers = try await getChapters(in: resources.tabla_mp4)
+        let markers = try await getChapters(in: BundleResources.shared.tabla_mp4)
         let names = markers.compactMap { $0.name }
         let times = markers.map { $0.startTime }
 

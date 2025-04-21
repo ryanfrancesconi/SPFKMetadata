@@ -4,6 +4,7 @@ import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
 @testable import SPFKTesting
+import SPFKUtils
 import Testing
 
 @Suite(.serialized)
@@ -15,7 +16,7 @@ class MP3MarkerTests: BinTestCase {
     }
 
     @Test func parseMarkers() async throws {
-        let markers = getChapters(in: resources.mp3_id3)
+        let markers = getChapters(in: BundleResources.shared.mp3_id3)
 
         let names = markers.compactMap { $0.name }
         let times = markers.map { $0.startTime }
@@ -26,12 +27,12 @@ class MP3MarkerTests: BinTestCase {
     }
 
     @Test func parseMarkers2() async throws {
-        let markers = getChapters(in: resources.toc_many_children)
+        let markers = getChapters(in: BundleResources.shared.toc_many_children)
         #expect(markers.count == 129)
     }
 
     @Test func writeMarkers() async throws {
-        let tmpfile = try copyToBin(url: resources.mp3_id3)
+        let tmpfile = try copyToBin(url: BundleResources.shared.mp3_id3)
         #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
         let markers: [ChapterMarker] = [
@@ -52,7 +53,7 @@ class MP3MarkerTests: BinTestCase {
     }
 
     @Test func removeMarkers() async throws {
-        let tmpfile = try copyToBin(url: resources.mp3_id3)
+        let tmpfile = try copyToBin(url: BundleResources.shared.mp3_id3)
         #expect(MPEGChapterUtil.removeAllChapters(tmpfile.path))
 
         let chapters = getChapters(in: tmpfile)

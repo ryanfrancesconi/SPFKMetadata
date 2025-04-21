@@ -4,13 +4,13 @@ import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
 @testable import SPFKTesting
+import SPFKUtils
 import Testing
 
 @Suite(.serialized)
 class BroadcastInfoTests: BinTestCase {
-
     @Test func parseBEXT_v2() async throws {
-        let desc = try #require(BEXTDescription(url: resources.wav_bext_v2))
+        let desc = try #require(BEXTDescription(url: BundleResources.shared.wav_bext_v2))
 
         Swift.print(desc)
 
@@ -38,7 +38,7 @@ class BroadcastInfoTests: BinTestCase {
     }
 
     @Test func writeBEXT() async throws {
-        let tmpfile = try copyToBin(url: resources.wav_bext_v2)
+        let tmpfile = try copyToBin(url: BundleResources.shared.wav_bext_v2)
 
         var desc = BEXTDescription()
         desc.description = "A new description"
