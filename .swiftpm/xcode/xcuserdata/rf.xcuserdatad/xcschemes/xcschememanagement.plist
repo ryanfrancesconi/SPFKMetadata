@@ -4,10 +4,10 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>SPFKMetadata.xcscheme_^#shared#^_</key>
+		<key>SPFKMetadata.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>58</integer>
 		</dict>
 		<key>SwiftTagLib.xcscheme_^#shared#^_</key>
 		<dict>
