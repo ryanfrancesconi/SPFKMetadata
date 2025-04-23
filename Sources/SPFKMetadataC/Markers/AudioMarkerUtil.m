@@ -45,13 +45,10 @@
         return NULL;
     }
 
-    // NSLog(@"# of markers: %d\n", markerList->mNumberMarkers);
-
     UInt32 count = markerList->mNumberMarkers;
 
     if (count <= 0) {
         AudioFileClose(fileID);
-        // NSLog(@"No markers in %@", url);
         free(markerList);
         return NULL;
     }
@@ -83,15 +80,13 @@
             safm.name = [NSString stringWithFormat:@"Marker %d", i + 1];
         }
 
-        // NSLog(@"%@ %lf", safm.name, safm.framePosition);
-
         [array addObject:safm];
     }
 
     free(markerList);
     AudioFileClose(fileID);
 
-    // cast to an immutable one
+    // cast to immutable
     return [array copy];
 }
 
@@ -122,8 +117,6 @@
         return NO;
     }
 
-    // NSLog(@"NumAudioFileMarkersToNumBytes %i", propertySize);
-
     AudioFileMarkerList *markerList = malloc(propertySize);
 
     for (int i = 0; i < inNumMarkers; i++) {
@@ -142,8 +135,6 @@
     }
 
     markerList->mNumberMarkers = (UInt32)inNumMarkers;
-
-    // NSLog(@"markerList->mNumberMarkers %i", markerList->mNumberMarkers);
 
     if (noErr != AudioFileSetProperty(fileID,  kAudioFilePropertyMarkerList, propertySize, markerList)) {
         NSLog(@"Failed to set kAudioFilePropertyMarkerList for %@", url);

@@ -200,7 +200,9 @@ extension BEXTDescription {
 
         return info
     }
+}
 
+extension BEXTDescription {
     /// Writes this BEXTDescription to file. The data will be validated before writing.
     public static func write(bextDescription: BEXTDescription, to url: URL) throws {
         let cObject = bextDescription.validateAndConvert()
