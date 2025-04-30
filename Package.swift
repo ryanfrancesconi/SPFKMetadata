@@ -25,11 +25,11 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private let dependencies: [PackageDescription.Package.Dependency] = [
-    .package(name: "SPFKUtils", path: "../SPFKUtils"),
-    .package(name: "SPFKTesting", path: "../SPFKTesting"),
+//    .package(name: "SPFKUtils", path: "../SPFKUtils"),
+//    .package(name: "SPFKTesting", path: "../SPFKTesting"),
     
-    // .package(url: "https://github.com/ryanfrancesconi/SPFKUtils", branch: "main"),
-    // .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
+     .package(url: "https://github.com/ryanfrancesconi/SPFKUtils", branch: "main"),
+     .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
 ]
 
 private let targets: [PackageDescription.Target] = [
