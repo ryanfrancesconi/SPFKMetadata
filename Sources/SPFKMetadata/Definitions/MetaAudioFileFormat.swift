@@ -14,6 +14,8 @@ public enum MetaAudioFileFormat: String, CaseIterable {
     case mp4
     case mov
     case aac
+    
+    public var pathExtension: String { rawValue }
 }
 
 extension MetaAudioFileFormat {

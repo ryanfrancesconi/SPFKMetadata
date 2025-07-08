@@ -35,6 +35,4 @@ DerivedData/
 Package.resolved
 
 UserInterfaceState.xcuserstate
-xcschememanagement.plist
-sync-repo.sh
 *.swiftpm
