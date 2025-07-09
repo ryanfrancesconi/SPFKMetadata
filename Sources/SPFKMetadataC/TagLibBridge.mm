@@ -67,6 +67,11 @@ using namespace TagLib;
 
         String tagKey = String(key.UTF8String);
 
+        if ([value isEqualToString:@""]) {
+            tags.erase(tagKey);
+            continue;
+        }
+
         tags.replace(tagKey, StringList(value.UTF8String));
     }
 

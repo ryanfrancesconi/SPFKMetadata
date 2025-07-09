@@ -45,6 +45,18 @@ extension TagPropertiesContainerModel {
         tags[frame] = value
     }
 
+    public func contains(key: TagKey) -> Bool {
+        tags.contains { $0.key.id3Frame == key.id3Frame }
+    }
+
+    public func contains(keys: [TagKey]) -> Bool {
+        for key in keys {
+            guard contains(key: key) else { return false }
+        }
+
+        return true
+    }
+
     public var description: String {
         let strings = tags.map {
             let key: TagKey = $0.key
