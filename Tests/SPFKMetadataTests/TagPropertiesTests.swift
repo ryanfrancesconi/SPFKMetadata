@@ -30,7 +30,7 @@ class TagPropertiesTests: BinTestCase {
     @Test func parseID3MP3_AV() async throws {
         let properties = try await TagPropertiesAV(url: BundleResources.shared.mp3_id3)
         // verify(properties: properties)
-        
+
         Log.debug(properties)
     }
 

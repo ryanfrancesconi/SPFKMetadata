@@ -67,11 +67,6 @@ using namespace TagLib;
 
         String tagKey = String(key.UTF8String);
 
-        if ([value isEqualToString:@""]) {
-            tags.erase(tagKey);
-            continue;
-        }
-
         tags.replace(tagKey, StringList(value.UTF8String));
     }
 
@@ -180,21 +175,23 @@ using namespace TagLib;
     if ([fileType isEqualToString:kTagFileTypeWAVE]) {
         RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
         waveFile->strip();
-        return fileRef.save();
         //
     } else if ([fileType isEqualToString:kTagFileTypeM4A] || [fileType isEqualToString:kTagFileTypeMP4]) {
         MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
-        return mp4File->strip();
+        mp4File->strip();
         //
     } else if ([fileType isEqualToString:kTagFileTypeMP3]) {
         MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
-        return mpegFile->strip();
+        mpegFile->strip();
+        //
+    } else {
+        // can handle more types here
+        cout << "Unable to strip tags in" << path << endl;
+
+        return false;
     }
 
-    // handle more types here
-
-    // unsupported file
-    return false;
+    return fileRef.save();
 }
 
 + (bool)copyTagsFromPath:(NSString *)path
@@ -202,7 +199,7 @@ using namespace TagLib;
     FileRef input(path.UTF8String);
 
     if (input.isNull()) {
-        cout << "Unable to write comment" << endl;
+        cout << "Unable to read" << path << endl;
         return false;
     }
 
