@@ -67,7 +67,7 @@ class TagLibBridgeTests: BinTestCase {
         let url = bin.appendingPathComponent(filename, conformingTo: exportType.utType)
         try cgImage.export(type: exportType, to: url)
 
-        Swift.print(tagPicture.cgImage)
+        Log.debug(tagPicture.cgImage)
     }
 
     @Test func getPictureFail() async throws {
@@ -92,7 +92,7 @@ class TagLibBridgeTests: BinTestCase {
 
         #expect(tagPicture.utType == .jpeg)
 
-        Swift.print(tmpfile.path, tagPicture.cgImage)
+        Log.debug(tmpfile.path, tagPicture.cgImage)
 
         let result = TagLibBridge.setPicture(tmpfile.path, picture: tagPicture)
         #expect(result)

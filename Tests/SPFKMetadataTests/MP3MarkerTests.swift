@@ -11,7 +11,7 @@ import Testing
 class MP3MarkerTests: BinTestCase {
     func getChapters(in url: URL) -> [ChapterMarker] {
         let chapters = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
-        Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
+        Log.debug(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
         return chapters
     }
 

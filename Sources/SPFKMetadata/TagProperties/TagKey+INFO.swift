@@ -7,6 +7,8 @@ extension TagKey {
     public var infoFrame: String? {
         switch self {
         case .album: return "IPRD"
+
+        // The name(s) of the engineer. Multiple names separated by a semicolon and a blank.
         case .arranger: return "IENG"
         case .artist: return "IART"
         case .artistWebpage: return "IBSU"

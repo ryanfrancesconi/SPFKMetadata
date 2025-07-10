@@ -38,7 +38,7 @@ using namespace TagLib;
     TagFile *tagFile = [[TagFile alloc] initWithPath:path];
 
     if (!tagFile) {
-        return nil;
+        return NULL;
     }
 
     return tagFile.dictionary;
@@ -50,13 +50,6 @@ using namespace TagLib;
 
     if (fileRef.isNull()) {
         cout << "Unable to read path:" << path << endl;
-        return false;
-    }
-
-    Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        cout << "Unable to create tag" << endl;
         return false;
     }
 
@@ -79,13 +72,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        return nil;
+        cout << "fileRef.isNull. Unable to read path: " << path << endl;
+        return NULL;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        return nil;
+        return NULL;
     }
 
     return @(tag->title().toCString());
@@ -103,7 +97,7 @@ using namespace TagLib;
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        cout << "Unable to write tag" << endl;
+        cout << "Unable to create tag" << endl;
         return false;
     }
 
@@ -125,15 +119,15 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "FileRef isNull" << endl;
-        return nil;
+        cout << "Unable to read path:" << path << endl;
+        return NULL;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        cout << "Tag is NULL" << endl;
-        return nil;
+        cout << "Unable to create tag" << endl;
+        return NULL;
     }
 
     return @(tag->comment().toCString());
@@ -151,7 +145,7 @@ using namespace TagLib;
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        cout << "Unable to write tag" << endl;
+        cout << "Unable to create tag" << endl;
         return false;
     }
 
@@ -240,21 +234,21 @@ const String pictureTypeKey("pictureType");
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "FileRef isNull" << endl;
-        return nil;
+        cout << "fileRef.isNull. Unable to read path: " << path << endl;
+        return NULL;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
         cout << "Unable to read tag" << endl;
-        return nil;
+        return NULL;
     }
 
     auto pictures = tag->complexProperties(pictureKey);
 
     if (pictures.size() == 0) {
-        return nil;
+        return NULL;
     }
 
     // take the first picture only
@@ -266,7 +260,7 @@ const String pictureTypeKey("pictureType");
 
     if (!utType) {
         cout << "Failed to determine UTType" << endl;
-        return nil;
+        return NULL;
     }
 
     ByteVector pictureData = picture.value(dataKey).toByteVector();
@@ -276,7 +270,7 @@ const String pictureTypeKey("pictureType");
     NSData *nsData = [[NSData alloc] initWithBytes:pictureData.data() length:pictureData.size()];
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData((__bridge CFDataRef)nsData);
 
-    CGImageRef imageRef = nil;
+    CGImageRef imageRef = NULL;
 
     if (utType == UTTypeJPEG) {
         imageRef = CGImageCreateWithJPEGDataProvider(
@@ -303,12 +297,12 @@ const String pictureTypeKey("pictureType");
 
     if (!imageRef) {
         cout << "Failed to create CGImageRef" << endl;
-        return nil;
+        return NULL;
     }
 
     if (!validSize) {
         cout << "Invalid size returned for image" << endl;
-        return nil;
+        return NULL;
     }
 
     NSString *desc = StringUtil::utf8NSString(pictureDescription);
@@ -362,7 +356,7 @@ const String pictureTypeKey("pictureType");
         NULL
         );
 
-    CGImageDestinationAddImage(destination, picture.cgImage, nil);
+    CGImageDestinationAddImage(destination, picture.cgImage, NULL);
 
     if (!CGImageDestinationFinalize(destination)) {
         cout << "CGImageDestinationFinalize failed" << endl;
@@ -372,7 +366,7 @@ const String pictureTypeKey("pictureType");
     NSData *nsData = (__bridge NSData *)mutableData;
 
     if (!nsData) {
-        cout << "data is nil" << endl;
+        cout << "data is NULL" << endl;
         return false;
     }
 
