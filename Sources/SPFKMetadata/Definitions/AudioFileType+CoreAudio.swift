@@ -26,7 +26,7 @@ extension AudioFileType {
         )
 
         guard err == noErr else {
-            throw NSError(description: "kAudioFileGlobalInfo_ExtensionsForType failed for \(url.lastPathComponent))")
+            throw NSError(description: "kAudioFileGlobalInfo_ExtensionsForType failed for \(url.lastPathComponent), error: \(err)")
         }
 
         defer { outPropertyData.deallocate() }

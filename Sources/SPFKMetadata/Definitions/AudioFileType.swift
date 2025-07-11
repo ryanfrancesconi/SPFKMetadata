@@ -55,7 +55,6 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
             return
         }
 
-        // otherwise the pathExtension should match the rawValue
         guard let value = AudioFileType(rawValue: rawValue) else {
             return nil
         }
@@ -67,6 +66,7 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
     public init?(url: URL) {
         let ext = url.pathExtension.lowercased()
 
+        // when the file has no extension
         guard ext != "" else {
             if let value = Self.parseFormat(fromURL: url) {
                 self = value
@@ -172,6 +172,7 @@ extension AudioFileType {
     /// - Parameter url: URL to an audio file
     /// - Returns: A `MetaAudioFileFormat` or nil
     fileprivate static func parseFormat(fromURL url: URL) -> AudioFileType? {
+        // tag lib is fastest to checkif it supports this type
         if let tagFormat = TagFile.detectType(url.path) {
             return AudioFileType(pathExtension: tagFormat)
         }
