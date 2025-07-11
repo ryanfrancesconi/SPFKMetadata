@@ -6,7 +6,7 @@ import SPFKUtils
 
 // MARK: - CoreAudio
 
-extension MetaAudioFileFormat {
+extension AudioFileType {
     /// Get possible path extensions via CoreAudio for this URL
     /// - Parameter url: URL to parse
     /// - Returns: an Array of Strings containing the file extensions that are recognized for this file type or

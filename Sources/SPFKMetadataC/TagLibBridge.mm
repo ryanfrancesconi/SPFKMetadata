@@ -50,11 +50,11 @@ using namespace TagLib;
 
     if (fileRef.isNull()) {
         cout << "Unable to read path:" << path << endl;
-        return false;
+        return false; 
     }
 
     PropertyMap tags = fileRef.file()->properties();
-
+    
     for (NSString *key in [dictionary allKeys]) {
         NSString *value = [dictionary objectForKey:key];
 
@@ -62,6 +62,8 @@ using namespace TagLib;
 
         tags.replace(tagKey, StringList(value.UTF8String));
     }
+    
+    tags.removeEmpty();
 
     fileRef.setProperties(tags);
 

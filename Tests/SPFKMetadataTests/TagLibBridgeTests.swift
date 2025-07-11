@@ -33,7 +33,7 @@ class TagLibBridgeTests: BinTestCase {
         #expect(success)
 
         let dict = TagLibBridge.getProperties(tmpfile.path) as? [String: String]
-        #expect(dict == nil)
+        #expect(dict?.isEmpty == true)
     }
 
     @Test func copyMetadata() async throws {

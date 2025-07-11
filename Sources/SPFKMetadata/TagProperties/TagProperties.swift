@@ -5,7 +5,7 @@ import SPFKMetadataC
 import SPFKUtils
 
 /// A Swift convenience wrapper to TagLibBridge (C++)
-public struct TagProperties: TagPropertiesContainerModel {
+public struct TagProperties: TagPropertiesContainerModel, Hashable, Codable {
     public var tags = TagKeyDictionary()
 
     /// Any tags that weren't matched to a `TagKey` value
@@ -33,7 +33,7 @@ public struct TagProperties: TagPropertiesContainerModel {
 
     public mutating func reload() throws {
         guard let dict = TagLibBridge.getProperties(url.path) as? [String: String] else {
-            throw NSError(description: "Failed to open file or no metadata in: \(url.path)")
+            throw NSError(description: "Failed to open file or no metadata for: \(url.path)")
         }
 
         dict.forEach {

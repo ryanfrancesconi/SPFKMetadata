@@ -21,30 +21,6 @@ extension TagPropertiesContainerModel {
         }
     }
 
-    /// TITLE: Hello
-    public mutating func set(taglibKey key: String, value: String) {
-        let value = value.removing(.controlCharacters).trimmed
-
-        guard let frame = TagKey(taglibKey: key) else {
-            customTags[key] = value
-            return
-        }
-
-        tags[frame] = value
-    }
-
-    /// TIT2 = Hello
-    public mutating func set(id3Frame key: String, value: String) {
-        let value = value.removing(.controlCharacters).trimmed
-
-        guard let frame = TagKey(id3Frame: key) else {
-            customTags[key] = value
-            return
-        }
-
-        tags[frame] = value
-    }
-
     public func contains(key: TagKey) -> Bool {
         tags.contains { $0.key.id3Frame == key.id3Frame }
     }
@@ -64,5 +40,31 @@ extension TagPropertiesContainerModel {
         }
 
         return strings.sorted().joined(separator: "\n")
+    }
+}
+
+extension TagPropertiesContainerModel {
+    /// "TITLE": "Hello"
+    internal mutating func set(taglibKey key: String, value: String) {
+        let value = value.removing(.controlCharacters).trimmed
+
+        guard let frame = TagKey(taglibKey: key) else {
+            customTags[key] = value
+            return
+        }
+
+        tags[frame] = value
+    }
+
+    /// TIT2 = Hello
+    internal mutating func set(id3Frame key: String, value: String) {
+        let value = value.removing(.controlCharacters).trimmed
+
+        guard let frame = TagKey(id3Frame: key) else {
+            customTags[key] = value
+            return
+        }
+
+        tags[frame] = value
     }
 }

@@ -32,13 +32,13 @@ using namespace TagLib;
         return nil;
     }
 
+    _dictionary = [[NSMutableDictionary alloc] init];
+
     PropertyMap tags = fileRef.file()->properties();
 
     if (tags.isEmpty()) {
-        return nil;
+        return self;
     }
-
-    _dictionary = [[NSMutableDictionary alloc] init];
 
     // Copy TagLib's PropertyMap into our dictionary using the same keys they use.
     // See TagKey for translations.
@@ -59,12 +59,12 @@ using namespace TagLib;
 
 # pragma mark - Helpers
 
+NSString *const kTagFileTypeAAC = @"aac";
+NSString *const kTagFileTypeAIFF = @"aif";
+NSString *const kTagFileTypeM4A = @"m4a";
 NSString *const kTagFileTypeMP3 = @"mp3";
 NSString *const kTagFileTypeMP4 = @"mp4";
-NSString *const kTagFileTypeM4A = @"m4a";
-NSString *const kTagFileTypeAAC = @"aac";
 NSString *const kTagFileTypeWAVE = @"wav";
-NSString *const kTagFileTypeAIFF = @"aif";
 
 + (NSString *)detectType:(NSString *)path
 {
@@ -79,7 +79,7 @@ NSString *const kTagFileTypeAIFF = @"aif";
 
     if ([pathExtension isEqualToString:@"wave"] || [pathExtension isEqualToString:@"bwf"]) {
         return kTagFileTypeWAVE;
-    } else if ([pathExtension isEqualToString:@"aiff"]) {
+    } else if ([pathExtension containsString:@"aif"]) {
         return kTagFileTypeAIFF;
     } else {
         return pathExtension;
@@ -93,10 +93,10 @@ NSString *const kTagFileTypeAIFF = @"aif";
     if (!stream->isOpen()) {
         NSLog(@"__C TaglibWrapper.detectStreamType: Unable to open FileStream: %@", path);
         delete stream;
-        return nil;
+        return NULL;
     }
 
-    NSString *value = nil;
+    NSString *value = NULL;
 
     if (RIFF::WAV::File::isSupported(stream)) {
         value = kTagFileTypeWAVE;

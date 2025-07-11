@@ -47,25 +47,29 @@ class TagPropertiesTests: BinTestCase {
         let tmpfile = try copyToBin(url: BundleResources.shared.wav_bext_v2)
 
         // source
-        let properties = try TagProperties(url: BundleResources.shared.mp3_id3)
+        let sourcefile = try copyToBin(url: BundleResources.shared.mp3_id3)
+        let source = try TagProperties(url: sourcefile)
 
         // target
         var output = try TagProperties(url: tmpfile)
         try output.removeAll()
+
         #expect(output.tags.isEmpty)
 
         // replace all tags
-        output.tags = properties.tags
+        output.tags = source.tags
         try output.save()
 
         #expect(output.tags.count == 28)
 
         let random = Float.random(in: 0 ... 1)
         output[.title] = "New Title \(random)"
+        output[.keywords] = "Keywords!"
         try output.save()
 
         try output.reload()
         #expect(output[.title] == "New Title \(random)")
+        #expect(output[.keywords] == "Keywords!")
     }
 }
 

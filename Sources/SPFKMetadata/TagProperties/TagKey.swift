@@ -3,7 +3,8 @@
 import Foundation
 
 /// This doesn't take custom frames into account but does handle most common non-standard
-/// ones. TagLib uses an all caps dictionary key system.
+/// ones. TagLib itself uses an all caps dictionary key system.
+///
 /// TagsProperties has a customKeys dictionary for any keys found that aren't documented here.
 public enum TagKey: String, CaseIterable, Codable, Comparable {
     public static func < (lhs: TagKey, rhs: TagKey) -> Bool {
@@ -12,7 +13,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     
     case album
     case albumArtist //  id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
-    case albumArtistSort // non-standard, used by iTunes
+    case albumArtistSort // Apple Itunes proprietary frame
     case albumSort
     case arranger
     case artist
@@ -40,7 +41,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case initialKey
     case instrumentation // non standard id3
     case isrc
-    case keywords // non standard id3
+    case keywords // RIFF INFO non standard id3
     case label
     case language
     case length
@@ -57,7 +58,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case originalLyricist
     case owner
     case paymentWebpage // URL Frame
-    case performer // wave INFO
+    case performer // RIFF INFO
     case playlistDelay
     case podcast // Apple Itunes proprietary frame
     case podcastCategory // Apple Itunes proprietary frame
@@ -70,7 +71,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case radioStation
     case radioStationOwner
     case radioStationWebpage // URL Frame
-    case releaseCountry // Wave INFO
+    case releaseCountry // RIFF INFO
     case releaseDate
     case remixer // Could also be ARRANGER
     case subtitle
