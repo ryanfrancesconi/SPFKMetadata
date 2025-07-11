@@ -11,8 +11,10 @@
 
 #import <tag/aifffile.h>
 #import <tag/fileref.h>
+#import <tag/flacfile.h>
 #import <tag/mp4file.h>
 #import <tag/mpegfile.h>
+#import <tag/oggfile.h>
 #import <tag/rifffile.h>
 #import <tag/tag.h>
 #import <tag/textidentificationframe.h>
@@ -49,20 +51,21 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
-        return false; 
+        cout << "Unable to read path:" << path.UTF8String << endl;
+        return false;
     }
 
-    PropertyMap tags = fileRef.file()->properties();
-    
+    PropertyMap tags = PropertyMap();
+
     for (NSString *key in [dictionary allKeys]) {
         NSString *value = [dictionary objectForKey:key];
 
         String tagKey = String(key.UTF8String);
+        StringList tagValue = StringList(value.UTF8String);
 
-        tags.replace(tagKey, StringList(value.UTF8String));
+        tags.insert(tagKey, tagValue);
     }
-    
+
     tags.removeEmpty();
 
     fileRef.setProperties(tags);
@@ -74,7 +77,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "fileRef.isNull. Unable to read path: " << path << endl;
+        cout << "fileRef.isNull. Unable to read path: " << path.UTF8String << endl;
         return NULL;
     }
 
@@ -92,7 +95,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path:" << path.UTF8String << endl;
         return false;
     }
 
@@ -121,7 +124,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path:" << path.UTF8String << endl;
         return NULL;
     }
 
@@ -140,7 +143,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path:" << path.UTF8String << endl;
         return false;
     }
 
@@ -160,7 +163,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path: " << path.UTF8String << endl;
         return false;
     }
 
@@ -169,22 +172,25 @@ using namespace TagLib;
     // implementation for strip() is specific to each type of file
 
     if ([fileType isEqualToString:kTagFileTypeWAVE]) {
-        RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
-        waveFile->strip();
+        RIFF::WAV::File *f = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+        f->strip();
         //
     } else if ([fileType isEqualToString:kTagFileTypeM4A] || [fileType isEqualToString:kTagFileTypeMP4]) {
-        MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
-        mp4File->strip();
+        MP4::File *f = dynamic_cast<MP4::File *>(fileRef.file());
+        f->strip();
         //
     } else if ([fileType isEqualToString:kTagFileTypeMP3]) {
-        MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
-        mpegFile->strip();
+        MPEG::File *f = dynamic_cast<MPEG::File *>(fileRef.file());
+        f->strip();
+        //
+    } else if ([fileType isEqualToString:kTagFileTypeFLAC]) {
+        FLAC::File *f = dynamic_cast<FLAC::File *>(fileRef.file());
+        f->strip();
         //
     } else {
-        // can handle more types here
-        cout << "Unable to strip tags in" << path << endl;
+        cout << "Unable to strip tags in " << path.UTF8String << endl;
 
-        return false;
+        fileRef.setProperties(PropertyMap());
     }
 
     return fileRef.save();
@@ -195,7 +201,7 @@ using namespace TagLib;
     FileRef input(path.UTF8String);
 
     if (input.isNull()) {
-        cout << "Unable to read" << path << endl;
+        cout << "Unable to read" << path.UTF8String << endl;
         return false;
     }
 
@@ -206,14 +212,14 @@ using namespace TagLib;
     }
 
     if (![self removeAllTags:toPath]) {
-        cout << "Failed to remove tags in" << toPath << endl;
+        cout << "Failed to remove tags in" << toPath.UTF8String << endl;
         return false;
     }
 
     FileRef output(toPath.UTF8String);
 
     if (output.isNull()) {
-        cout << "Unable to read path:" << toPath << endl;
+        cout << "Unable to read path: " << toPath.UTF8String << endl;
         return false;
     }
 
@@ -236,7 +242,7 @@ const String pictureTypeKey("pictureType");
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "fileRef.isNull. Unable to read path: " << path << endl;
+        cout << "fileRef.isNull. Unable to read path: " << path.UTF8String << endl;
         return NULL;
     }
 

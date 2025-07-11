@@ -10,7 +10,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     public static func < (lhs: TagKey, rhs: TagKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
-    
+
     case album
     case albumArtist //  id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
     case albumArtistSort // Apple Itunes proprietary frame
@@ -27,8 +27,8 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case composerSort
     case conductor
     case copyright
-    case copyrightURL // URL Frame
-    case date
+    case copyrightUrl // URL Frame
+    case date // or year
     case discNumber
     case discSubtitle
     case encodedBy
@@ -62,10 +62,10 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case playlistDelay
     case podcast // Apple Itunes proprietary frame
     case podcastCategory // Apple Itunes proprietary frame
-    case podcastDesc // Apple Itunes proprietary frame
-    case podcastID // Apple Itunes proprietary frame
+    case podcastDescription // Apple Itunes proprietary frame
+    case podcastId // Apple Itunes proprietary frame
     case podcastKeywords // Apple Itunes proprietary frame
-    case podcastURL // Apple Itunes proprietary frame
+    case podcastUrl // Apple Itunes proprietary frame
     case producedNotice
     case publisherWebpage // URL Frame
     case radioStation
@@ -85,6 +85,15 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
 // MARK: - Init
 
 extension TagKey {
+    public var commonCases: [TagKey] {
+        [.title, .artist, .album, .genre, .trackNumber, .comment, .date]
+    }
+
+    /// IE, .trackNumber = Track Number
+    public var displayName: String {
+        rawValue.titleCased
+    }
+
     /// TagLib uses an all caps readable string for its keys.
     public var taglibKey: String {
         rawValue.uppercased()
@@ -109,6 +118,15 @@ extension TagKey {
 
     public init?(infoFrame: String) {
         for item in Self.allCases where item.infoFrame == infoFrame {
+            self = item
+            return
+        }
+
+        return nil
+    }
+
+    public init?(displayName: String) {
+        for item in Self.allCases where item.displayName == displayName {
             self = item
             return
         }

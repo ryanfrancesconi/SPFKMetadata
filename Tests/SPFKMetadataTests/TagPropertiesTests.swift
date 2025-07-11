@@ -71,6 +71,67 @@ class TagPropertiesTests: BinTestCase {
         #expect(output[.title] == "New Title \(random)")
         #expect(output[.keywords] == "Keywords!")
     }
+
+    @Test func readFormats() async throws {
+        let source = try TagProperties(url: BundleResources.shared.mp3_id3)
+        let files = BundleResources.shared.formats
+
+        for file in files {
+            Log.debug("Parsing", file.lastPathComponent)
+            let props = try TagProperties(url: file)
+            #expect(props.tags == source.tags)
+        }
+    }
+
+    @Test func writeFormats() async throws {
+        deleteBinOnExit = false
+
+        let source = try TagProperties(url: BundleResources.shared.mp3_id3)
+
+        let files = BundleResources.shared.formats
+
+        for file in files {
+            let copy = try copyToBin(url: file)
+
+            do {
+                var copyProps = try TagProperties(url: copy)
+
+                try copyProps.removeAll()
+                copyProps.tags = source.tags
+                try copyProps.save()
+                try copyProps.reload()
+                Log.debug(copy.lastPathComponent, copyProps.description)
+
+                #expect(copyProps.tags == source.tags)
+
+            } catch {
+                Log.error(error)
+            }
+        }
+    }
+
+    @Test func stripTags() async throws {
+        deleteBinOnExit = false
+
+        let files = BundleResources.shared.formats
+
+        for file in files {
+            let copy = try copyToBin(url: file)
+
+            do {
+                var copyProps = try TagProperties(url: copy)
+                try copyProps.removeAll()
+                try copyProps.reload()
+
+                Log.debug(copy.lastPathComponent, copyProps.description)
+
+                #expect(copyProps.tags == [:])
+
+            } catch {
+                Log.error(error)
+            }
+        }
+    }
 }
 
 extension TagPropertiesTests {

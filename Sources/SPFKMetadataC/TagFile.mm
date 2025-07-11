@@ -2,8 +2,10 @@
 
 #import <tag/aifffile.h>
 #import <tag/fileref.h>
+#import <tag/flacfile.h>
 #import <tag/mp4file.h>
 #import <tag/mpegfile.h>
+#import <tag/oggfile.h>
 #import <tag/rifffile.h>
 #import <tag/tag.h>
 #import <tag/tfilestream.h>
@@ -65,6 +67,8 @@ NSString *const kTagFileTypeM4A = @"m4a";
 NSString *const kTagFileTypeMP3 = @"mp3";
 NSString *const kTagFileTypeMP4 = @"mp4";
 NSString *const kTagFileTypeWAVE = @"wav";
+NSString *const kTagFileTypeOGG = @"ogg";
+NSString *const kTagFileTypeFLAC = @"flac";
 
 + (NSString *)detectType:(NSString *)path
 {
@@ -106,6 +110,9 @@ NSString *const kTagFileTypeWAVE = @"wav";
         value = kTagFileTypeAIFF;
     } else if (MPEG::File::isSupported(stream)) {
         value = kTagFileTypeMP3;
+    } else if (FLAC::File::isSupported(stream)) {
+        value = kTagFileTypeFLAC;
+        //} else if (Ogg::File::(stream)) {
     }
 
     delete stream;

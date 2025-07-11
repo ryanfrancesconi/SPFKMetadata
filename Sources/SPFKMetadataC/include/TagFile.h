@@ -13,6 +13,8 @@ extern NSString *const kTagFileTypeAAC;
 extern NSString *const kTagFileTypeWAVE;
 extern NSString *const kTagFileTypeAIFF;
 extern NSString *const kTagFileTypeMP3;
+extern NSString *const kTagFileTypeOGG;
+extern NSString *const kTagFileTypeFLAC;
 
 @interface TagFile : NSObject
 

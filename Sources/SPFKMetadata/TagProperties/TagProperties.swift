@@ -47,12 +47,16 @@ public struct TagProperties: TagPropertiesContainerModel, Hashable, Codable {
             url.path,
             dictionary: tagLibPropertyMap
         ) else {
-            throw NSError(description: "Failed to update \(url.path)")
+            throw NSError(description: "Failed to update tags in \(url.path)")
         }
     }
 
     public mutating func removeAll() throws {
-        try Self.removeAll(in: url)
+        do {
+            try Self.removeAll(in: url)
+        } catch {
+            Log.error(error)
+        }
         tags = [:]
     }
 }
@@ -68,7 +72,7 @@ extension TagProperties {
 
     public static func removeAll(in url: URL) throws {
         guard TagLibBridge.removeAllTags(url.path) else {
-            throw NSError(description: "Failed to update \(url.path)")
+            throw NSError(description: "Failed to removeAll tags in \(url.path)")
         }
     }
 }

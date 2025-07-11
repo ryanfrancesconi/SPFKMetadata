@@ -11,16 +11,27 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
     case aifc
     case aiff
     case au
-    case snd
     case caf
+    case flac
+    case ogg
     case m4a
     case m4v
     case mov
     case mp3
     case mp4
     case sd2
+    case snd
     case ts
     case wav
+
+    /// File types that are commonly used for metadata storage
+    public var metadataTypes: [AudioFileType] {
+        [.aac, .aiff, .caf, .m4a, .mp3, .mp4, .wav]
+    }
+
+    public var supportsMetadata: Bool {
+        metadataTypes.contains(self)
+    }
 
     public var description: String {
         fileTypeName ?? rawValue
@@ -81,15 +92,6 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         }
 
         return nil
-    }
-
-    /// file types that are commonly used for metadata storage
-    public var metadataTypes: [AudioFileType] {
-        [.aac, .aiff, .caf, .m4a, .mp3, .mp4, .wav]
-    }
-
-    public var supportsMetadata: Bool {
-        metadataTypes.contains(self)
     }
 
     // MARK: - Convenience onversions mappings to CoreAudio and AVFoundation types where possible
