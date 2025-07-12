@@ -26,7 +26,7 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
 
     /// File types that are commonly used for metadata storage
     public var metadataTypes: [AudioFileType] {
-        [.aac, .aiff, .caf, .m4a, .mp3, .mp4, .wav]
+        [.aac, .aiff, .m4a, .mp3, .mp4, .wav, .flac, .ogg]
     }
 
     public var supportsMetadata: Bool {
