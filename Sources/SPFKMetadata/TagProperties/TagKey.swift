@@ -85,7 +85,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
 // MARK: - Init
 
 extension TagKey {
-    public var commonCases: [TagKey] {
+    public static var commonCases: [TagKey] {
         [.title, .artist, .album, .genre, .trackNumber, .comment, .date]
     }
 
