@@ -165,7 +165,6 @@ extension TagPropertiesTests {
         #expect(tags[.album] == "This Is Spinal Tap")
         #expect(tags[.albumArtist] == "Spinal Tap")
         #expect(tags[.remixer] == "SPFKMetadata")
-
         #expect(tags[.title] == "Stonehenge")
         #expect(tags[.bpm] == "666")
     }

@@ -47,7 +47,9 @@ class TagLibBridgeTests: BinTestCase {
         let dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
         #expect(dict["TITLE"] == "Stonehenge")
     }
+}
 
+extension TagLibBridgeTests {
     @Test func getPicture() async throws {
         let source = BundleResources.shared.mp3_id3
 

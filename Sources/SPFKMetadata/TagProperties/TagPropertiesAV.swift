@@ -27,18 +27,10 @@ public struct TagPropertiesAV: TagPropertiesContainerModel {
     }
 
     private static func loadMetadata(from asset: AVURLAsset) async throws -> [AVMetadataItem] {
-        if #available(macOS 12, iOS 15, *) {
-            return try await asset.loadMetadata(for: .id3Metadata)
-        } else {
-            return asset.metadata(forFormat: .id3Metadata)
-        }
+        try await asset.loadMetadata(for: .id3Metadata)
     }
 
     private static func loadValue(for item: AVMetadataItem) async throws -> String? {
-        if #available(macOS 12, iOS 15, *) {
-            return try await item.load(.value) as? String
-        } else {
-            return item.value as? String
-        }
+        try await item.load(.value) as? String
     }
 }
