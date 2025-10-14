@@ -33,7 +33,7 @@ class TagLibBridgeTests: BinTestCase {
         #expect(success)
 
         let dict = TagLibBridge.getProperties(tmpfile.path) as? [String: String]
-        #expect(dict == nil)
+        #expect(dict?.isEmpty == true)
     }
 
     @Test func copyMetadata() async throws {
@@ -47,7 +47,9 @@ class TagLibBridgeTests: BinTestCase {
         let dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
         #expect(dict["TITLE"] == "Stonehenge")
     }
+}
 
+extension TagLibBridgeTests {
     @Test func getPicture() async throws {
         let source = BundleResources.shared.mp3_id3
 
@@ -67,7 +69,7 @@ class TagLibBridgeTests: BinTestCase {
         let url = bin.appendingPathComponent(filename, conformingTo: exportType.utType)
         try cgImage.export(type: exportType, to: url)
 
-        Swift.print(tagPicture.cgImage)
+        Log.debug(tagPicture.cgImage)
     }
 
     @Test func getPictureFail() async throws {
@@ -92,7 +94,7 @@ class TagLibBridgeTests: BinTestCase {
 
         #expect(tagPicture.utType == .jpeg)
 
-        Swift.print(tmpfile.path, tagPicture.cgImage)
+        Log.debug(tmpfile.path, tagPicture.cgImage)
 
         let result = TagLibBridge.setPicture(tmpfile.path, picture: tagPicture)
         #expect(result)

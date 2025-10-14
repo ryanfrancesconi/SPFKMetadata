@@ -21,8 +21,31 @@ extension TagPropertiesContainerModel {
         }
     }
 
-    /// TITLE: Hello
-    public mutating func set(taglibKey key: String, value: String) {
+    public func contains(key: TagKey) -> Bool {
+        tags.contains { $0.key.id3Frame == key.id3Frame }
+    }
+
+    public func contains(keys: [TagKey]) -> Bool {
+        for key in keys {
+            guard contains(key: key) else { return false }
+        }
+
+        return true
+    }
+
+    public var description: String {
+        let strings = tags.map {
+            let key: TagKey = $0.key
+            return "\(key.rawValue) (ID3: \(key.id3Frame ?? "????")) (INFO: \(key.infoFrame ?? "????")) = \($0.value)"
+        }
+
+        return strings.sorted().joined(separator: "\n")
+    }
+}
+
+extension TagPropertiesContainerModel {
+    /// "TITLE": "Hello"
+    internal mutating func set(taglibKey key: String, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
         guard let frame = TagKey(taglibKey: key) else {
@@ -34,7 +57,7 @@ extension TagPropertiesContainerModel {
     }
 
     /// TIT2 = Hello
-    public mutating func set(id3Frame key: String, value: String) {
+    internal mutating func set(id3Frame key: String, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
         guard let frame = TagKey(id3Frame: key) else {
@@ -43,14 +66,5 @@ extension TagPropertiesContainerModel {
         }
 
         tags[frame] = value
-    }
-
-    public var description: String {
-        let strings = tags.map {
-            let key: TagKey = $0.key
-            return "\(key.rawValue) (ID3: \(key.id3Frame ?? "????")) (INFO: \(key.infoFrame ?? "????")) = \($0.value)"
-        }
-
-        return strings.sorted().joined(separator: "\n")
     }
 }

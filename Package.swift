@@ -3,9 +3,7 @@
 
 import PackageDescription
 
-// This package will assume C / Objective-C interoperability as it's more common.
-// C++ could be enabled with:
-// swiftSettings: [.interoperabilityMode(.Cxx)]
+// This package will assume C / Objective-C interoperability
 
 // Swift target
 private let name: String = "SPFKMetadata"

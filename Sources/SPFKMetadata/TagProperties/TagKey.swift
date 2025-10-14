@@ -3,12 +3,17 @@
 import Foundation
 
 /// This doesn't take custom frames into account but does handle most common non-standard
-/// ones. TagLib uses an all caps dictionary key system.
+/// ones. TagLib itself uses an all caps dictionary key system.
+///
 /// TagsProperties has a customKeys dictionary for any keys found that aren't documented here.
-public enum TagKey: String, CaseIterable, Codable {
+public enum TagKey: String, CaseIterable, Codable, Comparable {
+    public static func < (lhs: TagKey, rhs: TagKey) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+
     case album
     case albumArtist //  id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
-    case albumArtistSort // non-standard, used by iTunes
+    case albumArtistSort // Apple Itunes proprietary frame
     case albumSort
     case arranger
     case artist
@@ -22,21 +27,21 @@ public enum TagKey: String, CaseIterable, Codable {
     case composerSort
     case conductor
     case copyright
-    case copyrightURL // URL Frame
-    case date
+    case copyrightUrl // URL Frame
+    case date // or year
     case discNumber
     case discSubtitle
     case encodedBy
     case encoding
     case encodingTime
     case fileWebpage // URL Frame
-    case filyType
+    case fileType
     case genre
     case grouping // Apple Itunes proprietary frame
     case initialKey
     case instrumentation // non standard id3
     case isrc
-    case keywords // non standard id3
+    case keywords // RIFF INFO non standard id3
     case label
     case language
     case length
@@ -53,20 +58,20 @@ public enum TagKey: String, CaseIterable, Codable {
     case originalLyricist
     case owner
     case paymentWebpage // URL Frame
-    case performer // wave INFO
+    case performer // RIFF INFO
     case playlistDelay
     case podcast // Apple Itunes proprietary frame
     case podcastCategory // Apple Itunes proprietary frame
-    case podcastDesc // Apple Itunes proprietary frame
-    case podcastID // Apple Itunes proprietary frame
+    case podcastDescription // Apple Itunes proprietary frame
+    case podcastId // Apple Itunes proprietary frame
     case podcastKeywords // Apple Itunes proprietary frame
-    case podcastURL // Apple Itunes proprietary frame
+    case podcastUrl // Apple Itunes proprietary frame
     case producedNotice
     case publisherWebpage // URL Frame
     case radioStation
     case radioStationOwner
     case radioStationWebpage // URL Frame
-    case releaseCountry // Wave INFO
+    case releaseCountry // RIFF INFO
     case releaseDate
     case remixer // Could also be ARRANGER
     case subtitle
@@ -80,6 +85,15 @@ public enum TagKey: String, CaseIterable, Codable {
 // MARK: - Init
 
 extension TagKey {
+    public static var commonCases: [TagKey] {
+        [.title, .artist, .album, .genre, .trackNumber, .comment, .date]
+    }
+
+    /// IE, .trackNumber = Track Number
+    public var displayName: String {
+        rawValue.titleCased
+    }
+
     /// TagLib uses an all caps readable string for its keys.
     public var taglibKey: String {
         rawValue.uppercased()
@@ -104,6 +118,15 @@ extension TagKey {
 
     public init?(infoFrame: String) {
         for item in Self.allCases where item.infoFrame == infoFrame {
+            self = item
+            return
+        }
+
+        return nil
+    }
+
+    public init?(displayName: String) {
+        for item in Self.allCases where item.displayName == displayName {
             self = item
             return
         }

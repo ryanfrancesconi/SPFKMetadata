@@ -12,7 +12,7 @@ class BroadcastInfoTests: BinTestCase {
     @Test func parseBEXT_v2() async throws {
         let desc = try #require(BEXTDescription(url: BundleResources.shared.wav_bext_v2))
 
-        Swift.print(desc)
+        Log.debug(desc)
 
         #expect(desc.version == 2)
         #expect(desc.umid == "")

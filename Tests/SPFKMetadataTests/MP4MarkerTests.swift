@@ -11,7 +11,7 @@ import Testing
 class MP4MarkerTests: BinTestCase {
     func getChapters(in url: URL) async throws -> [ChapterMarker] {
         let chapters = try await ChapterParser.parse(url: url)
-        Swift.print(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
+        Log.debug(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })
         return chapters
     }
 

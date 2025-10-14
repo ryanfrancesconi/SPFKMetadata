@@ -11,8 +11,10 @@
 
 #import <tag/aifffile.h>
 #import <tag/fileref.h>
+#import <tag/flacfile.h>
 #import <tag/mp4file.h>
 #import <tag/mpegfile.h>
+#import <tag/oggfile.h>
 #import <tag/rifffile.h>
 #import <tag/tag.h>
 #import <tag/textidentificationframe.h>
@@ -38,7 +40,7 @@ using namespace TagLib;
     TagFile *tagFile = [[TagFile alloc] initWithPath:path];
 
     if (!tagFile) {
-        return nil;
+        return NULL;
     }
 
     return tagFile.dictionary;
@@ -49,26 +51,22 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path:" << path.UTF8String << endl;
         return false;
     }
 
-    Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        cout << "Unable to create tag" << endl;
-        return false;
-    }
-
-    PropertyMap tags = fileRef.file()->properties();
+    PropertyMap tags = PropertyMap();
 
     for (NSString *key in [dictionary allKeys]) {
         NSString *value = [dictionary objectForKey:key];
 
         String tagKey = String(key.UTF8String);
+        StringList tagValue = StringList(value.UTF8String);
 
-        tags.replace(tagKey, StringList(value.UTF8String));
+        tags.insert(tagKey, tagValue);
     }
+
+    tags.removeEmpty();
 
     fileRef.setProperties(tags);
 
@@ -79,13 +77,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        return nil;
+        cout << "fileRef.isNull. Unable to read path: " << path.UTF8String << endl;
+        return NULL;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        return nil;
+        return NULL;
     }
 
     return @(tag->title().toCString());
@@ -96,14 +95,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path:" << path.UTF8String << endl;
         return false;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        cout << "Unable to write tag" << endl;
+        cout << "Unable to create tag" << endl;
         return false;
     }
 
@@ -125,15 +124,15 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "FileRef isNull" << endl;
-        return nil;
+        cout << "Unable to read path:" << path.UTF8String << endl;
+        return NULL;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        cout << "Tag is NULL" << endl;
-        return nil;
+        cout << "Unable to create tag" << endl;
+        return NULL;
     }
 
     return @(tag->comment().toCString());
@@ -144,14 +143,14 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path:" << path.UTF8String << endl;
         return false;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        cout << "Unable to write tag" << endl;
+        cout << "Unable to create tag" << endl;
         return false;
     }
 
@@ -164,7 +163,7 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path << endl;
+        cout << "Unable to read path: " << path.UTF8String << endl;
         return false;
     }
 
@@ -173,23 +172,28 @@ using namespace TagLib;
     // implementation for strip() is specific to each type of file
 
     if ([fileType isEqualToString:kTagFileTypeWAVE]) {
-        RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
-        waveFile->strip();
-        return fileRef.save();
+        RIFF::WAV::File *f = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+        f->strip();
         //
     } else if ([fileType isEqualToString:kTagFileTypeM4A] || [fileType isEqualToString:kTagFileTypeMP4]) {
-        MP4::File *mp4File = dynamic_cast<MP4::File *>(fileRef.file());
-        return mp4File->strip();
+        MP4::File *f = dynamic_cast<MP4::File *>(fileRef.file());
+        f->strip();
         //
     } else if ([fileType isEqualToString:kTagFileTypeMP3]) {
-        MPEG::File *mpegFile = dynamic_cast<MPEG::File *>(fileRef.file());
-        return mpegFile->strip();
+        MPEG::File *f = dynamic_cast<MPEG::File *>(fileRef.file());
+        f->strip();
+        //
+    } else if ([fileType isEqualToString:kTagFileTypeFLAC]) {
+        FLAC::File *f = dynamic_cast<FLAC::File *>(fileRef.file());
+        f->strip();
+        //
+    } else {
+        cout << "Unable to strip tags in " << path.UTF8String << endl;
+
+        fileRef.setProperties(PropertyMap());
     }
 
-    // handle more types here
-
-    // unsupported file
-    return false;
+    return fileRef.save();
 }
 
 + (bool)copyTagsFromPath:(NSString *)path
@@ -197,7 +201,7 @@ using namespace TagLib;
     FileRef input(path.UTF8String);
 
     if (input.isNull()) {
-        cout << "Unable to write comment" << endl;
+        cout << "Unable to read" << path.UTF8String << endl;
         return false;
     }
 
@@ -208,14 +212,14 @@ using namespace TagLib;
     }
 
     if (![self removeAllTags:toPath]) {
-        cout << "Failed to remove tags in" << toPath << endl;
+        cout << "Failed to remove tags in" << toPath.UTF8String << endl;
         return false;
     }
 
     FileRef output(toPath.UTF8String);
 
     if (output.isNull()) {
-        cout << "Unable to read path:" << toPath << endl;
+        cout << "Unable to read path: " << toPath.UTF8String << endl;
         return false;
     }
 
@@ -238,21 +242,21 @@ const String pictureTypeKey("pictureType");
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        cout << "FileRef isNull" << endl;
-        return nil;
+        cout << "fileRef.isNull. Unable to read path: " << path.UTF8String << endl;
+        return NULL;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
         cout << "Unable to read tag" << endl;
-        return nil;
+        return NULL;
     }
 
     auto pictures = tag->complexProperties(pictureKey);
 
     if (pictures.size() == 0) {
-        return nil;
+        return NULL;
     }
 
     // take the first picture only
@@ -264,7 +268,7 @@ const String pictureTypeKey("pictureType");
 
     if (!utType) {
         cout << "Failed to determine UTType" << endl;
-        return nil;
+        return NULL;
     }
 
     ByteVector pictureData = picture.value(dataKey).toByteVector();
@@ -274,7 +278,7 @@ const String pictureTypeKey("pictureType");
     NSData *nsData = [[NSData alloc] initWithBytes:pictureData.data() length:pictureData.size()];
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData((__bridge CFDataRef)nsData);
 
-    CGImageRef imageRef = nil;
+    CGImageRef imageRef = NULL;
 
     if (utType == UTTypeJPEG) {
         imageRef = CGImageCreateWithJPEGDataProvider(
@@ -301,12 +305,12 @@ const String pictureTypeKey("pictureType");
 
     if (!imageRef) {
         cout << "Failed to create CGImageRef" << endl;
-        return nil;
+        return NULL;
     }
 
     if (!validSize) {
         cout << "Invalid size returned for image" << endl;
-        return nil;
+        return NULL;
     }
 
     NSString *desc = StringUtil::utf8NSString(pictureDescription);
@@ -360,7 +364,7 @@ const String pictureTypeKey("pictureType");
         NULL
         );
 
-    CGImageDestinationAddImage(destination, picture.cgImage, nil);
+    CGImageDestinationAddImage(destination, picture.cgImage, NULL);
 
     if (!CGImageDestinationFinalize(destination)) {
         cout << "CGImageDestinationFinalize failed" << endl;
@@ -370,7 +374,7 @@ const String pictureTypeKey("pictureType");
     NSData *nsData = (__bridge NSData *)mutableData;
 
     if (!nsData) {
-        cout << "data is nil" << endl;
+        cout << "data is NULL" << endl;
         return false;
     }
 
