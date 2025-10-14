@@ -41,7 +41,17 @@ extension AudioFileType {
     /// - Parameter url: URL to parse
     /// - Returns: The name of the file format such as "WAVE"
     public static func getFileTypeName(for url: URL) throws -> String {
-        var inSpecifier = try audioFilePropertyID(for: url)
+        let inSpecifier = try audioFilePropertyID(for: url)
+
+        return try getFileTypeName(propertyId: inSpecifier)
+    }
+
+    /// Detect file format name via CoreAudio
+    /// - Parameter inSpecifier: Use this ID to lookup the name
+    /// - Returns: The name of the file format such as "WAVE"
+    public static func getFileTypeName(propertyId inSpecifier: AudioFilePropertyID) throws -> String {
+        var inSpecifier = inSpecifier
+
         let inSpecifierSize = UInt32(MemoryLayout<AudioFilePropertyID>.size)
         var ioDataSize = UInt32(MemoryLayout<CFString>.size)
         let outPropertyData = UnsafeMutablePointer<CFString>.allocate(capacity: 1)
@@ -53,7 +63,7 @@ extension AudioFileType {
             &ioDataSize,
             outPropertyData
         ) else {
-            throw NSError(description: "kAudioFileGlobalInfo_FileTypeName failed for \(url.lastPathComponent)")
+            throw NSError(description: "kAudioFileGlobalInfo_FileTypeName failed for id \(inSpecifier)")
         }
 
         defer { outPropertyData.deallocate() }
@@ -64,7 +74,7 @@ extension AudioFileType {
     // MARK: - Helpers
 
     /// Get pointer to an `AudioFilePropertyID`
-    private static func audioFilePropertyID(for url: URL) throws -> AudioFilePropertyID? {
+    private static func audioFilePropertyID(for url: URL) throws -> AudioFilePropertyID {
         guard let inAudioFile = openAudioFile(url: url) else {
             throw NSError(description: "Unable to open \(url.lastPathComponent)")
         }
