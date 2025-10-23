@@ -62,7 +62,7 @@ class TagPropertiesTests: BinTestCase {
 
         #expect(output.tags.count == 28)
 
-        let random = Float.random(in: 0 ... 1)
+        let random = Float.random(in: Float.unitIntervalRange)
         output[.title] = "New Title \(random)"
         output[.keywords] = "Keywords!"
         try output.save()
