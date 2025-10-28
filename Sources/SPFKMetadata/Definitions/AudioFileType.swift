@@ -43,7 +43,7 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         metadataTypes.contains(self)
     }
 
-    public var description: String {
+    public var stringValue: String {
         fileTypeName ?? rawValue
     }
 

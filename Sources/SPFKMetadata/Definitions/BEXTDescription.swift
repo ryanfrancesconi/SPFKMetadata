@@ -15,7 +15,9 @@ public struct BEXTDescription: Hashable, Codable {
     /// To help applications which display only a short description, it is recommended
     /// that a resume of the description is contained in the first 64 characters
     /// and the last 192 characters are used for details.
-    public var description: String?
+    ///
+    /// (Note: this isn't named "description" for compatibility with CoreData/SwiftData Schemas)
+    public var sequenceDescription: String?
 
     /// UMID (Unique Material Identifier) to standard SMPTE. (Note: Added in version 1.)
     public var umid: String?
@@ -103,7 +105,7 @@ public struct BEXTDescription: Hashable, Codable {
             umid = info.umid
         }
 
-        description = info.bextDescription
+        sequenceDescription = info.bextDescription
 
         if version >= 2 {
             loudnessValue = info.loudnessValue
@@ -170,8 +172,8 @@ extension BEXTDescription {
             info.maxShortTermLoudness = maxShortTermLoudness
         }
 
-        if let description {
-            info.bextDescription = description
+        if let sequenceDescription {
+            info.bextDescription = sequenceDescription
         }
 
         if let originator {

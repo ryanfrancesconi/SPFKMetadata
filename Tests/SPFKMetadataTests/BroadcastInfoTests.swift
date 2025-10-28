@@ -16,7 +16,7 @@ class BroadcastInfoTests: BinTestCase {
 
         #expect(desc.version == 2)
         #expect(desc.umid == "")
-        #expect(desc.description == """
+        #expect(desc.sequenceDescription == """
             And oh how they danced
             The little children of Stonehenge
             Beneath the haunted moon
@@ -41,7 +41,7 @@ class BroadcastInfoTests: BinTestCase {
         let tmpfile = try copyToBin(url: BundleResources.shared.wav_bext_v2)
 
         var desc = BEXTDescription()
-        desc.description = "A new description"
+        desc.sequenceDescription = "A new description"
         desc.umid = "XXXXXX"
         desc.originator = "Ryan Francesconi"
         desc.originatorReference = "ITRAIDA88396FG347125324098748726"
@@ -62,7 +62,7 @@ class BroadcastInfoTests: BinTestCase {
         // read it back in
         let updated = try #require(BEXTDescription(url: tmpfile))
         #expect(updated.version == 2)
-        #expect(updated.description == "A new description")
+        #expect(updated.sequenceDescription == "A new description")
         #expect(updated.umid == "XXXXXX000000000000000000000000000000000000000000000000000000000")
         #expect(updated.originator == "Ryan Francesconi")
         #expect(updated.originatorReference == "ITRAIDA88396FG347125324098748726")
