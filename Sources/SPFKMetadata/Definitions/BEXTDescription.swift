@@ -5,8 +5,7 @@ import Foundation
 import SPFKMetadataC
 import SPFKUtils
 
-/// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC but with
-/// more friendly syntax.
+/// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC for swift
 public struct BEXTDescription: Hashable, Codable {
     /// BWF Version 0, 1, or 2. This will be set based on the content provided.
     public private(set) var version: Int16 = 0
@@ -85,6 +84,14 @@ public struct BEXTDescription: Hashable, Codable {
     }
 
     public var sampleRate: Double?
+
+    public var loudnessDescription: LoudnessDescription {
+        LoudnessDescription(
+            lufs: loudnessValue?.double,
+            loudnessRange: loudnessRange?.double,
+            truePeak: maxTruePeakLevel
+        )
+    }
 
     public init() {}
 
