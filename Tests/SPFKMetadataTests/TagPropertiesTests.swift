@@ -24,21 +24,21 @@ class TagPropertiesTests: BinTestCase {
 
     @Test func parseID3MP3() async throws {
         let properties = try TagProperties(url: BundleResources.shared.mp3_id3)
-        verify(properties: properties)
+        verify(properties: properties.data)
     }
 
     @Test func parseID3MP3_AV() async throws {
         let properties = try await TagPropertiesAV(url: BundleResources.shared.mp3_id3)
         // verify(properties: properties)
 
-        Log.debug(properties)
+        Log.debug(properties.data)
     }
 
     @Test func parseID3Wave() async throws {
         Log.debug(BundleResources.shared.wav_bext_v2.path)
 
         let properties = try TagProperties(url: BundleResources.shared.wav_bext_v2)
-        verify(properties: properties)
+        verify(properties: properties.data)
     }
 
     @Test func readWriteTagProperties() async throws {

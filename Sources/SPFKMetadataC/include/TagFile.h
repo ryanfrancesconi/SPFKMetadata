@@ -30,4 +30,4 @@ extern NSString *const kTagFileTypeFLAC;
 
 NS_ASSUME_NONNULL_END
 
-#endif /* TAGFILE_HH */
+#endif /* TAGFILE_H */

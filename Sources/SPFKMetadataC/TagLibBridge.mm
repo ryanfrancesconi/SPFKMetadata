@@ -67,7 +67,6 @@ using namespace TagLib;
     }
 
     tags.removeEmpty();
-
     fileRef.setProperties(tags);
 
     return fileRef.save();

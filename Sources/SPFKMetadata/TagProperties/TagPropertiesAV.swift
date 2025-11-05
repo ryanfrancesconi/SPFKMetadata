@@ -9,9 +9,8 @@ import Foundation
 /// Since AV is async, that would likely account for some of the performance hit.
 ///
 /// You can measure yourself in the tests: parseID3MP3 vs parseID3MP3_AV
-public struct TagPropertiesAV: TagPropertiesContainerModel {
-    public var tags = TagKeyDictionary()
-    public var customTags = [String: String]()
+public struct TagPropertiesAV: Hashable, Codable {
+    public var data = ID3Data()
 
     public init(url: URL) async throws {
         let asset = AVURLAsset(url: url)
@@ -22,7 +21,7 @@ public struct TagPropertiesAV: TagPropertiesContainerModel {
             guard let id3Frame = item.key as? String,
                   let value = try? await Self.loadValue(for: item) else { continue }
 
-            set(id3Frame: id3Frame, value: value)
+            data.set(id3Frame: id3Frame, value: value)
         }
     }
 
@@ -32,5 +31,17 @@ public struct TagPropertiesAV: TagPropertiesContainerModel {
 
     private static func loadValue(for item: AVMetadataItem) async throws -> String? {
         try await item.load(.value) as? String
+    }
+}
+
+extension TagPropertiesAV: TagPropertiesContainerModel {
+    public var tags: TagKeyDictionary {
+        get { data.tags }
+        set { data.tags = newValue }
+    }
+
+    public var customTags: [String: String] {
+        get { data.customTags }
+        set { data.customTags = newValue }
     }
 }

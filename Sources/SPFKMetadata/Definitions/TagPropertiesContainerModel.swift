@@ -6,10 +6,10 @@ internal import OTCore
 public typealias TagKeyDictionary = [TagKey: String]
 
 public protocol TagPropertiesContainerModel: CustomStringConvertible {
-    /// official ID3 or conventional tags found in this file
+    /// Official ID3 or conventional tags found in this file
     var tags: TagKeyDictionary { get set }
 
-    /// unoffical, uncommon tags found in this file
+    /// Unoffical, uncommon tags found in this file
     var customTags: [String: String] { get set }
 }
 

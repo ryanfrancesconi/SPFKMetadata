@@ -3,7 +3,8 @@
 import Foundation
 
 extension TagKey {
-    /// Wave INFO frames. TagLib defines this mapping in its infotag.cpp and these are the INFO tags it will write.
+    /// Wave INFO frames. TagLib defines this mapping in its infotag.cpp and
+    /// these are the primary INFO tags it will write.
     public var infoFrame: String? {
         switch self {
         case .album: return "IPRD"
@@ -37,85 +38,85 @@ extension TagKey {
 }
 
 /**
-For reference all possible INFO tags are:
+ For reference all possible INFO tags are:
 
- 'IARL'    ArchivalLocation
- 'IART'    Artist
- 'IAS1'    FirstLanguage
- 'IAS2'    SecondLanguage
- 'IAS3'    ThirdLanguage
- 'IAS4'    FourthLanguage
- 'IAS5'    FifthLanguage
- 'IAS6'    SixthLanguage
- 'IAS7'    SeventhLanguage
- 'IAS8'    EighthLanguage
- 'IAS9'    NinthLanguage
- 'IBSU'    BaseURL
- 'ICAS'    DefaultAudioStream
- 'ICDS'    CostumeDesigner
- 'ICMS'    Commissioned
- 'ICMT'    Comment
- 'ICNM'    Cinematographer
- 'ICNT'    Country
- 'ICOP'    Copyright
- 'ICRD'    DateCreated
- 'ICRP'    Cropped
- 'IDIM'    Dimensions
- 'IDIT'    DateTimeOriginal
- 'IDPI'    DotsPerInch
- 'IDST'    DistributedBy
- 'IEDT'    EditedBy
- 'IENC'    EncodedBy
- 'IENG'    Engineer
- 'IGNR'    Genre
- 'IKEY'    Keywords
- 'ILGT'    Lightness
- 'ILGU'    LogoURL
- 'ILIU'    LogoIconURL
- 'ILNG'    Language
- 'IMBI'    MoreInfoBannerImage
- 'IMBU'    MoreInfoBannerURL
- 'IMED'    Medium
- 'IMIT'    MoreInfoText
- 'IMIU'    MoreInfoURL
- 'IMUS'    MusicBy
- 'INAM'    Title
- 'IPDS'    ProductionDesigner
- 'IPLT'    NumColors
- 'IPRD'    Product
- 'IPRO'    ProducedBy
- 'IRIP'    RippedBy
- 'IRTD'    Rating
- 'ISBJ'    Subject
- 'ISFT'    Software
- 'ISGN'    SecondaryGenre
- 'ISHP'    Sharpness
- 'ISMP'    TimeCode
- 'ISRC'    Source
- 'ISRF'    SourceForm
- 'ISTD'    ProductionStudio
- 'ISTR'    Starring
- 'ITCH'    Technician
- 'ITRK'    TrackNumber
- 'IWMU'    WatermarkURL
- 'IWRI'    WrittenBy
- 'LANG'    Language
- 'LOCA'    Location
- 'PRT1'    Part
- 'PRT2'    NumberOfParts
- 'RATE'    Rate
- 'STAR'    Starring
- 'STAT'    Statistics (0 = Bad, 1 = OK)
- 'TAPE'    TapeName
- 'TCDO'    EndTimecode
- 'TCOD'    StartTimecode
- 'TITL'    Title
- 'TLEN'    Length
- 'TORG'    Organization
- 'TRCK'    TrackNumber
- 'TURL'    URL
- 'TVER'    Version
- 'VMAJ'    VegasVersionMajor
- 'VMIN'    VegasVersionMir
- 'YEAR'    Year
- */
+  'IARL'    ArchivalLocation
+  'IART'    Artist
+  'IAS1'    FirstLanguage
+  'IAS2'    SecondLanguage
+  'IAS3'    ThirdLanguage
+  'IAS4'    FourthLanguage
+  'IAS5'    FifthLanguage
+  'IAS6'    SixthLanguage
+  'IAS7'    SeventhLanguage
+  'IAS8'    EighthLanguage
+  'IAS9'    NinthLanguage
+  'IBSU'    BaseURL
+  'ICAS'    DefaultAudioStream
+  'ICDS'    CostumeDesigner
+  'ICMS'    Commissioned
+  'ICMT'    Comment
+  'ICNM'    Cinematographer
+  'ICNT'    Country
+  'ICOP'    Copyright
+  'ICRD'    DateCreated
+  'ICRP'    Cropped
+  'IDIM'    Dimensions
+  'IDIT'    DateTimeOriginal
+  'IDPI'    DotsPerInch
+  'IDST'    DistributedBy
+  'IEDT'    EditedBy
+  'IENC'    EncodedBy
+  'IENG'    Engineer
+  'IGNR'    Genre
+  'IKEY'    Keywords
+  'ILGT'    Lightness
+  'ILGU'    LogoURL
+  'ILIU'    LogoIconURL
+  'ILNG'    Language
+  'IMBI'    MoreInfoBannerImage
+  'IMBU'    MoreInfoBannerURL
+  'IMED'    Medium
+  'IMIT'    MoreInfoText
+  'IMIU'    MoreInfoURL
+  'IMUS'    MusicBy
+  'INAM'    Title
+  'IPDS'    ProductionDesigner
+  'IPLT'    NumColors
+  'IPRD'    Product
+  'IPRO'    ProducedBy
+  'IRIP'    RippedBy
+  'IRTD'    Rating
+  'ISBJ'    Subject
+  'ISFT'    Software
+  'ISGN'    SecondaryGenre
+  'ISHP'    Sharpness
+  'ISMP'    TimeCode
+  'ISRC'    Source
+  'ISRF'    SourceForm
+  'ISTD'    ProductionStudio
+  'ISTR'    Starring
+  'ITCH'    Technician
+  'ITRK'    TrackNumber
+  'IWMU'    WatermarkURL
+  'IWRI'    WrittenBy
+  'LANG'    Language
+  'LOCA'    Location
+  'PRT1'    Part
+  'PRT2'    NumberOfParts
+  'RATE'    Rate
+  'STAR'    Starring
+  'STAT'    Statistics (0 = Bad, 1 = OK)
+  'TAPE'    TapeName
+  'TCDO'    EndTimecode
+  'TCOD'    StartTimecode
+  'TITL'    Title
+  'TLEN'    Length
+  'TORG'    Organization
+  'TRCK'    TrackNumber
+  'TURL'    URL
+  'TVER'    Version
+  'VMAJ'    VegasVersionMajor
+  'VMIN'    VegasVersionMir
+  'YEAR'    Year
+  */

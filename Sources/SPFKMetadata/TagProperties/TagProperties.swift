@@ -5,16 +5,13 @@ import SPFKMetadataC
 import SPFKUtils
 
 /// A Swift convenience wrapper to TagLibBridge (C++)
-public struct TagProperties: TagPropertiesContainerModel, Hashable, Codable {
-    public var tags = TagKeyDictionary()
-
-    /// Any tags that weren't matched to a `TagKey` value
-    public var customTags = [String: String]()
+public struct TagProperties: Hashable, Codable {
+    public var data = ID3Data()
 
     private var tagLibPropertyMap: [String: String] {
         var dict: [String: String] = .init()
 
-        for item in tags {
+        for item in data.tags {
             dict[item.key.taglibKey] = item.value
         }
 
@@ -37,12 +34,13 @@ public struct TagProperties: TagPropertiesContainerModel, Hashable, Codable {
         }
 
         dict.forEach {
-            set(taglibKey: $0.key, value: $0.value)
+            data.set(taglibKey: $0.key, value: $0.value)
         }
     }
 
     /// Write the current tags dictionary back to the file
     public func save() throws {
+        // TODO: this is only saving standard tags, save customTags
         guard TagLibBridge.setProperties(
             url.path,
             dictionary: tagLibPropertyMap
@@ -57,7 +55,20 @@ public struct TagProperties: TagPropertiesContainerModel, Hashable, Codable {
         } catch {
             Log.error(error)
         }
-        tags = [:]
+
+        data.removeAll()
+    }
+}
+
+extension TagProperties: TagPropertiesContainerModel {
+    public var tags: TagKeyDictionary {
+        get { data.tags }
+        set { data.tags = newValue }
+    }
+
+    public var customTags: [String: String] {
+        get { data.customTags }
+        set { data.customTags = newValue }
     }
 }
 

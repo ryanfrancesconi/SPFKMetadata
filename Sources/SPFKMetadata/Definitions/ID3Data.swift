@@ -1,0 +1,24 @@
+import Foundation
+
+public struct ID3Data: TagPropertiesContainerModel, Hashable, Codable {
+    public var isEmpty: Bool {
+        tags.isEmpty && customTags.isEmpty
+    }
+
+    /// Known ID3 tags
+    public var tags: TagKeyDictionary
+
+    /// TXXX, Unoffical, uncommon tags found in this file
+    /// Any tags that weren't matched to a `TagKey` value
+    public var customTags: [String: String]
+
+    public init(tags: TagKeyDictionary = .init(), customTags: [String: String] = .init()) {
+        self.tags = tags
+        self.customTags = customTags
+    }
+
+    public mutating func removeAll() {
+        tags.removeAll()
+        customTags.removeAll()
+    }
+}
