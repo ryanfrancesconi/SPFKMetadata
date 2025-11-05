@@ -11,11 +11,11 @@ import Testing
 class TagPropertiesTests: BinTestCase {
     @Test func benchmarkTagLib() async throws {
         let tagLibElapsed = try ContinuousClock().measure {
-            _ = try TagProperties(url: BundleResources.shared.mp3_id3)
+            _ = try TagProperties(url: TestBundleResources.shared.mp3_id3)
         }
 
         let avElapsed = try await ContinuousClock().measure {
-            _ = try await TagPropertiesAV(url: BundleResources.shared.mp3_id3)
+            _ = try await TagPropertiesAV(url: TestBundleResources.shared.mp3_id3)
         }
 
         Log.debug("TagLib took", tagLibElapsed)
@@ -23,31 +23,31 @@ class TagPropertiesTests: BinTestCase {
     }
 
     @Test func parseID3MP3() async throws {
-        let properties = try TagProperties(url: BundleResources.shared.mp3_id3)
+        let properties = try TagProperties(url: TestBundleResources.shared.mp3_id3)
         verify(properties: properties.data)
     }
 
     @Test func parseID3MP3_AV() async throws {
-        let properties = try await TagPropertiesAV(url: BundleResources.shared.mp3_id3)
+        let properties = try await TagPropertiesAV(url: TestBundleResources.shared.mp3_id3)
         // verify(properties: properties)
 
         Log.debug(properties.data)
     }
 
     @Test func parseID3Wave() async throws {
-        Log.debug(BundleResources.shared.wav_bext_v2.path)
+        Log.debug(TestBundleResources.shared.wav_bext_v2.path)
 
-        let properties = try TagProperties(url: BundleResources.shared.wav_bext_v2)
+        let properties = try TagProperties(url: TestBundleResources.shared.wav_bext_v2)
         verify(properties: properties.data)
     }
 
     @Test func readWriteTagProperties() async throws {
         deleteBinOnExit = false
 
-        let tmpfile = try copyToBin(url: BundleResources.shared.wav_bext_v2)
+        let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
 
         // source
-        let sourcefile = try copyToBin(url: BundleResources.shared.mp3_id3)
+        let sourcefile = try copyToBin(url: TestBundleResources.shared.mp3_id3)
         let source = try TagProperties(url: sourcefile)
 
         // target
@@ -73,8 +73,8 @@ class TagPropertiesTests: BinTestCase {
     }
 
     @Test func readFormats() async throws {
-        let source = try TagProperties(url: BundleResources.shared.mp3_id3)
-        let files = BundleResources.shared.formats
+        let source = try TagProperties(url: TestBundleResources.shared.mp3_id3)
+        let files = TestBundleResources.shared.formats
 
         for file in files {
             Log.debug("Parsing", file.lastPathComponent)
@@ -86,9 +86,9 @@ class TagPropertiesTests: BinTestCase {
     @Test func writeFormats() async throws {
         deleteBinOnExit = false
 
-        let source = try TagProperties(url: BundleResources.shared.mp3_id3)
+        let source = try TagProperties(url: TestBundleResources.shared.mp3_id3)
 
-        let files = BundleResources.shared.formats
+        let files = TestBundleResources.shared.formats
 
         for file in files {
             let copy = try copyToBin(url: file)
@@ -113,7 +113,7 @@ class TagPropertiesTests: BinTestCase {
     @Test func stripTags() async throws {
         deleteBinOnExit = false
 
-        let files = BundleResources.shared.formats
+        let files = TestBundleResources.shared.formats
 
         for file in files {
             let copy = try copyToBin(url: file)

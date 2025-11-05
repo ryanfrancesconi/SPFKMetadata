@@ -24,7 +24,7 @@ class AudioFileTypeTests: BinTestCase {
 
     @Test func checkMissingExtension() throws {
         deleteBinOnExit = false
-        let url = try copyToBin(url: BundleResources.shared.tabla_mp4)
+        let url = try copyToBin(url: TestBundleResources.shared.tabla_mp4)
         let target = url.deletingPathExtension()
         try FileManager.default.moveItem(at: url, to: target)
 

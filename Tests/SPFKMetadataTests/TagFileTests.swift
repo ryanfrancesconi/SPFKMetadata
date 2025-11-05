@@ -10,7 +10,7 @@ import Testing
 @Suite(.serialized)
 class TagFileTests: BinTestCase {
     @Test func testParseID3() async throws {
-        let tagFile = try #require(TagFile(path: BundleResources.shared.wav_bext_v2.path))
+        let tagFile = try #require(TagFile(path: TestBundleResources.shared.wav_bext_v2.path))
 
         // this is the TagLib properties map
         #expect(
