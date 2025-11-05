@@ -58,8 +58,8 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         case .mp3:  return "MPEG Layer 3"
         case .mp4:  return "MPEG-4 Audio"
         case .mov:  return "Apple MOV"
-        case .wav:  return "WAVE"
-        case .w64:  return "WAVE (BW64 for length over 4 GB)"
+        case .wav:  return "Waveform Audio"
+        case .w64:  return "Wave (BW64 for length over 4 GB)"
         default:
             return nil
         }

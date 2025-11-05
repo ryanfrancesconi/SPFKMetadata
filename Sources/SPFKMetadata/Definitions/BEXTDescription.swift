@@ -33,19 +33,19 @@ public struct BEXTDescription: Hashable, Codable {
     /// Examples of the contents: ID-No; codec type; A/D type>
     public var codingHistory: String?
 
-    /// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
+    /// Integrated Loudness Value of the file in LUFS dB. (Note: Added in version 2.)
     public var loudnessValue: Float?
 
     /// Loudness Range of the file in LU. (Note: Added in version 2.)
     public var loudnessRange: Float?
 
-    /// Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
+    /// Maximum True Peak Value of the file (dBTP). (Note: Added in version 2.)
     public var maxTruePeakLevel: Float?
 
-    /// highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
+    /// highest value of the Momentary Loudness Level of the file in LUFS dB. (Note: Added in version 2.)
     public var maxMomentaryLoudness: Float?
 
-    /// highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
+    /// highest value of the Short-term Loudness Level of the file in LUFS dB. (Note: Added in version 2.)
     public var maxShortTermLoudness: Float?
 
     /// The name of the originator / producer of the audio file
@@ -54,10 +54,22 @@ public struct BEXTDescription: Hashable, Codable {
     /// Unambiguous reference allocated by the originating organization
     public var originatorReference: String?
 
-    /// yyyy:mm:dd
+    /// yyyy-mm-dd
+    /// 10 ASCII characters containing the date of creation of the audio sequence.
+    /// The format shall be « ‘,year’,-,’month,’-‘,day,’» with 4 characters for the year
+    /// and 2 characters per other item. 10 Tech 3285 v2 Broadcast Wave Format Specification
+    /// Year is defined from 0000 to 9999 Month is defined from 1 to 12 Day is defined
+    /// from 1 to 28, 29, 30 or 31 The separator between the items can be anything but
+    /// it is recommended that one of the following characters be used:
+    /// ‘-’  hyphen  ‘_’  underscore  ‘:’  colon  ‘ ’  space  ‘.’  stop
     public var originationDate: String?
 
     /// hh:mm:ss
+    /// 8 ASCII characters containing the time of creation of the audio sequence. The format
+    /// shall be « ‘hour’-‘minute’-‘second’» with 2 characters per item. Hour is defined
+    /// from 0 to 23. Minute and second are defined from 0 to 59. The separator between
+    /// the items can be anything but it is recommended that one of the following characters be used:
+    /// ‘-’  hyphen  ‘_’  underscore  ‘:’  colon  ‘ ’  space  ‘.’  stop
     public var originationTime: String?
 
     /// Time reference in samples
@@ -78,6 +90,7 @@ public struct BEXTDescription: Hashable, Codable {
         return (UInt64(timeReferenceHigh) << 32) | UInt64(timeReferenceLow)
     }
 
+    /// Convenience time reference is seconds, requires sampleRate to be set
     public var timeReferenceInSeconds: TimeInterval? {
         guard let timeReference, let sampleRate else { return nil }
         return TimeInterval(timeReference) / sampleRate
@@ -85,6 +98,7 @@ public struct BEXTDescription: Hashable, Codable {
 
     public var sampleRate: Double?
 
+    /// Convenience struct suitable for a UI display
     public var loudnessDescription: LoudnessDescription {
         LoudnessDescription(
             lufs: loudnessValue?.double,

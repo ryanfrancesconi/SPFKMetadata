@@ -32,14 +32,23 @@
     self.codingHistory = @(bext.coding_history);
 
     if (self.version >= 1 && strlen(bext.umid) > 0) {
-        self.umid = @(bext.umid); // Util::asciiString(bext.umid, sizeof(bext.umid));
+        self.umid = @(bext.umid);
     }
 
     if (self.version >= 2) {
+        // A 16-bit signed integer, equal to round(100x the Integrated Loudness Value of the file in LUFS).
         self.loudnessValue = ((float)bext.loudness_value) / 100;
+
+        // A 16-bit signed integer, equal to round(100x the Loudness Range of the file in LU).
         self.loudnessRange = ((float)bext.loudness_range) / 100;
+
+        // A 16-bit signed integer, equal to round(100x the Maximum True Peak Value of the file in dBTP).
         self.maxTruePeakLevel = ((float)bext.max_true_peak_level) / 100;
+
+        // A 16-bit signed integer, equal to round(100x the highest value of the Momentary Loudness Level of the file in LUFS).
         self.maxMomentaryLoudness = ((float)bext.max_momentary_loudness) / 100;
+
+        // A 16-bit signed integer, equal to round(100x the highest value of the Short-term Loudness Level of the file in LUFS).
         self.maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
     }
 
@@ -65,6 +74,7 @@
     //
     SndfileHandle file = SndfileHandle(path.UTF8String, SFM_RDWR);
     SF_BROADCAST_INFO bext = {};
+
     memset(&bext, 0, sizeof(bext));
 
     bext.version = info.version;

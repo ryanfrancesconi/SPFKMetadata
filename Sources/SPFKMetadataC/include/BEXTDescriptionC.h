@@ -37,10 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
 @property (atomic) float maxTruePeakLevel;
 
-/// highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
+/// Highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
 @property (atomic) float maxMomentaryLoudness;
 
-/// highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
+/// Highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
 @property (atomic) float maxShortTermLoudness;
 
 /// The name of the originator / producer of the audio file
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Unambiguous reference allocated by the originating organization
 @property (atomic) NSString *originatorReference;
 
-/// yyyy:mm:dd
+/// yyyy-mm-dd
 @property (atomic) NSString *originationDate;
 
 /// hh:mm:ss
