@@ -74,11 +74,13 @@ public struct BEXTDescription: Hashable, Codable {
 
     /// Time reference in samples
     /// These fields shall contain the time-code of the sequence. It is a 64-bit value which contains the first sample count since midnight.
-    /// First sample count since midnight, low word
+    /// First sample count since midnight, low word.
+    /// Keep 64 for larger headroom for invalid time values.
     public var timeReferenceLow: UInt64?
 
     /// Time reference in samples
     /// First sample count since midnight, high word
+    /// Keep 64 for larger headroom for invalid time values.
     public var timeReferenceHigh: UInt64?
 
     /// Combined 64bit time value of low and high words
@@ -200,30 +202,32 @@ public struct BEXTDescription: Hashable, Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(version, forKey: .version)
-        try container.encode(sequenceDescription, forKey: .sequenceDescription)
-        try container.encode(codingHistory, forKey: .codingHistory)
 
-        try container.encode(originator, forKey: .originator)
-        try container.encode(originationDate, forKey: .originationDate)
-        try container.encode(originationTime, forKey: .originationTime)
-        try container.encode(originatorReference, forKey: .originatorReference)
-        try container.encode(originator, forKey: .originator)
-        try container.encode(originationDate, forKey: .originationDate)
+        try? container.encode(sequenceDescription, forKey: .sequenceDescription)
+        try? container.encode(codingHistory, forKey: .codingHistory)
 
-        try container.encode(timeReferenceLow, forKey: .timeReferenceLow)
-        try container.encode(timeReferenceHigh, forKey: .timeReferenceHigh)
-        try container.encode(sampleRate, forKey: .sampleRate)
+        try? container.encode(originator, forKey: .originator)
+        try? container.encode(originationDate, forKey: .originationDate)
+        try? container.encode(originationTime, forKey: .originationTime)
+        try? container.encode(originatorReference, forKey: .originatorReference)
+        try? container.encode(originator, forKey: .originator)
+        try? container.encode(originationDate, forKey: .originationDate)
+
+        try? container.encode(timeReferenceLow, forKey: .timeReferenceLow)
+        try? container.encode(timeReferenceHigh, forKey: .timeReferenceHigh)
+
+        try? container.encode(sampleRate, forKey: .sampleRate)
 
         if version >= 1 {
-            try container.encode(umid, forKey: .umid)
+            try? container.encode(umid, forKey: .umid)
         }
 
         if version >= 2 {
-            try container.encode(loudnessValue, forKey: .loudnessValue)
-            try container.encode(loudnessRange, forKey: .loudnessRange)
-            try container.encode(maxTruePeakLevel, forKey: .maxTruePeakLevel)
-            try container.encode(maxMomentaryLoudness, forKey: .maxMomentaryLoudness)
-            try container.encode(maxShortTermLoudness, forKey: .maxShortTermLoudness)
+            try? container.encode(loudnessValue, forKey: .loudnessValue)
+            try? container.encode(loudnessRange, forKey: .loudnessRange)
+            try? container.encode(maxTruePeakLevel, forKey: .maxTruePeakLevel)
+            try? container.encode(maxMomentaryLoudness, forKey: .maxMomentaryLoudness)
+            try? container.encode(maxShortTermLoudness, forKey: .maxShortTermLoudness)
         }
     }
 }
