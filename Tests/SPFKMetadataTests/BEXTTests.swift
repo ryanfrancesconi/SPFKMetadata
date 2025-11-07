@@ -8,10 +8,29 @@ import SPFKUtils
 import Testing
 
 @Suite(.serialized)
-class BroadcastInfoTests: BinTestCase {
+class BEXTTests: BinTestCase {
+    @Test func parseBEXT_v1() async throws {
+        let desc = try #require(BEXTDescription(url: TestBundleResources.shared.wav_bext_v1))
+        Log.debug(desc)
+
+        // <bext:originator>Logic Pro</bext:originator>
+        // <bext:originationDate>2025-10-18</bext:originationDate>
+        // <bext:originationTime>17:51:21</bext:originationTime>
+        // <bext:timeReference>172800000</bext:timeReference>
+        // <bext:version>1</bext:version>
+        // <bext:umid>00000000F05E776B01000000000000000000000000000000000000006058776B010000003058776B01000000C8D3B6080100000000000000000000006058776B</bext:umid>
+
+        #expect(desc.version == 1)
+        #expect(desc.umid == "00000000F05E776B01000000000000000000000000000000000000006058776B010000003058776B01000000C8D3B6080100000000000000000000006058776B")
+
+        #expect(desc.originator == "Logic Pro")
+        #expect(desc.originationDate == "2025-10-18")
+        #expect(desc.originationTime == "17:51:21")
+        #expect(desc.timeReference == 172800000)
+    }
+
     @Test func parseBEXT_v2() async throws {
         let desc = try #require(BEXTDescription(url: TestBundleResources.shared.wav_bext_v2))
-
         Log.debug(desc)
 
         #expect(desc.version == 2)
@@ -32,13 +51,14 @@ class BroadcastInfoTests: BinTestCase {
         #expect(desc.loudnessRange == 0)
         #expect(desc.maxTruePeakLevel == -8.75)
         #expect(desc.maxMomentaryLoudness == -18.42)
-        #expect(desc.maxShortTermLoudness == 327.67) // wrong?
+        #expect(desc.maxShortTermLoudness == nil)
         #expect(desc.timeReference == 158760000)
         #expect(desc.timeReferenceInSeconds == 3600.0)
     }
 
     @Test func writeBEXT() async throws {
-        let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
+        deleteBinOnExit = false
+        let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v1)
 
         var desc = BEXTDescription()
         desc.sequenceDescription = "A new description"
@@ -55,6 +75,7 @@ class BroadcastInfoTests: BinTestCase {
         desc.maxMomentaryLoudness = -2
         desc.timeReferenceLow = 175728049
         desc.timeReferenceHigh = 0
+        desc.sampleRate = 48000
 
         // validate and write the above def
         try BEXTDescription.write(bextDescription: desc, to: tmpfile)
@@ -63,14 +84,14 @@ class BroadcastInfoTests: BinTestCase {
         let updated = try #require(BEXTDescription(url: tmpfile))
         #expect(updated.version == 2)
         #expect(updated.sequenceDescription == "A new description")
-        #expect(updated.umid == "XXXXXX000000000000000000000000000000000000000000000000000000000")
+        #expect(updated.umid == "58585858585830303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303000")
         #expect(updated.originator == "Ryan Francesconi")
         #expect(updated.originatorReference == "ITRAIDA88396FG347125324098748726")
         #expect(updated.originationDate == "2011:01:10")
         #expect(updated.originationTime == "01:01:01")
         #expect(updated.codingHistory?.trimmed == "A=PCM,F=48000,W=16,M=mono,T=original")
         #expect(updated.timeReference == 175728049)
-        #expect(updated.timeReferenceInSeconds == 3984.763015873016)
+        #expect(updated.timeReferenceInSeconds == 3661.0010208333333)
         #expect(updated.loudnessValue == -20.12)
         #expect(updated.loudnessRange == -21)
         #expect(updated.maxTruePeakLevel == -22)

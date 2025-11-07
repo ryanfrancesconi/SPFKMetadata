@@ -6,7 +6,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TagPicture : NSObject
+@interface TagPictureRef : NSObject
 
 @property (nonatomic) CGImageRef cgImage;
 @property (nonatomic, strong, nullable) NSString *pictureDescription;

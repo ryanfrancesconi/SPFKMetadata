@@ -62,6 +62,7 @@ extension TagKey {
         case .podcastUrl: return "WFED"
         case .producedNotice: return "TPRO"
         case .publisherWebpage: return "WPUB"
+        case .private: return "PRIV"
         case .radioStation: return "TRSN"
         case .radioStationOwner: return "TRSO"
         case .radioStationWebpage: return "WORS"

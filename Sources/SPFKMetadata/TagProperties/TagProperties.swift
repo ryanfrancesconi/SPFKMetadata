@@ -6,7 +6,7 @@ import SPFKUtils
 
 /// A Swift convenience wrapper to TagLibBridge (C++)
 public struct TagProperties: Hashable, Codable {
-    public var data = ID3Data()
+    public var data = TagData()
 
     private var tagLibPropertyMap: [String: String] {
         var dict: [String: String] = .init()

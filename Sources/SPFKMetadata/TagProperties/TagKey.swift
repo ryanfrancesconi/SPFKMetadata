@@ -66,6 +66,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case podcastId // Apple Itunes proprietary frame
     case podcastKeywords // Apple Itunes proprietary frame
     case podcastUrl // Apple Itunes proprietary frame
+    case `private`
     case producedNotice
     case publisherWebpage // URL Frame
     case radioStation

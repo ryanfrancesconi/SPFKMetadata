@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// BWF Version 0, 1, or 2
 @property (atomic) short version;
 
-@property (atomic) NSString *bextDescription;
+@property (atomic) NSString *sequenceDescription;
 
 /// UMID (Unique Material Identifier) to standard SMPTE. (Note: Added in version 1.)
 @property (atomic) NSString *umid;

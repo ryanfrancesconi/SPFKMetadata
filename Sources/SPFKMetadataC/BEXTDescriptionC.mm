@@ -7,6 +7,8 @@
 
 @implementation BEXTDescriptionC
 
+using namespace std;
+
 - (id)init {
     self = [super init];
     return self;
@@ -28,11 +30,24 @@
     self = [super init];
 
     self.version = bext.version;
-
     self.codingHistory = @(bext.coding_history);
 
-    if (self.version >= 1 && strlen(bext.umid) > 0) {
-        self.umid = @(bext.umid);
+    if (bext.version >= 1) {
+        // Calculate the actual size of the array [64]
+        int length = MAX(64, sizeof(bext.umid) / sizeof(bext.umid[0]));
+        char hexid[2] = {};
+        char hexArray[128] = {};
+
+        // Convert the char array to 2 digit hex
+        for (int i = 0; i < length; i++) {
+            StringUtil::charToHex(bext.umid[i], hexid);
+            // printf("The character '%c' in hex is: %c%c\n", bext.umid[i], hexumid[0], hexumid[1]);
+            strncat(hexArray, hexid, 2);
+        }
+
+        // printf("umid: %s\n", output);
+
+        self.umid = StringUtil::asciiString(hexArray, sizeof(hexArray));
     }
 
     if (self.version >= 2) {
@@ -52,14 +67,14 @@
         self.maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
     }
 
-    self.bextDescription = StringUtil::asciiString(bext.description, sizeof(bext.description));
+    self.sequenceDescription = StringUtil::asciiString(bext.description, sizeof(bext.description));
     self.originator = StringUtil::asciiString(bext.originator, sizeof(bext.originator));
     self.originationDate = StringUtil::asciiString(bext.origination_date, sizeof(bext.origination_date));
     self.originationTime =  StringUtil::asciiString(bext.origination_time, sizeof(bext.origination_time));
     self.originatorReference = StringUtil::asciiString(bext.originator_reference, sizeof(bext.originator_reference));
 
-    self.timeReferenceLow = bext.time_reference_low;
-    self.timeReferenceHigh = bext.time_reference_high;
+    self.timeReferenceLow = (uint32_t)bext.time_reference_low;
+    self.timeReferenceHigh = (uint32_t)bext.time_reference_high;
 
     // read only properties
     _timeReference = (uint64_t(self.timeReferenceHigh) << 32) | self.timeReferenceLow;
@@ -81,7 +96,7 @@
 
     const char *umid = StringUtil::asciiCString(info.umid);
     const char *codingHistory = StringUtil::asciiCString(info.codingHistory);
-    const char *description = StringUtil::asciiCString(info.bextDescription);
+    const char *sequenceDescription = StringUtil::asciiCString(info.sequenceDescription);
     const char *originator = StringUtil::asciiCString(info.originator);
     const char *originatorReference = StringUtil::asciiCString(info.originatorReference);
     const char *originationDate = StringUtil::asciiCString(info.originationDate);
@@ -96,8 +111,8 @@
         StringUtil::strncpy_pad0(bext.umid, umid, sizeof(bext.umid), true);
     }
 
-    if (description) {
-        StringUtil::strncpy_validate(bext.description, description, sizeof(bext.description));
+    if (sequenceDescription) {
+        StringUtil::strncpy_validate(bext.description, sequenceDescription, sizeof(bext.description));
     }
 
     if (originator) {

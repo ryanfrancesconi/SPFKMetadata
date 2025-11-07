@@ -44,12 +44,7 @@ public enum ChapterParser {
     /// return the embedded title frame for this chapter
     private static func title(from group: AVTimedMetadataGroup) async throws -> String? {
         for item in group.items where item.commonKey == .commonKeyTitle {
-            if #available(macOS 12, iOS 15, *) {
-                return try await item.load(.stringValue)
-
-            } else {
-                return item.stringValue
-            }
+            return try await item.load(.stringValue)
         }
 
         return nil

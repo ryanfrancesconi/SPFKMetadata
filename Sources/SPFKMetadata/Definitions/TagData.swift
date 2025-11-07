@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ID3Data: TagPropertiesContainerModel, Hashable, Codable {
+public struct TagData: TagPropertiesContainerModel, Hashable, Codable {
     public var isEmpty: Bool {
         tags.isEmpty && customTags.isEmpty
     }

@@ -3,9 +3,9 @@
 #import <Foundation/Foundation.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
-#import "TagPicture.h"
+#import "TagPictureRef.h"
 
-@implementation TagPicture
+@implementation TagPictureRef
 - (nonnull id)initWithImage:(CGImageRef)cgImage
                      utType:(UTType *)utType
          pictureDescription:(NSString *)pictureDescription

@@ -22,18 +22,21 @@ using namespace TagLib;
     RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
 
     if (!waveFile) {
+        // not a wave file
         return nil;
     }
 
     _dictionary = [[NSMutableDictionary alloc] init];
 
-    TagLib::RIFF::Info::FieldListMap map = waveFile->InfoTag()->fieldListMap();
+    RIFF::Info::FieldListMap map = waveFile->InfoTag()->fieldListMap();
 
     if (map.isEmpty()) {
         return self;
     }
 
     for (const auto &[key, val] : map) {
+        // cout << key << " = " << val << endl;
+
         const char *bytes = key.data();
         const unsigned int length = key.size();
 
@@ -44,7 +47,6 @@ using namespace TagLib;
         NSString *nsValue = [[NSString alloc] initWithCString:val.toCString()
                                                      encoding:NSUTF8StringEncoding];
 
-        // cout << key << " = " << val << endl;
         // NSLog(@"%@ = %@", nsKey, nsValue);
 
         [_dictionary setValue:nsValue ? : @"" forKey:nsKey];

@@ -74,12 +74,12 @@ public struct BEXTDescription: Hashable, Codable {
 
     /// Time reference in samples
     /// These fields shall contain the time-code of the sequence. It is a 64-bit value which contains the first sample count since midnight.
-    /// First sample count since midnight, low word (UInt32)
-    public var timeReferenceLow: UInt32?
+    /// First sample count since midnight, low word
+    public var timeReferenceLow: UInt64?
 
     /// Time reference in samples
-    /// First sample count since midnight, high word (UInt32)
-    public var timeReferenceHigh: UInt32?
+    /// First sample count since midnight, high word
+    public var timeReferenceHigh: UInt64?
 
     /// Combined 64bit time value of low and high words
     public var timeReference: UInt64? {
@@ -121,28 +121,110 @@ public struct BEXTDescription: Hashable, Codable {
         version = info.version
         codingHistory = info.codingHistory
         sampleRate = info.sampleRate
-
-        if version > 1 {
-            umid = info.umid
-        }
-
-        sequenceDescription = info.bextDescription
-
-        if version >= 2 {
-            loudnessValue = info.loudnessValue
-            loudnessRange = info.loudnessRange
-            maxTruePeakLevel = info.maxTruePeakLevel
-            maxMomentaryLoudness = info.maxMomentaryLoudness
-            maxShortTermLoudness = info.maxShortTermLoudness
-        }
-
+        sequenceDescription = info.sequenceDescription
         originator = info.originator
         originationDate = info.originationDate
         originationTime = info.originationTime
         originatorReference = info.originatorReference
+        timeReferenceLow = info.timeReferenceLow.uInt64
+        timeReferenceHigh = info.timeReferenceHigh.uInt64
 
-        timeReferenceLow = info.timeReferenceLow
-        timeReferenceHigh = info.timeReferenceHigh
+        if version >= 1 {
+            umid = info.umid
+        }
+
+        if version >= 2 {
+            // 0x7fff shall be used to designate an unused value
+            // valid range: -99.99 .. 99.99
+            let invalid: Float = 0x7FFF / 100
+
+            loudnessValue = info.loudnessValue == invalid ? nil : info.loudnessValue
+            loudnessRange = info.loudnessRange == invalid ? nil : info.loudnessRange
+            maxTruePeakLevel = info.maxTruePeakLevel == invalid ? nil : info.maxTruePeakLevel
+            maxMomentaryLoudness = info.maxMomentaryLoudness == invalid ? nil : info.maxMomentaryLoudness
+            maxShortTermLoudness = info.maxShortTermLoudness == invalid ? nil : info.maxShortTermLoudness
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case codingHistory
+        case loudnessRange
+        case loudnessValue
+        case maxMomentaryLoudness
+        case maxShortTermLoudness
+        case maxTruePeakLevel
+        case originationDate
+        case originationTime
+        case originator
+        case originatorReference
+        case sampleRate
+        case sequenceDescription
+        case timeReferenceHigh
+        case timeReferenceLow
+        case umid
+        case version
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        version = try container.decode(Int16.self, forKey: .version)
+        sequenceDescription = try container.decode(String?.self, forKey: .sequenceDescription)
+        codingHistory = try container.decode(String?.self, forKey: .codingHistory)
+
+        originator = try container.decode(String?.self, forKey: .originator)
+        originationDate = try container.decode(String?.self, forKey: .originationDate)
+        originationTime = try container.decode(String?.self, forKey: .originationTime)
+        originatorReference = try container.decode(String?.self, forKey: .originatorReference)
+        originator = try container.decode(String?.self, forKey: .originator)
+        originationDate = try container.decode(String?.self, forKey: .originationDate)
+
+        timeReferenceLow = try container.decode(UInt64?.self, forKey: .timeReferenceLow)
+        timeReferenceHigh = try container.decode(UInt64?.self, forKey: .timeReferenceHigh)
+        sampleRate = try? container.decode(Double?.self, forKey: .sampleRate)
+
+        if version >= 1 {
+            umid = try container.decode(String?.self, forKey: .umid)
+        }
+
+        if version >= 2 {
+            loudnessValue = try? container.decode(Float?.self, forKey: .loudnessValue)
+            loudnessRange = try? container.decode(Float?.self, forKey: .loudnessRange)
+            maxTruePeakLevel = try? container.decode(Float?.self, forKey: .maxTruePeakLevel)
+            maxMomentaryLoudness = try? container.decode(Float?.self, forKey: .maxMomentaryLoudness)
+            maxShortTermLoudness = try? container.decode(Float?.self, forKey: .maxShortTermLoudness)
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(version, forKey: .version)
+        try container.encode(sequenceDescription, forKey: .sequenceDescription)
+        try container.encode(codingHistory, forKey: .codingHistory)
+
+        try container.encode(originator, forKey: .originator)
+        try container.encode(originationDate, forKey: .originationDate)
+        try container.encode(originationTime, forKey: .originationTime)
+        try container.encode(originatorReference, forKey: .originatorReference)
+        try container.encode(originator, forKey: .originator)
+        try container.encode(originationDate, forKey: .originationDate)
+
+        try container.encode(timeReferenceLow, forKey: .timeReferenceLow)
+        try container.encode(timeReferenceHigh, forKey: .timeReferenceHigh)
+        try container.encode(sampleRate, forKey: .sampleRate)
+
+        if version >= 1 {
+            try container.encode(umid, forKey: .umid)
+        }
+
+        if version >= 2 {
+            try container.encode(loudnessValue, forKey: .loudnessValue)
+            try container.encode(loudnessRange, forKey: .loudnessRange)
+            try container.encode(maxTruePeakLevel, forKey: .maxTruePeakLevel)
+            try container.encode(maxMomentaryLoudness, forKey: .maxMomentaryLoudness)
+            try container.encode(maxShortTermLoudness, forKey: .maxShortTermLoudness)
+        }
     }
 }
 
@@ -194,7 +276,7 @@ extension BEXTDescription {
         }
 
         if let sequenceDescription {
-            info.bextDescription = sequenceDescription
+            info.sequenceDescription = sequenceDescription
         }
 
         if let originator {
@@ -214,11 +296,11 @@ extension BEXTDescription {
         }
 
         if let timeReferenceLow {
-            info.timeReferenceLow = timeReferenceLow
+            info.timeReferenceLow = timeReferenceLow.uInt32
         }
 
         if let timeReferenceHigh {
-            info.timeReferenceHigh = timeReferenceHigh
+            info.timeReferenceHigh = timeReferenceHigh.uInt32
         }
 
         return info

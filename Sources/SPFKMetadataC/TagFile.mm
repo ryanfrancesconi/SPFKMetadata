@@ -1,15 +1,23 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
+#import <Foundation/Foundation.h>
+#import <iostream>
+
 #import <tag/aifffile.h>
 #import <tag/fileref.h>
 #import <tag/flacfile.h>
+#import <tag/id3v2tag.h>
 #import <tag/mp4file.h>
 #import <tag/mpegfile.h>
 #import <tag/oggfile.h>
+#import <tag/oggflacfile.h>
+#import <tag/opusfile.h>
+#import <tag/privateframe.h>
 #import <tag/rifffile.h>
 #import <tag/tag.h>
 #import <tag/tfilestream.h>
 #import <tag/tpropertymap.h>
+#import <tag/vorbisfile.h>
 #import <tag/wavfile.h>
 
 #import "StringUtil.h"
@@ -17,6 +25,7 @@
 
 @implementation TagFile
 
+using namespace std;
 using namespace TagLib;
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
@@ -25,34 +34,37 @@ using namespace TagLib;
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
-        return nil;
+        return NULL;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        return nil;
+        return NULL;
     }
 
     _dictionary = [[NSMutableDictionary alloc] init];
 
-    PropertyMap tags = fileRef.file()->properties();
+    PropertyMap properties = tag->properties();
 
-    if (tags.isEmpty()) {
+    if (properties.isEmpty()) {
         return self;
     }
 
     // Copy TagLib's PropertyMap into our dictionary using the same keys they use.
     // See TagKey for translations.
-    for (auto i = tags.begin(); i != tags.end(); ++i) {
-        for (auto j = i->second.begin(); j != i->second.end(); ++j) {
-            //
-            NSString *key = @(i->first.toCString());
-            NSString *object = @(j->toCString());
 
-            if (key != nil && object != nil) {
-                [_dictionary setValue:object ? : @"" forKey:key];
-            }
+    for (const auto &property : properties) {
+        const char *ckey = property.first.toCString();
+        String cval = property.second.toString();
+
+        // cout << ckey << " = " << cval << endl;
+
+        NSString *key = @(ckey);
+        NSString *object = @(cval.toCString()) ? : @"";
+
+        if (key != nil && object != nil) {
+            [_dictionary setValue:object forKey:key];
         }
     }
 
@@ -67,8 +79,9 @@ NSString *const kTagFileTypeM4A = @"m4a";
 NSString *const kTagFileTypeMP3 = @"mp3";
 NSString *const kTagFileTypeMP4 = @"mp4";
 NSString *const kTagFileTypeWAVE = @"wav";
-NSString *const kTagFileTypeOGG = @"ogg";
+NSString *const kTagFileTypeOPUS = @"opus";
 NSString *const kTagFileTypeFLAC = @"flac";
+NSString *const kTagFileTypeVORBIS = @"ogg";
 
 + (NSString *)detectType:(NSString *)path
 {
@@ -110,9 +123,12 @@ NSString *const kTagFileTypeFLAC = @"flac";
         value = kTagFileTypeAIFF;
     } else if (MPEG::File::isSupported(stream)) {
         value = kTagFileTypeMP3;
-    } else if (FLAC::File::isSupported(stream)) {
+    } else if (Ogg::FLAC::File::isSupported(stream)) {
         value = kTagFileTypeFLAC;
-        //} else if (Ogg::File::(stream)) {
+    } else if (Ogg::Opus::File::isSupported(stream)) {
+        value = kTagFileTypeOPUS;
+    } else if (Ogg::Vorbis::File::isSupported(stream)) {
+        value = kTagFileTypeVORBIS;
     }
 
     delete stream;

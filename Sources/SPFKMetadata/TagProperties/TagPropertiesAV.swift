@@ -10,7 +10,7 @@ import Foundation
 ///
 /// You can measure yourself in the tests: parseID3MP3 vs parseID3MP3_AV
 public struct TagPropertiesAV: Hashable, Codable {
-    public var data = ID3Data()
+    public var data = TagData()
 
     public init(url: URL) async throws {
         let asset = AVURLAsset(url: url)

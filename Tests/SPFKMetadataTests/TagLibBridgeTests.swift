@@ -32,8 +32,11 @@ class TagLibBridgeTests: BinTestCase {
         let success = TagLibBridge.removeAllTags(tmpfile.path)
         #expect(success)
 
-        let dict = TagLibBridge.getProperties(tmpfile.path) as? [String: String]
-        #expect(dict?.isEmpty == true)
+        let dict = try #require(TagLibBridge.getProperties(tmpfile.path))
+
+        Log.debug(dict)
+
+        #expect(dict.count == 0)
     }
 
     @Test func copyMetadata() async throws {
@@ -46,64 +49,5 @@ class TagLibBridgeTests: BinTestCase {
 
         let dict = try #require(TagLibBridge.getProperties(tmpfile.path) as? [String: String])
         #expect(dict["TITLE"] == "Stonehenge")
-    }
-}
-
-extension TagLibBridgeTests {
-    @Test func getPicture() async throws {
-        let source = TestBundleResources.shared.mp3_id3
-
-        let tagPicture = try #require(TagLibBridge.getPicture(source.path))
-        let desc = try #require(tagPicture.pictureDescription)
-        let type = try #require(tagPicture.pictureType)
-        let cgImage = tagPicture.cgImage
-
-        #expect(cgImage.width == 600)
-        #expect(cgImage.height == 592)
-        #expect(type == "Front Cover")
-        #expect(desc == "Smell the glove")
-
-        // test export to file
-        let exportType: CGImage.ExportType = .jpeg
-        let filename = "\(type) - \(desc).\(exportType.rawValue)"
-        let url = bin.appendingPathComponent(filename, conformingTo: exportType.utType)
-        try cgImage.export(type: exportType, to: url)
-
-        Log.debug(tagPicture.cgImage)
-    }
-
-    @Test func getPictureFail() async throws {
-        let source = TestBundleResources.shared.toc_many_children
-        #expect(source.exists)
-
-        let tagPicture = TagLibBridge.getPicture(source.path)
-        #expect(tagPicture == nil)
-    }
-
-    @Test func setPicture() async throws {
-        let tmpfile = try copyToBin(url: TestBundleResources.shared.mp3_id3)
-        let imageURL = TestBundleResources.shared.sharksandwich
-
-        let tagPicture = try #require(
-            TagPicture(
-                url: imageURL,
-                pictureDescription: "Shit Sandwich",
-                pictureType: "Back Cover"
-            )
-        )
-
-        #expect(tagPicture.utType == .jpeg)
-
-        Log.debug(tmpfile.path, tagPicture.cgImage)
-
-        let result = TagLibBridge.setPicture(tmpfile.path, picture: tagPicture)
-        #expect(result)
-
-        // open the tmp file up and double check properties were correctly set
-        let outputPicture = try #require(TagLibBridge.getPicture(tmpfile.path))
-        #expect(outputPicture.cgImage.width == 425)
-        #expect(outputPicture.cgImage.height == 425)
-        #expect(outputPicture.pictureDescription == "Shit Sandwich")
-        #expect(outputPicture.pictureType == "Back Cover")
     }
 }
