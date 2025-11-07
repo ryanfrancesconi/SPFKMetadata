@@ -160,6 +160,20 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         UTType(filenameExtension: pathExtension)
     }
 
+    public var isVideo: Bool {
+        //utType?.conforms(to: .video) == true
+        
+        self == .mp4 || self == .mov
+    }
+
+    public var isAudio: Bool {
+        utType?.conforms(to: .audio) == true
+    }
+
+    public var isPCM: Bool {
+        audioFormatID == kAudioFormatLinearPCM
+    }
+
     public var mimeType: String? {
         switch self {
         case .aac:  return "audio/aac"
@@ -174,10 +188,6 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         default:
             return utType?.preferredMIMEType
         }
-    }
-
-    public var isPCM: Bool {
-        audioFormatID == kAudioFormatLinearPCM
     }
 
     /// CoreAudio: A four char code indicating the general kind of data in the stream.
