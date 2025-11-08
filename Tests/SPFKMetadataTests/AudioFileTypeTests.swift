@@ -62,9 +62,39 @@ class AudioFileTypeTests: BinTestCase {
         let names = ids.compactMap {
             try? AudioFileType.getFileTypeName(propertyId: $0)
         }
-        
+
         #expect(names.count == ids.count)
 
         Log.debug(names)
+    }
+
+    @Test func utType() throws {
+        let formats = TestBundleResources.shared.formats
+
+        let audioFileTypes = formats.compactMap {
+            AudioFileType(url: $0)
+        }
+
+        Log.debug(audioFileTypes)
+
+        #expect(audioFileTypes.count == formats.count)
+
+        let utTypes = audioFileTypes.compactMap { $0.utType }
+        #expect(audioFileTypes.count == utTypes.count)
+
+        Log.debug(utTypes)
+    }
+
+    @Test func videoTypes() throws {
+        #expect(AudioFileType.mov.isVideo)
+        #expect(AudioFileType.m4v.isVideo)
+        #expect(AudioFileType.mp4.isVideo)
+
+        #expect(!AudioFileType.wav.isVideo)
+        #expect(AudioFileType.wav.isAudio)
+        #expect(AudioFileType.wav.isPCM)
+
+        // it could be but this returns false
+        // #expect(AudioFileType.mp4.isPCM)
     }
 }

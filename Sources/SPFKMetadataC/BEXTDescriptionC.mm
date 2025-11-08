@@ -32,24 +32,6 @@ using namespace std;
     self.version = bext.version;
     self.codingHistory = @(bext.coding_history);
 
-    if (bext.version >= 1) {
-        // Calculate the actual size of the array [64]
-        int length = MAX(64, sizeof(bext.umid) / sizeof(bext.umid[0]));
-        char hexid[2] = {};
-        char hexArray[128] = {};
-
-        // Convert the char array to 2 digit hex
-        for (int i = 0; i < length; i++) {
-            StringUtil::charToHex(bext.umid[i], hexid);
-            // printf("The character '%c' in hex is: %c%c\n", bext.umid[i], hexumid[0], hexumid[1]);
-            strncat(hexArray, hexid, 2);
-        }
-
-        // printf("umid: %s\n", output);
-
-        self.umid = StringUtil::asciiString(hexArray, sizeof(hexArray));
-    }
-
     if (self.version >= 2) {
         // A 16-bit signed integer, equal to round(100x the Integrated Loudness Value of the file in LUFS).
         self.loudnessValue = ((float)bext.loudness_value) / 100;
@@ -80,6 +62,25 @@ using namespace std;
     _timeReference = (uint64_t(self.timeReferenceHigh) << 32) | self.timeReferenceLow;
     _sampleRate = double(file.samplerate());
     _timeReferenceInSeconds = double(self.timeReference) / self.sampleRate;
+
+    if (bext.version >= 1) {
+        // Calculate the actual size of the array [64]
+        char hexid[2] = {};
+        char hexArray[64] = {};
+
+        int length = MAX(64, sizeof(bext.umid) / sizeof(bext.umid[0]));
+
+        // Convert the char array to 2 digit hex
+        for (int i = 0; i < length; i++) {
+            StringUtil::charToHex(bext.umid[i], hexid);
+            // printf("The character '%c' in hex is: %c%c\n", bext.umid[i], hexArray[0], hexArray[1]);
+            strncat(hexArray, hexid, 2);
+        }
+
+        // printf("umid: %s\n", output);
+        self.umid = StringUtil::asciiString(hexArray, sizeof(hexArray));
+        //self.umid = StringUtil::asciiString(bext.umid, sizeof(bext.umid));
+    }
 
     return self;
 }
@@ -131,7 +132,7 @@ using namespace std;
         StringUtil::strncpy_pad0(bext.origination_time, originationTime, sizeof(bext.origination_time), false);
     }
 
-    if (info.version >= 2) {
+    if (bext.version >= 2) {
         bext.loudness_value = (int16_t)(info.loudnessValue * 100);
         bext.loudness_range = (int16_t)(info.loudnessRange * 100);
         bext.max_true_peak_level = (int16_t)(info.maxTruePeakLevel * 100);

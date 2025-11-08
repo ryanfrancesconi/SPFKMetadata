@@ -17,6 +17,7 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
     case flac
     case ogg
     case m4a
+    case m4b
     case m4v
     case mov
     case mp3
@@ -32,6 +33,7 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         .aac,
         .aiff,
         .m4a,
+        .m4b,
         .mp3,
         .mp4,
         .wav,
@@ -55,9 +57,11 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         case .caf:  return "CAF"
         case .flac: return "FLAC"
         case .m4a:  return "Apple MPEG-4 Audio"
+        case .m4b:  return "Apple MPEG-4 AudioBooks"
         case .mp3:  return "MPEG Layer 3"
-        case .mp4:  return "MPEG-4 Audio"
-        case .mov:  return "Apple MOV"
+        case .mp4:  return "MPEG-4"
+        case .m4v:  return "Apple MPEG-4 Video"
+        case .mov:  return "Apple QuickTime"
         case .wav:  return "Waveform Audio"
         case .w64:  return "Wave (BW64 for length over 4 GB)"
         default:
@@ -161,13 +165,14 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
     }
 
     public var isVideo: Bool {
-        //utType?.conforms(to: .video) == true
-        
-        self == .mp4 || self == .mov
+        guard let utType else { return false }
+        return utType.conforms(to: .video) || utType.conforms(to: .movie)
     }
 
     public var isAudio: Bool {
-        utType?.conforms(to: .audio) == true
+        guard let utType else { return false }
+
+        return utType.conforms(to: .audio)
     }
 
     public var isPCM: Bool {

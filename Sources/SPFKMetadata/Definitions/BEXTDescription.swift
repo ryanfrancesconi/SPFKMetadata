@@ -6,9 +6,9 @@ import SPFKMetadataC
 import SPFKUtils
 
 /// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC for swift
-public struct BEXTDescription: Hashable, Codable {
+public struct BEXTDescription: Hashable {
     /// BWF Version 0, 1, or 2. This will be set based on the content provided.
-    public private(set) var version: Int16 = 0
+    public var version: Int16 = 0
 
     /// A free description of the sequence.
     /// To help applications which display only a short description, it is recommended
@@ -147,89 +147,6 @@ public struct BEXTDescription: Hashable, Codable {
             maxShortTermLoudness = info.maxShortTermLoudness == invalid ? nil : info.maxShortTermLoudness
         }
     }
-
-    enum CodingKeys: String, CodingKey {
-        case codingHistory
-        case loudnessRange
-        case loudnessValue
-        case maxMomentaryLoudness
-        case maxShortTermLoudness
-        case maxTruePeakLevel
-        case originationDate
-        case originationTime
-        case originator
-        case originatorReference
-        case sampleRate
-        case sequenceDescription
-        case timeReferenceHigh
-        case timeReferenceLow
-        case umid
-        case version
-    }
-
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        version = try container.decode(Int16.self, forKey: .version)
-        sequenceDescription = try container.decode(String?.self, forKey: .sequenceDescription)
-        codingHistory = try container.decode(String?.self, forKey: .codingHistory)
-
-        originator = try container.decode(String?.self, forKey: .originator)
-        originationDate = try container.decode(String?.self, forKey: .originationDate)
-        originationTime = try container.decode(String?.self, forKey: .originationTime)
-        originatorReference = try container.decode(String?.self, forKey: .originatorReference)
-        originator = try container.decode(String?.self, forKey: .originator)
-        originationDate = try container.decode(String?.self, forKey: .originationDate)
-
-        timeReferenceLow = try container.decode(UInt64?.self, forKey: .timeReferenceLow)
-        timeReferenceHigh = try container.decode(UInt64?.self, forKey: .timeReferenceHigh)
-        sampleRate = try? container.decode(Double?.self, forKey: .sampleRate)
-
-        if version >= 1 {
-            umid = try container.decode(String?.self, forKey: .umid)
-        }
-
-        if version >= 2 {
-            loudnessValue = try? container.decode(Float?.self, forKey: .loudnessValue)
-            loudnessRange = try? container.decode(Float?.self, forKey: .loudnessRange)
-            maxTruePeakLevel = try? container.decode(Float?.self, forKey: .maxTruePeakLevel)
-            maxMomentaryLoudness = try? container.decode(Float?.self, forKey: .maxMomentaryLoudness)
-            maxShortTermLoudness = try? container.decode(Float?.self, forKey: .maxShortTermLoudness)
-        }
-    }
-
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encode(version, forKey: .version)
-
-        try? container.encode(sequenceDescription, forKey: .sequenceDescription)
-        try? container.encode(codingHistory, forKey: .codingHistory)
-
-        try? container.encode(originator, forKey: .originator)
-        try? container.encode(originationDate, forKey: .originationDate)
-        try? container.encode(originationTime, forKey: .originationTime)
-        try? container.encode(originatorReference, forKey: .originatorReference)
-        try? container.encode(originator, forKey: .originator)
-        try? container.encode(originationDate, forKey: .originationDate)
-
-        try? container.encode(timeReferenceLow, forKey: .timeReferenceLow)
-        try? container.encode(timeReferenceHigh, forKey: .timeReferenceHigh)
-
-        try? container.encode(sampleRate, forKey: .sampleRate)
-
-        if version >= 1 {
-            try? container.encode(umid, forKey: .umid)
-        }
-
-        if version >= 2 {
-            try? container.encode(loudnessValue, forKey: .loudnessValue)
-            try? container.encode(loudnessRange, forKey: .loudnessRange)
-            try? container.encode(maxTruePeakLevel, forKey: .maxTruePeakLevel)
-            try? container.encode(maxMomentaryLoudness, forKey: .maxMomentaryLoudness)
-            try? container.encode(maxShortTermLoudness, forKey: .maxShortTermLoudness)
-        }
-    }
 }
 
 extension BEXTDescription {
@@ -238,7 +155,7 @@ extension BEXTDescription {
         let info = BEXTDescriptionC()
 
         func updateVersion(_ requiredVersion: Int16) {
-            if version < requiredVersion {
+            if info.version < requiredVersion {
                 info.version = requiredVersion
             }
         }
