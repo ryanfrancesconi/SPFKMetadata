@@ -29,34 +29,34 @@ using namespace std;
 
     self = [super init];
 
-    self.version = bext.version;
-    self.codingHistory = @(bext.coding_history);
+    _version = bext.version;
+    _codingHistory = @(bext.coding_history);
 
-    if (self.version >= 2) {
+    if (bext.version >= 2) {
         // A 16-bit signed integer, equal to round(100x the Integrated Loudness Value of the file in LUFS).
-        self.loudnessValue = ((float)bext.loudness_value) / 100;
+        _loudnessValue = ((float)bext.loudness_value) / 100;
 
         // A 16-bit signed integer, equal to round(100x the Loudness Range of the file in LU).
-        self.loudnessRange = ((float)bext.loudness_range) / 100;
+        _loudnessRange = ((float)bext.loudness_range) / 100;
 
         // A 16-bit signed integer, equal to round(100x the Maximum True Peak Value of the file in dBTP).
-        self.maxTruePeakLevel = ((float)bext.max_true_peak_level) / 100;
+        _maxTruePeakLevel = ((float)bext.max_true_peak_level) / 100;
 
         // A 16-bit signed integer, equal to round(100x the highest value of the Momentary Loudness Level of the file in LUFS).
-        self.maxMomentaryLoudness = ((float)bext.max_momentary_loudness) / 100;
+        _maxMomentaryLoudness = ((float)bext.max_momentary_loudness) / 100;
 
         // A 16-bit signed integer, equal to round(100x the highest value of the Short-term Loudness Level of the file in LUFS).
-        self.maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
+        _maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
     }
 
-    self.sequenceDescription = StringUtil::asciiString(bext.description, sizeof(bext.description));
-    self.originator = StringUtil::asciiString(bext.originator, sizeof(bext.originator));
-    self.originationDate = StringUtil::asciiString(bext.origination_date, sizeof(bext.origination_date));
-    self.originationTime =  StringUtil::asciiString(bext.origination_time, sizeof(bext.origination_time));
-    self.originatorReference = StringUtil::asciiString(bext.originator_reference, sizeof(bext.originator_reference));
+    _sequenceDescription = StringUtil::asciiString(bext.description, sizeof(bext.description));
+    _originator = StringUtil::asciiString(bext.originator, sizeof(bext.originator));
+    _originationDate = StringUtil::asciiString(bext.origination_date, sizeof(bext.origination_date));
+    _originationTime =  StringUtil::asciiString(bext.origination_time, sizeof(bext.origination_time));
+    _originatorReference = StringUtil::asciiString(bext.originator_reference, sizeof(bext.originator_reference));
 
-    self.timeReferenceLow = (uint32_t)bext.time_reference_low;
-    self.timeReferenceHigh = (uint32_t)bext.time_reference_high;
+    _timeReferenceLow = (uint32_t)bext.time_reference_low;
+    _timeReferenceHigh = (uint32_t)bext.time_reference_high;
 
     // read only properties
     _timeReference = (uint64_t(self.timeReferenceHigh) << 32) | self.timeReferenceLow;
@@ -64,22 +64,19 @@ using namespace std;
     _timeReferenceInSeconds = double(self.timeReference) / self.sampleRate;
 
     if (bext.version >= 1) {
-        // Calculate the actual size of the array [64]
         char hexid[2] = {};
-        char hexArray[64] = {};
 
+        // Calculate the actual size of the array [64]
         int length = MAX(64, sizeof(bext.umid) / sizeof(bext.umid[0]));
 
-        // Convert the char array to 2 digit hex
+        std::string buffer;
+
         for (int i = 0; i < length; i++) {
-            StringUtil::charToHex(bext.umid[i], hexid);
-            // printf("The character '%c' in hex is: %c%c\n", bext.umid[i], hexArray[0], hexArray[1]);
-            strncat(hexArray, hexid, 2);
+            // Convert the char array to 2 digit hex
+            buffer += StringUtil::charToHexString(bext.umid[i]);
         }
 
-        // printf("umid: %s\n", output);
-        self.umid = StringUtil::asciiString(hexArray, sizeof(hexArray));
-        //self.umid = StringUtil::asciiString(bext.umid, sizeof(bext.umid));
+        _umid = StringUtil::utf8NSString(buffer);
     }
 
     return self;

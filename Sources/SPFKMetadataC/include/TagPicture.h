@@ -1,22 +1,21 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
-#ifndef WAVEFILE_H
-#define WAVEFILE_H
-
 #import <Foundation/Foundation.h>
+
+#import "TagPictureRef.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WaveFile : NSObject
+@interface TagPicture : NSObject
 
-@property (nullable, nonatomic) NSMutableDictionary *dictionary;
+@property (nullable, nonatomic) TagPictureRef *pictureRef;
 
-/// Convert the wave INFO chunks into a NSDictionary
-/// - Parameter path: the file to parse
 - (nullable id)initWithPath:(nonnull NSString *)path;
+
+/// Set the Broadcast Extension Chunk for WAV (and related) files.
++ (bool)write:(TagPictureRef *)picture
+         path:(nonnull NSString *)path;
 
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif /* WAVEFILE_H */

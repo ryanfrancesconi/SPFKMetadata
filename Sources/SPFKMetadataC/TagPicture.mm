@@ -14,23 +14,23 @@
 #import <tag/tag.h>
 
 #import "StringUtil.h"
-#import "TagLibPicture.h"
+#import "TagPicture.h"
 #import "TagPictureRef.h"
 
 using namespace std;
 using namespace TagLib;
 
-@implementation TagLibPicture
+@implementation TagPicture
 
 // NOTE: these are TagLib constants
 
-const String pictureKey("PICTURE");
-const String dataKey("data");
-const String mimeTypeKey("mimeType");
-const String descriptionKey("description");
-const String pictureTypeKey("pictureType");
+const TagLib::String pictureKey("PICTURE");
+const TagLib::String dataKey("data");
+const TagLib::String mimeTypeKey("mimeType");
+const TagLib::String descriptionKey("description");
+const TagLib::String pictureTypeKey("pictureType");
 
-+ (TagPictureRef *)getPicture:(nonnull NSString *)path {
+- (nullable id)initWithPath:(nonnull NSString *)path {
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {
@@ -84,6 +84,10 @@ const String pictureTypeKey("pictureType");
             true,
             kCGRenderingIntentDefault
             );
+    } else {
+        NSLog(@"Image must be either JPEG or PNG");
+        CFRelease(dataProvider);
+        return NULL;
     }
 
     CFRelease(dataProvider);
@@ -109,31 +113,17 @@ const String pictureTypeKey("pictureType");
     NSString *desc = StringUtil::utf8NSString(pictureDescription);
     NSString *pict = StringUtil::utf8NSString(pictureType);
 
-    TagPictureRef *pictureRef = [[TagPictureRef alloc] initWithImage:imageRef
-                                                              utType:utType
-                                                  pictureDescription:desc
-                                                         pictureType:pict];
+    _pictureRef = [[TagPictureRef alloc] initWithImage:imageRef
+                                                utType:utType
+                                    pictureDescription:desc
+                                           pictureType:pict];
 
-    return pictureRef;
+    return self;
 }
 
-+ (bool)setPicture:(nonnull TagPictureRef *)picture
-              path:(nonnull NSString *)path  {
++ (bool)write:(TagPictureRef *)picture
+         path:(nonnull NSString *)path {
     //
-    FileRef fileRef(path.UTF8String);
-
-    if (fileRef.isNull()) {
-        cout << "FileRef isNull" << endl;
-
-        return false;
-    }
-
-    Tag *tag = fileRef.tag();
-
-    if (!tag) {
-        cout << "Unable to read tag" << endl;
-        return false;
-    }
 
     VariantMap map;
 
@@ -173,6 +163,21 @@ const String pictureTypeKey("pictureType");
         return false;
     }
 
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        cout << "FileRef isNull" << endl;
+
+        return false;
+    }
+
+    Tag *tag = fileRef.tag();
+
+    if (!tag) {
+        cout << "Unable to read tag" << endl;
+        return false;
+    }
+
     vector<char> vector = copyToVector(nsData);
 
     ByteVector data = ByteVector(vector.data(), int(vector.size()));
@@ -184,7 +189,7 @@ const String pictureTypeKey("pictureType");
     return true;
 }
 
-vector<char> copyToVector(NSData *data) {
+static vector<char> copyToVector(NSData *data) {
     const char *bytes = (const char *)[data bytes];
     NSUInteger length = [data length];
 

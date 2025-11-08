@@ -14,7 +14,7 @@ class TagLibPictureTests: BinTestCase {
 
         let source = TestBundleResources.shared.mp3_id3
 
-        let tagPicture = try #require(TagLibPicture.getPicture(source.path))
+        let tagPicture = try #require(TagPicture(path: source.path)?.pictureRef)
         let desc = try #require(tagPicture.pictureDescription)
         let type = try #require(tagPicture.pictureType)
         let cgImage = tagPicture.cgImage
@@ -37,7 +37,7 @@ class TagLibPictureTests: BinTestCase {
         let source = TestBundleResources.shared.toc_many_children
         #expect(source.exists)
 
-        let tagPicture = TagLibPicture.getPicture(source.path)
+        let tagPicture = TagPicture(path: source.path)?.pictureRef
         #expect(tagPicture == nil)
     }
 
@@ -61,11 +61,11 @@ class TagLibPictureTests: BinTestCase {
 
             Log.debug(tmpfile.path)
 
-            let result = TagLibPicture.setPicture(pictureRef, path: tmpfile.path)
+            let result = TagPicture.write(pictureRef, path: tmpfile.path)
             #expect(result)
 
             // open the tmp file up and double check properties were correctly set
-            let outputPicture = try #require(TagLibPicture.getPicture(tmpfile.path))
+            let outputPicture = try #require(TagPicture(path: tmpfile.path)?.pictureRef)
             #expect(outputPicture.cgImage.width == pictureRef.cgImage.width)
             #expect(outputPicture.cgImage.height == pictureRef.cgImage.height)
 

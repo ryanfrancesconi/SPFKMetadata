@@ -121,8 +121,7 @@ using namespace TagLib;
     return fileRef.save();
 }
 
-+ (nullable NSString *)getComment:(NSString *)path
-{
++ (nullable NSString *)getComment:(NSString *)path {
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {

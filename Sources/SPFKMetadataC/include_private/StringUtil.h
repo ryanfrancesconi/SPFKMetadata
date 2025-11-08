@@ -1,5 +1,8 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
+#ifndef StringUtil_H
+#define StringUtil_H
+
 #import <Foundation/Foundation.h>
 #import <iostream>
 #import <tag/tstring.h>
@@ -58,28 +61,15 @@ namespace StringUtil {
         }
     }
 
-    static void
-    charToHex(char c, char hex_output[2]) {
-        // Ensure the char is treated as unsigned to avoid sign extension issues
-        unsigned char uc = (unsigned char)c;
+    static std::string charToHexString(unsigned char c) {
+        static const std::array<char, 16> hex_chars = {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+        };
+        std::string result;
 
-        // Convert the upper 4 bits to a hex character
-        int upper_nibble = (uc >> 4) & 0x0F;
-
-        if (upper_nibble < 10) {
-            hex_output[0] = '0' + upper_nibble;
-        } else {
-            hex_output[0] = 'A' + (upper_nibble - 10);
-        }
-
-        // Convert the lower 4 bits to a hex character
-        int lower_nibble = uc & 0x0F;
-
-        if (lower_nibble < 10) {
-            hex_output[1] = '0' + lower_nibble;
-        } else {
-            hex_output[1] = 'A' + (lower_nibble - 10);
-        }
+        result += hex_chars[(c >> 4) & 0xF]; // High nibble
+        result += hex_chars[c & 0xF];   // Low nibble
+        return result;
     }
 
     /**
@@ -104,6 +94,11 @@ namespace StringUtil {
         return [[NSString alloc] initWithCString:string.toCString() encoding:NSUTF8StringEncoding];
     }
 
+    static NSString *
+    utf8NSString(std::string string) {
+        return [[NSString alloc] initWithCString:string.c_str() encoding:NSUTF8StringEncoding];
+    }
+
     static const char *
     asciiCString(NSString *string) {
         return [string cStringUsingEncoding:NSASCIIStringEncoding];
@@ -114,3 +109,5 @@ namespace StringUtil {
         return [string cStringUsingEncoding:NSUTF8StringEncoding];
     }
 }
+
+#endif // !StringUtil_H

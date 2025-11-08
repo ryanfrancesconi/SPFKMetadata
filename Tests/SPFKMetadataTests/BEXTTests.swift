@@ -1,9 +1,9 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
-@testable import SPFKMetadata
-@testable import SPFKMetadataC
-@testable import SPFKTesting
+import SPFKMetadata
+import SPFKMetadataC
+import SPFKTesting
 import SPFKUtils
 import Testing
 
@@ -13,19 +13,22 @@ class BEXTTests: BinTestCase {
         let desc = try #require(BEXTDescription(url: TestBundleResources.shared.wav_bext_v1))
         Log.debug(desc)
 
-        // <bext:originator>Logic Pro</bext:originator>
-        // <bext:originationDate>2025-10-18</bext:originationDate>
-        // <bext:originationTime>17:51:21</bext:originationTime>
-        // <bext:timeReference>172800000</bext:timeReference>
         // <bext:version>1</bext:version>
-        // <bext:umid>00000000F05E776B01000000000000000000000000000000000000006058776B010000003058776B01000000C8D3B6080100000000000000000000006058776B</bext:umid>
-
         #expect(desc.version == 1)
-        #expect(desc.umid == "00000000F05E776B01000000000000000000000000000000000000006058776B")
 
+        // XMP: <bext:umid>00000000F05E776B01000000000000000000000000000000000000006058776B010000003058776B01000000C8D3B6080100000000000000000000006058776B</bext:umid>
+        #expect(desc.umid == "00000000F05E776B01000000000000000000000000000000000000006058776B010000003058776B01000000C8D3B6080100000000000000000000006058776B")
+
+        // <bext:originator>Logic Pro</bext:originator>
         #expect(desc.originator == "Logic Pro")
+
+        // <bext:originationDate>2025-10-18</bext:originationDate>
         #expect(desc.originationDate == "2025-10-18")
+
+        // <bext:originationTime>17:51:21</bext:originationTime>
         #expect(desc.originationTime == "17:51:21")
+
+        // <bext:timeReference>172800000</bext:timeReference>
         #expect(desc.timeReference == 172800000)
     }
 
@@ -38,10 +41,10 @@ class BEXTTests: BinTestCase {
         let desc = try #require(BEXTDescription(url: url))
         Log.debug(desc)
 
-        // #expect(desc.umid == "\u{06}\n+4\u{01}\u{01}\u{01}\u{05}\u{01}\u{01}\u{0F}\u{10}\u{13}")
-        #expect(desc.umid == "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F0")
-
-        // #expect(desc.umid == "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F00000000000000000000000000000000000000000000000000000000000000000")
+        // BWF MetaEdit: "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F0"
+        #expect(
+            desc.umid == "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F00000000000000000000000000000000000000000000000000000000000000000"
+        )
     }
 
     @Test func parseBEXT_v2b() async throws {
@@ -53,9 +56,9 @@ class BEXTTests: BinTestCase {
         Log.debug(desc)
 
         #expect(desc.version == 2)
-        #expect(desc.umid == "53504F4E4745464F524B30303030303030303030303030303030303030303030")
+        #expect(desc.umid == "53504F4E4745464F524B303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303000")
         #expect(desc.sequenceDescription == "And oh how they danced The little children of Stonehenge Beneath the haunted moon For fear that daybreak might come too soonr fear that daybreak might come too soon")
-        #expect(desc.codingHistory?.hasPrefix("A=PCM,F=44100,W=16,M=stereo,T=original") == true)
+        #expect(desc.codingHistory?.trimmed == "A=PCM,F=44100,W=16,M=stereo,T=original")
         #expect(desc.originator == "ITRAIDA88396FG347125324098748726")
         #expect(desc.originatorReference == "RF666SPONGEFORK66000100510720836")
         #expect(desc.originationDate == "1984:01:01")
@@ -95,17 +98,15 @@ class BEXTTests: BinTestCase {
         // validate and write the above def
         try BEXTDescription.write(bextDescription: desc, to: tmpfile)
 
-        let imageURL = TestBundleResources.shared.sharksandwich
-
         let pictureRef = try #require(
             TagPictureRef(
-                url: imageURL,
+                url: TestBundleResources.shared.sharksandwich,
                 pictureDescription: "Shit Sandwich",
                 pictureType: "Back Cover"
             )
         )
 
-        TagLibPicture.setPicture(pictureRef, path: tmpfile.path)
+        TagPicture.write(pictureRef, path: tmpfile.path)
 
         let source = try TagProperties(url: TestBundleResources.shared.mp3_id3)
         var copyProps = try TagProperties(url: tmpfile)
@@ -140,10 +141,10 @@ class BEXTTests: BinTestCase {
         // read it back in
         let updated = try #require(BEXTDescription(url: tmpfile))
         #expect(updated.version == 2)
-        #expect(updated.sequenceDescription == "A new description")
-        #expect(updated.umid == "5858585858583030303030303030303030303030303030303030303030303030")
-        #expect(updated.originator == "Ryan Francesconi")
-        #expect(updated.originatorReference == "ITRAIDA88396FG347125324098748726")
+        #expect(updated.sequenceDescription == desc.sequenceDescription)
+        #expect(updated.umid == "58585858585830303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303000")
+        #expect(updated.originator == desc.originator)
+        #expect(updated.originatorReference == desc.originatorReference)
         #expect(updated.originationDate == "2011:01:10")
         #expect(updated.originationTime == "01:01:01")
         #expect(updated.codingHistory?.trimmed == "A=PCM,F=48000,W=16,M=mono,T=original")
