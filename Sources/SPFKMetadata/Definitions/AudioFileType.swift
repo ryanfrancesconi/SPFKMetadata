@@ -22,6 +22,7 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
     case mov
     case mp3
     case mp4
+    case opus
     case sd2
     case snd
     case ts
@@ -39,7 +40,34 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         .wav,
         .flac,
         .ogg,
+        .opus,
     ] }
+
+    public var tagType: TagFileTypeDef? {
+        switch self {
+        case .aac:
+            return .aac
+        case .aifc, .aiff:
+            return .aiff
+        case .flac:
+            return .flac
+        case .ogg:
+            return .vorbis
+        case .m4a:
+            return .m4a
+        case .mp3:
+            return .mp3
+        case .mp4:
+            return .mp4
+        case .opus:
+            return .opus
+        case .wav, .w64:
+            return .wave
+
+        default:
+            return nil
+        }
+    }
 
     public var supportsMetadata: Bool {
         metadataTypes.contains(self)
@@ -62,6 +90,8 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         case .mp4:  return "MPEG-4"
         case .m4v:  return "Apple MPEG-4 Video"
         case .mov:  return "Apple QuickTime"
+        case .ogg:  return "Ogg Vorbis"
+        case .opus: return "Ogg Opus"
         case .wav:  return "Waveform Audio"
         case .w64:  return "Wave (BW64 for length over 4 GB)"
         default:
@@ -120,8 +150,8 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
     /// - Returns: A `MetaAudioFileFormat` or nil
     fileprivate init?(parsing url: URL) {
         // tag lib is faster than CoreAudio so run it first for primary types
-        if let tagFormat = TagFile.detectType(url.path),
-           let value = AudioFileType(pathExtension: tagFormat) {
+        if let tagType = TagFileType.detect(url.path),
+           let value = AudioFileType(tagType: tagType) {
             self = value
             return
         }
@@ -134,6 +164,15 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
                 self = item
                 return
             }
+        }
+
+        return nil
+    }
+
+    public init?(tagType: TagFileTypeDef) {
+        for item in Self.allCases where item.tagType == tagType {
+            self = item
+            return
         }
 
         return nil
@@ -232,3 +271,17 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
 }
 
 // swiftformat:enable consecutiveSpaces
+
+extension TagFileType {
+    public static var allCases: [TagFileTypeDef] { [
+        .aac,
+        .aiff,
+        .flac,
+        .m4a,
+        .mp3,
+        .mp4,
+        .opus,
+        .vorbis,
+        .wave,
+    ] }
+}

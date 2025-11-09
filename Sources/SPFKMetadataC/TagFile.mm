@@ -71,68 +71,29 @@ using namespace TagLib;
     return self;
 }
 
-# pragma mark - Helpers
++ (bool)write:(nonnull NSDictionary *)dictionary path:(nonnull NSString *)path {
+    FileRef fileRef(path.UTF8String);
 
-NSString *const kTagFileTypeAAC = @"aac";
-NSString *const kTagFileTypeAIFF = @"aif";
-NSString *const kTagFileTypeM4A = @"m4a";
-NSString *const kTagFileTypeMP3 = @"mp3";
-NSString *const kTagFileTypeMP4 = @"mp4";
-NSString *const kTagFileTypeWAVE = @"wav";
-NSString *const kTagFileTypeOPUS = @"opus";
-NSString *const kTagFileTypeFLAC = @"flac";
-NSString *const kTagFileTypeVORBIS = @"ogg";
-
-+ (NSString *)detectType:(NSString *)path
-{
-    NSString *pathExtension = [path.pathExtension lowercaseString];
-
-    // no extension, open the file
-    if ([pathExtension isEqualToString:@""]) {
-        return [TagFile detectStreamType:path];
+    if (fileRef.isNull()) {
+        cout << "Unable to read path:" << path.UTF8String << endl;
+        return false;
     }
 
-    // ----
+    PropertyMap tags = PropertyMap();
 
-    if ([pathExtension isEqualToString:@"wave"] || [pathExtension isEqualToString:@"bwf"]) {
-        return kTagFileTypeWAVE;
-    } else if ([pathExtension containsString:@"aif"]) {
-        return kTagFileTypeAIFF;
-    } else {
-        return pathExtension;
-    }
-}
+    for (NSString *key in [dictionary allKeys]) {
+        NSString *value = [dictionary objectForKey:key];
 
-+ (NSString *)detectStreamType:(NSString *)path
-{
-    FileStream *stream = new FileStream(path.UTF8String);
+        String tagKey = String(key.UTF8String);
+        StringList tagValue = StringList(value.UTF8String);
 
-    if (!stream->isOpen()) {
-        NSLog(@"__C TaglibWrapper.detectStreamType: Unable to open FileStream: %@", path);
-        delete stream;
-        return NULL;
+        tags.insert(tagKey, tagValue);
     }
 
-    NSString *value = NULL;
+    tags.removeEmpty();
+    fileRef.setProperties(tags);
 
-    if (RIFF::WAV::File::isSupported(stream)) {
-        value = kTagFileTypeWAVE;
-    } else if (MP4::File::isSupported(stream)) {
-        value = kTagFileTypeM4A;
-    } else if (RIFF::AIFF::File::isSupported(stream)) {
-        value = kTagFileTypeAIFF;
-    } else if (MPEG::File::isSupported(stream)) {
-        value = kTagFileTypeMP3;
-    } else if (Ogg::FLAC::File::isSupported(stream)) {
-        value = kTagFileTypeFLAC;
-    } else if (Ogg::Opus::File::isSupported(stream)) {
-        value = kTagFileTypeOPUS;
-    } else if (Ogg::Vorbis::File::isSupported(stream)) {
-        value = kTagFileTypeVORBIS;
-    }
-
-    delete stream;
-    return value;
+    return fileRef.save();
 }
 
 @end

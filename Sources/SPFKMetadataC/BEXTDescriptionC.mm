@@ -32,7 +32,7 @@ using namespace std;
     _version = bext.version;
     _codingHistory = @(bext.coding_history);
 
-    if (bext.version >= 2) {
+    if (_version >= 2) {
         // A 16-bit signed integer, equal to round(100x the Integrated Loudness Value of the file in LUFS).
         _loudnessValue = ((float)bext.loudness_value) / 100;
 
@@ -63,7 +63,7 @@ using namespace std;
     _sampleRate = double(file.samplerate());
     _timeReferenceInSeconds = double(self.timeReference) / self.sampleRate;
 
-    if (bext.version >= 1) {
+    if (_version >= 1) {
         char hexid[2] = {};
 
         // Calculate the actual size of the array [64]

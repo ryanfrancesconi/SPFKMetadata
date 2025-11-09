@@ -47,12 +47,40 @@ using namespace TagLib;
         NSString *nsValue = [[NSString alloc] initWithCString:val.toCString()
                                                      encoding:NSUTF8StringEncoding];
 
-        // NSLog(@"%@ = %@", nsKey, nsValue);
+        NSLog(@"%@ = %@", nsKey, nsValue);
 
         [_dictionary setValue:nsValue ? : @"" forKey:nsKey];
     }
 
     return self;
+}
+
++ (bool)write:(nonnull NSDictionary *)dictionary path:(nonnull NSString *)path {
+    FileRef fileRef(path.UTF8String);
+
+    if (fileRef.isNull()) {
+        return;
+    }
+
+    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+
+    if (!waveFile) {
+        // not a wave file
+        return;
+    }
+
+    RIFF::Info::FieldListMap map = RIFF::Info::FieldListMap();
+
+    for (NSString *key in [dictionary allKeys]) {
+        NSString *value = [dictionary objectForKey:key];
+
+        String tagKey = String(key.UTF8String);
+        String tagValue = String(value.UTF8String);
+
+        waveFile->InfoTag()->setFieldText(tagKey.data(String::UTF8), tagValue);
+    }
+
+    waveFile->save();
 }
 
 @end

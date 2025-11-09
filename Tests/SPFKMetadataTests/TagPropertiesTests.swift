@@ -132,6 +132,26 @@ class TagPropertiesTests: BinTestCase {
             }
         }
     }
+    
+    @Test func customTag() async throws {
+        deleteBinOnExit = false
+        let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
+
+        var dict: [String: String] = TagLibBridge.getProperties(tmpfile.path) as? [String: String] ?? [:]
+        
+        dict["loudnessValue"] = "-9"
+        dict["loudnessRange"] = "-10"
+        dict["maxTruePeakLevel"] = "-16"
+        
+        TagLibBridge.setProperties(tmpfile.path, dictionary: dict)
+        
+        let newFile = try TagProperties(url: tmpfile)
+        Log.debug(newFile.customTags)
+        
+        let id3File = ID3File(path: tmpfile.path)
+        Log.debug(id3File?.dictionary)
+
+    }
 }
 
 extension TagPropertiesTests {

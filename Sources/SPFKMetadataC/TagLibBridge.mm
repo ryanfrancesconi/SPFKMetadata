@@ -29,6 +29,7 @@
 
 #import "ChapterMarker.h"
 #import "TagFile.h"
+#import "TagFileType.h"
 #import "TagLibBridge.h"
 #import "TagPictureRef.h"
 
@@ -51,28 +52,7 @@ using namespace TagLib;
 
 + (bool)setProperties:(NSString *)path
            dictionary:(NSDictionary *)dictionary {
-    FileRef fileRef(path.UTF8String);
-
-    if (fileRef.isNull()) {
-        cout << "Unable to read path:" << path.UTF8String << endl;
-        return false;
-    }
-
-    PropertyMap tags = PropertyMap();
-
-    for (NSString *key in [dictionary allKeys]) {
-        NSString *value = [dictionary objectForKey:key];
-
-        String tagKey = String(key.UTF8String);
-        StringList tagValue = StringList(value.UTF8String);
-
-        tags.insert(tagKey, tagValue);
-    }
-
-    tags.removeEmpty();
-    fileRef.setProperties(tags);
-
-    return fileRef.save();
+    return [TagFile write:dictionary path:path];
 }
 
 + (nullable NSString *)getTitle:(NSString *)path {
@@ -109,14 +89,6 @@ using namespace TagLib;
     }
 
     tag->setTitle(title.UTF8String);
-
-    // also duplicate the data into the INFO tag if it's a wave file
-    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
-
-    // also set InfoTag for wave
-    if (waveFile) {
-        waveFile->InfoTag()->setTitle(title.UTF8String);
-    }
 
     return fileRef.save();
 }
@@ -168,23 +140,23 @@ using namespace TagLib;
         return false;
     }
 
-    NSString *fileType = [TagFile detectType:path];
+    NSString *fileType = [TagFileType detectType:path];
 
     // implementation for strip() is specific to each type of file
 
-    if ([fileType isEqualToString:kTagFileTypeWAVE]) {
+    if ([fileType isEqualToString:kTagFileTypeWave]) {
         RIFF::WAV::File *f = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
         f->strip();
         //
-    } else if ([fileType isEqualToString:kTagFileTypeM4A] || [fileType isEqualToString:kTagFileTypeMP4]) {
+    } else if ([fileType isEqualToString:kTagFileTypeM4a] || [fileType isEqualToString:kTagFileTypeMp4]) {
         MP4::File *f = dynamic_cast<MP4::File *>(fileRef.file());
         f->strip();
         //
-    } else if ([fileType isEqualToString:kTagFileTypeMP3]) {
+    } else if ([fileType isEqualToString:kTagFileTypeMp3]) {
         MPEG::File *f = dynamic_cast<MPEG::File *>(fileRef.file());
         f->strip();
         //
-    } else if ([fileType isEqualToString:kTagFileTypeFLAC]) {
+    } else if ([fileType isEqualToString:kTagFileTypeFlac]) {
         FLAC::File *f = dynamic_cast<FLAC::File *>(fileRef.file());
         f->strip();
         //

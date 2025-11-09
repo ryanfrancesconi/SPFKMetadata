@@ -36,7 +36,7 @@ extension TagPropertiesContainerModel {
     public var description: String {
         let strings = tags.map {
             let key: TagKey = $0.key
-            return "\(key.rawValue) (ID3: \(key.id3Frame ?? "????")) (INFO: \(key.infoFrame ?? "????")) = \($0.value)"
+            return "\(key.rawValue) (ID3: \(key.id3Frame.value)) (INFO: \(key.infoFrame?.value ?? "????")) = \($0.value)"
         }
 
         return strings.sorted().joined(separator: "\n")
@@ -57,11 +57,11 @@ extension TagPropertiesContainerModel {
     }
 
     /// TIT2 = Hello
-    internal mutating func set(id3Frame key: String, value: String) {
+    internal mutating func set(id3Frame key: ID3Frame, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
         guard let frame = TagKey(id3Frame: key) else {
-            customTags[key] = value
+            customTags[key.rawValue] = value
             return
         }
 

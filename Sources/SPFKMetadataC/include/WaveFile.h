@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// - Parameter path: the file to parse
 - (nullable id)initWithPath:(nonnull NSString *)path;
 
++ (bool)write:(NSDictionary *)dictionary
+         path:(nonnull NSString *)path;
+
 @end
 
 NS_ASSUME_NONNULL_END

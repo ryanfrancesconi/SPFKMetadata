@@ -2,8 +2,7 @@
 
 import Foundation
 
-/// This doesn't take custom frames into account but does handle most common non-standard
-/// ones. TagLib itself uses an all caps dictionary key system.
+/// TagKey is a predomiantly ID3 based label system which mostly follows TagLib's conventions.
 ///
 /// TagsProperties has a customKeys dictionary for any keys found that aren't documented here.
 public enum TagKey: String, CaseIterable, Codable, Comparable {
@@ -13,7 +12,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
 
     case album
     case albumArtist //  id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
-    case albumArtistSort // Apple Itunes proprietary frame
+    case albumArtistSort // Apple proprietary frame
     case albumSort
     case arranger
     case artist
@@ -22,12 +21,12 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case audioSourceWebpage // URL Frame
     case bpm
     case comment
-    case compilation // Apple Itunes proprietary frame
+    case compilation // Apple proprietary frame
     case composer
     case composerSort
     case conductor
     case copyright
-    case copyrightUrl // URL Frame
+    case copyrightURL // URL Frame
     case date // or year
     case discNumber
     case discSubtitle
@@ -37,11 +36,11 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case fileWebpage // URL Frame
     case fileType
     case genre
-    case grouping // Apple Itunes proprietary frame
+    case grouping // Apple proprietary frame
     case initialKey
-    case instrumentation // non standard id3
+    case instrumentation // TXXX non standard id3
     case isrc
-    case keywords // RIFF INFO non standard id3
+    case keywords // TXXX RIFF INFO non standard id3
     case label
     case language
     case length
@@ -49,8 +48,8 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case lyrics
     case media
     case mood
-    case movementName // Apple Itunes proprietary frame
-    case movementNumber // Apple Itunes proprietary frame
+    case movementName // Apple proprietary frame
+    case movementNumber // Apple proprietary frame
     case originalAlbum
     case originalArtist
     case originalDate
@@ -58,15 +57,14 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case originalLyricist
     case owner
     case paymentWebpage // URL Frame
-    case performer // RIFF INFO
+    case performer // TXXX RIFF INFO
     case playlistDelay
-    case podcast // Apple Itunes proprietary frame
-    case podcastCategory // Apple Itunes proprietary frame
-    case podcastDescription // Apple Itunes proprietary frame
-    case podcastId // Apple Itunes proprietary frame
-    case podcastKeywords // Apple Itunes proprietary frame
-    case podcastUrl // Apple Itunes proprietary frame
-    case `private`
+    case podcast // Apple proprietary frame
+    case podcastCategory // Apple proprietary frame
+    case podcastDescription // Apple proprietary frame
+    case podcastId // Apple proprietary frame
+    case podcastKeywords // TXXX Apple proprietary frame
+    case podcastURL // Apple proprietary frame
     case producedNotice
     case publisherWebpage // URL Frame
     case radioStation
@@ -81,6 +79,13 @@ public enum TagKey: String, CaseIterable, Codable, Comparable {
     case titleSort
     case trackNumber
     case work
+
+    // BEXT: TXXX Non-Standard Loudness Tags. Defined by this package.
+    case loudnessValue
+    case loudnessRange
+    case maxTruePeakLevel
+    case maxMomentaryLoudness
+    case maxShortTermLoudness
 }
 
 // MARK: - Init
@@ -95,7 +100,7 @@ extension TagKey {
         rawValue.titleCased
     }
 
-    /// TagLib uses an all caps readable string for its keys.
+    /// TagLib uses an all caps string for its properties.
     public var taglibKey: String {
         rawValue.uppercased()
     }
@@ -108,7 +113,7 @@ extension TagKey {
         return nil
     }
 
-    public init?(id3Frame: String) {
+    public init?(id3Frame: ID3Frame) {
         for item in Self.allCases where item.id3Frame == id3Frame {
             self = item
             return
@@ -117,7 +122,7 @@ extension TagKey {
         return nil
     }
 
-    public init?(infoFrame: String) {
+    public init?(infoFrame: InfoFrame) {
         for item in Self.allCases where item.infoFrame == infoFrame {
             self = item
             return

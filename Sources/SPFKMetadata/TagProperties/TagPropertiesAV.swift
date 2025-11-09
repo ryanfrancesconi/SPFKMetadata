@@ -18,7 +18,8 @@ public struct TagPropertiesAV: Hashable, Codable {
         let metadata = try await Self.loadMetadata(from: asset)
 
         for item in metadata {
-            guard let id3Frame = item.key as? String,
+            guard let id3key = item.key as? String,
+                  let id3Frame = ID3Frame(rawValue: id3key),
                   let value = try? await Self.loadValue(for: item) else { continue }
 
             data.set(id3Frame: id3Frame, value: value)

@@ -20,6 +20,7 @@
 
 #import "ID3File.h"
 #import "TagFile.h"
+#import "TagFileType.h"
 
 @implementation ID3File
 
@@ -37,28 +38,28 @@ using namespace TagLib;
 
     _dictionary = [[NSMutableDictionary alloc] init];
 
-    NSString *fileType = [TagFile detectType:path];
+    NSString *fileType = [TagFileType detectType:path];
     ID3v2::Tag *id3v2;
 
-    if ([fileType isEqualToString:kTagFileTypeWAVE]) {
+    if ([fileType isEqualToString:kTagFileTypeWave]) {
         RIFF::WAV::File *f = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
 
         if (f->hasID3v2Tag()) {
             id3v2 = f->ID3v2Tag();
         }
-    } else if ([fileType isEqualToString:kTagFileTypeAIFF]) {
+    } else if ([fileType isEqualToString:kTagFileTypeAiff]) {
         RIFF::AIFF::File *f = dynamic_cast<RIFF::AIFF::File *>(fileRef.file());
 
         if (f->hasID3v2Tag()) {
             id3v2 = f->tag();
         }
-    } else if ([fileType isEqualToString:kTagFileTypeMP3]) {
+    } else if ([fileType isEqualToString:kTagFileTypeMp3]) {
         MPEG::File *f = dynamic_cast<MPEG::File *>(fileRef.file());
 
         if (f->hasID3v2Tag()) {
             id3v2 = f->ID3v2Tag();
         }
-    } else if ([fileType isEqualToString:kTagFileTypeFLAC]) {
+    } else if ([fileType isEqualToString:kTagFileTypeFlac]) {
         FLAC::File *f = dynamic_cast<FLAC::File *>(fileRef.file());
 
         if (f->hasID3v2Tag()) {
@@ -77,7 +78,7 @@ using namespace TagLib;
         ByteVector frameID = (*it)->frameID();
         String value = (*it)->toString();
 
-        cout << frameID << " == " << value << endl;
+        cout << frameID << " = " << value << endl;
 
         // custom frame handling
         if (frameID == "PRIV") {

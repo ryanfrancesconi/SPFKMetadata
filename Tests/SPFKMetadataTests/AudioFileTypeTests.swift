@@ -2,6 +2,7 @@
 
 import AVFoundation
 @testable import SPFKMetadata
+import SPFKMetadataC
 import SPFKTesting
 import SPFKUtils
 import Testing
@@ -19,6 +20,12 @@ class AudioFileTypeTests: BinTestCase {
             )
 
             #expect(instance.utType != nil)
+        }
+    }
+
+    @Test func tagFileType() throws {
+        for item in TagFileType.allCases {
+            #expect(AudioFileType(tagType: item) != nil)
         }
     }
 
