@@ -12,10 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ID3File : NSObject
 
 @property (nullable, nonatomic) NSMutableDictionary *dictionary;
+@property (nonatomic, strong, nonnull) NSString *path;
 
 /// Convert the frame list into a NSDictionary
 /// - Parameter path: the file to parse
-- (nullable id)initWithPath:(nonnull NSString *)path;
+- (id)initWithPath:(nonnull NSString *)path;
+- (bool)update;
+- (bool)save;
 
 @end
 

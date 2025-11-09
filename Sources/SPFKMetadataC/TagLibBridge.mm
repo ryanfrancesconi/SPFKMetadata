@@ -40,10 +40,10 @@ using namespace TagLib;
 
 @implementation TagLibBridge
 
-+ (nullable NSMutableDictionary *)getProperties:(NSString *)path {
++ (nullable NSDictionary *)getProperties:(NSString *)path {
     TagFile *tagFile = [[TagFile alloc] initWithPath:path];
 
-    if (!tagFile) {
+    if (![tagFile update]) {
         return NULL;
     }
 
@@ -52,7 +52,11 @@ using namespace TagLib;
 
 + (bool)setProperties:(NSString *)path
            dictionary:(NSDictionary *)dictionary {
-    return [TagFile write:dictionary path:path];
+    TagFile *tagFile = [[TagFile alloc] initWithPath:path];
+
+    [tagFile setDictionary:dictionary];
+
+    return [tagFile save];
 }
 
 + (nullable NSString *)getTitle:(NSString *)path {

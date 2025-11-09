@@ -8,13 +8,13 @@ import SPFKUtils
 import Testing
 
 @Suite(.serialized)
-class RIFFTests: BinTestCase {
+class WaveInfoTests: BinTestCase {
     @Test func parseInfo() async throws {
-        // let url = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
-        // let url = URL(fileURLWithPath: "/Users/rf/Downloads/M1F1-float64WE-AFsp.wav")
 
         let url = TestBundleResources.shared.wav_bext_v2
         let waveFile = try #require(WaveFile(path: url.path))
+        #expect(waveFile.update())
+
         let dictionary = try #require(waveFile.dictionary)
         Log.debug(dictionary)
 
@@ -28,13 +28,13 @@ class RIFFTests: BinTestCase {
         let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
 
         let waveFile = try #require(WaveFile(path: tmpfile.path))
-        var dictionary = try #require(waveFile.dictionary as? [String: String])
-
-        dictionary["IBPM"] = "666"
-
-        WaveFile.write(dictionary, path: tmpfile.path)
+        #expect(waveFile.update())
+        waveFile[.bpm] = "666"
+        waveFile.save()
 
         let newFile = try #require(WaveFile(path: tmpfile.path))
+        #expect(newFile.update())
+
         let newDict = try #require(newFile.dictionary)
         Log.debug(newDict)
     }

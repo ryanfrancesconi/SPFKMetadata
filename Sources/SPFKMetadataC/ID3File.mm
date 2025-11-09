@@ -27,18 +27,23 @@
 using namespace std;
 using namespace TagLib;
 
-- (nullable id)initWithPath:(nonnull NSString *)path {
+- (id)initWithPath:(nonnull NSString *)path {
     self = [super init];
 
-    FileRef fileRef(path.UTF8String);
+    _path = path;
+    return self;
+}
+
+- (bool)update {
+    FileRef fileRef(_path.UTF8String);
 
     if (fileRef.isNull()) {
-        return nil;
+        return false;
     }
 
     _dictionary = [[NSMutableDictionary alloc] init];
 
-    NSString *fileType = [TagFileType detectType:path];
+    NSString *fileType = [TagFileType detectType:_path];
     ID3v2::Tag *id3v2;
 
     if ([fileType isEqualToString:kTagFileTypeWave]) {
@@ -69,7 +74,7 @@ using namespace TagLib;
 
     if (id3v2 == nil) {
         cout << "No ID3v2 tag found" << endl;
-        return nil;
+        return false;
     }
 
     ID3v2::FrameList frameList = id3v2->frameList();
@@ -100,8 +105,12 @@ using namespace TagLib;
 
         [_dictionary setValue:nsValue ? : @"" forKey:nsKey];
     }
+    
+    return true;
+}
 
-    return self;
+- (bool)save {
+    return [TagFile write:_dictionary path:_path];
 }
 
 @end

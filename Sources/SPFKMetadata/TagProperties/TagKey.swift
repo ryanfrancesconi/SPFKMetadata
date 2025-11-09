@@ -113,7 +113,7 @@ extension TagKey {
         return nil
     }
 
-    public init?(id3Frame: ID3Frame) {
+    public init?(id3Frame: ID3FrameKey) {
         for item in Self.allCases where item.id3Frame == id3Frame {
             self = item
             return
@@ -122,7 +122,7 @@ extension TagKey {
         return nil
     }
 
-    public init?(infoFrame: InfoFrame) {
+    public init?(infoFrame: InfoFrameKey) {
         for item in Self.allCases where item.infoFrame == infoFrame {
             self = item
             return

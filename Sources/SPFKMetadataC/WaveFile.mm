@@ -12,18 +12,23 @@ using namespace TagLib;
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
     self = [super init];
+    
+    _path = path;
+    return self;
+}
 
-    FileRef fileRef(path.UTF8String);
+- (bool)update {
+    FileRef fileRef(_path.UTF8String);
 
     if (fileRef.isNull()) {
-        return nil;
+        return false;
     }
 
     RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
 
     if (!waveFile) {
         // not a wave file
-        return nil;
+        return false;
     }
 
     _dictionary = [[NSMutableDictionary alloc] init];
@@ -52,14 +57,14 @@ using namespace TagLib;
         [_dictionary setValue:nsValue ? : @"" forKey:nsKey];
     }
 
-    return self;
+    return true;
 }
 
-+ (bool)write:(nonnull NSDictionary *)dictionary path:(nonnull NSString *)path {
-    FileRef fileRef(path.UTF8String);
+- (bool)save {
+    FileRef fileRef(_path.UTF8String);
 
     if (fileRef.isNull()) {
-        return;
+        return false;
     }
 
     RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
@@ -71,8 +76,8 @@ using namespace TagLib;
 
     RIFF::Info::FieldListMap map = RIFF::Info::FieldListMap();
 
-    for (NSString *key in [dictionary allKeys]) {
-        NSString *value = [dictionary objectForKey:key];
+    for (NSString *key in [_dictionary allKeys]) {
+        NSString *value = [_dictionary objectForKey:key];
 
         String tagKey = String(key.UTF8String);
         String tagValue = String(value.UTF8String);

@@ -109,7 +109,9 @@ class BEXTTests: BinTestCase {
         TagPicture.write(pictureRef, path: tmpfile.path)
 
         let source = try TagProperties(url: TestBundleResources.shared.mp3_id3)
+       
         var copyProps = try TagProperties(url: tmpfile)
+        
         copyProps.tags = source.tags
         try copyProps.save()
     }

@@ -9,15 +9,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TagFile : NSObject
 
-@property (nullable, nonatomic) NSMutableDictionary *dictionary;
+@property (nullable, nonatomic) NSDictionary *dictionary;
+@property (nonatomic, strong, nonnull) NSString *path;
 
-/// Convert TagLib's PropertyMap of tags into a NSDictionary
+/// Convert the frame list into a NSDictionary
 /// - Parameter path: the file to parse
-- (nullable id)initWithPath:(nonnull NSString *)path;
+- (id)initWithPath:(nonnull NSString *)path;
 
-+ (bool)write:(NSDictionary *)dictionary
-         path:(nonnull NSString *)path;
+- (bool)update;
+- (bool)save;
 
++ (bool)write:(nonnull NSDictionary *)dictionary path:(nonnull NSString *)path;
 
 @end
 

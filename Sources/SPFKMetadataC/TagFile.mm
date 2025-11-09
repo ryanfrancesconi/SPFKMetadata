@@ -28,19 +28,25 @@
 using namespace std;
 using namespace TagLib;
 
-- (nullable id)initWithPath:(nonnull NSString *)path {
+- (id)initWithPath:(nonnull NSString *)path {
     self = [super init];
 
-    FileRef fileRef(path.UTF8String);
+    _path = path;
+
+    return self;
+}
+
+- (bool)update {
+    FileRef fileRef(_path.UTF8String);
 
     if (fileRef.isNull()) {
-        return NULL;
+        return false;
     }
 
     Tag *tag = fileRef.tag();
 
     if (!tag) {
-        return NULL;
+        return false;
     }
 
     _dictionary = [[NSMutableDictionary alloc] init];
@@ -48,7 +54,7 @@ using namespace TagLib;
     PropertyMap properties = tag->properties();
 
     if (properties.isEmpty()) {
-        return self;
+        return true;
     }
 
     // Copy TagLib's PropertyMap into our dictionary using the same keys they use.
@@ -68,7 +74,11 @@ using namespace TagLib;
         }
     }
 
-    return self;
+    return true;
+}
+
+- (bool)save {
+    return [TagFile write:_dictionary path:_path];
 }
 
 + (bool)write:(nonnull NSDictionary *)dictionary path:(nonnull NSString *)path {

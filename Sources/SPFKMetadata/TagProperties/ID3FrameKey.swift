@@ -1,9 +1,10 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
+import SPFKMetadataC
 
-public enum ID3Frame: String, CaseIterable, Codable, Comparable {
-    public static func < (lhs: ID3Frame, rhs: ID3Frame) -> Bool {
+public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
+    public static func < (lhs: ID3FrameKey, rhs: ID3FrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 
@@ -58,6 +59,7 @@ public enum ID3Frame: String, CaseIterable, Codable, Comparable {
     case podcastDescription // Apple proprietary frame
     case podcastId // Apple proprietary frame
     case podcastURL // Apple proprietary frame
+    case `private`
     case producedNotice
     case publisherWebpage // URL Frame
     case radioStation
@@ -130,6 +132,7 @@ public enum ID3Frame: String, CaseIterable, Codable, Comparable {
         case .podcastDescription: return "TDES"
         case .podcastId: return "TGID"
         case .podcastURL: return "WFED"
+        case .private: return "PRIV"
         case .producedNotice: return "TPRO"
         case .publisherWebpage: return "WPUB"
         case .radioStation: return "TRSN"
@@ -146,4 +149,43 @@ public enum ID3Frame: String, CaseIterable, Codable, Comparable {
         case .userDefined: return "TXXX"
         }
     }
+
+    public init?(value: String) {
+        for item in Self.allCases where item.value == value {
+            self = item
+            return
+        }
+
+        return nil
+    }
+}
+
+extension ID3File {
+    public subscript(key: ID3FrameKey) -> String? {
+        get {
+            dictionary?[key.value] as? String
+        }
+
+        set {
+            dictionary?[key.value] = newValue
+        }
+    }
+
+    public var frames: [ID3Frame] {
+        guard let dictionary, dictionary.count > 0 else { return [] }
+
+        return dictionary.compactMap {
+            guard let key = $0.key as? String,
+                  let value = $0.value as? String,
+                  let frameKey = ID3FrameKey(value: key)
+            else { return nil }
+
+            return ID3Frame(key: frameKey, value: value)
+        }
+    }
+}
+
+public struct ID3Frame: Codable, Hashable, Equatable {
+    var key: ID3FrameKey
+    var value: String
 }

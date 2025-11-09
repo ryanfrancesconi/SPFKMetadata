@@ -43,26 +43,18 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
         .opus,
     ] }
 
+    /// Mapping to TagLib file types
     public var tagType: TagFileTypeDef? {
         switch self {
-        case .aac:
-            return .aac
-        case .aifc, .aiff:
-            return .aiff
-        case .flac:
-            return .flac
-        case .ogg:
-            return .vorbis
-        case .m4a:
-            return .m4a
-        case .mp3:
-            return .mp3
-        case .mp4:
-            return .mp4
-        case .opus:
-            return .opus
-        case .wav, .w64:
-            return .wave
+        case .aac:          return .aac
+        case .aifc, .aiff:  return .aiff
+        case .flac:         return .flac
+        case .ogg:          return .vorbis
+        case .m4a:          return .m4a
+        case .mp3:          return .mp3
+        case .mp4:          return .mp4
+        case .opus:         return .opus
+        case .wav, .w64:    return .wave
 
         default:
             return nil
@@ -271,17 +263,3 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
 }
 
 // swiftformat:enable consecutiveSpaces
-
-extension TagFileType {
-    public static var allCases: [TagFileTypeDef] { [
-        .aac,
-        .aiff,
-        .flac,
-        .m4a,
-        .mp3,
-        .mp4,
-        .opus,
-        .vorbis,
-        .wave,
-    ] }
-}

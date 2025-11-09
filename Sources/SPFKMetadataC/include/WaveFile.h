@@ -10,13 +10,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WaveFile : NSObject
 
 @property (nullable, nonatomic) NSMutableDictionary *dictionary;
+@property (nonatomic, strong, nonnull) NSString *path;
 
-/// Convert the wave INFO chunks into a NSDictionary
+/// Convert the frame list into a NSDictionary
 /// - Parameter path: the file to parse
 - (nullable id)initWithPath:(nonnull NSString *)path;
-
-+ (bool)write:(NSDictionary *)dictionary
-         path:(nonnull NSString *)path;
+- (bool)update;
+- (bool)save;
 
 @end
 

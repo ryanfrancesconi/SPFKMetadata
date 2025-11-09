@@ -1,16 +1,17 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
+import SPFKMetadataC
 
-public enum InfoFrame: String, CaseIterable, Codable, Comparable {
-    public static func < (lhs: InfoFrame, rhs: InfoFrame) -> Bool {
+public enum InfoFrameKey: String, CaseIterable, Codable, Comparable {
+    public static func < (lhs: InfoFrameKey, rhs: InfoFrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 
     case archivalLocation
     case artist
     case baseURL
-    case bpm
+    case bpm // non standard frame
     case cinematographer
     case comment
     case commissioned
@@ -174,4 +175,43 @@ public enum InfoFrame: String, CaseIterable, Codable, Comparable {
         case .year: return "YEAR"
         }
     }
+
+    public init?(value: String) {
+        for item in Self.allCases where item.value == value {
+            self = item
+            return
+        }
+
+        return nil
+    }
+}
+
+extension WaveFile {
+    public subscript(key: InfoFrameKey) -> String? {
+        get {
+            dictionary?[key.value] as? String
+        }
+
+        set {
+            dictionary?[key.value] = newValue
+        }
+    }
+
+    public var frames: [InfoFrame] {
+        guard let dictionary, dictionary.count > 0 else { return [] }
+
+        return dictionary.compactMap {
+            guard let key = $0.key as? String,
+                  let value = $0.value as? String,
+                  let frameKey = InfoFrameKey(value: key)
+            else { return nil }
+
+            return InfoFrame(key: frameKey, value: value)
+        }
+    }
+}
+
+public struct InfoFrame: Codable, Hashable, Equatable {
+    var key: InfoFrameKey
+    var value: String
 }
