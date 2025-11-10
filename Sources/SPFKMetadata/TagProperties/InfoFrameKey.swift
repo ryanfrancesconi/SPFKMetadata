@@ -185,33 +185,3 @@ public enum InfoFrameKey: String, CaseIterable, Codable, Comparable {
         return nil
     }
 }
-
-extension WaveFile {
-    public subscript(key: InfoFrameKey) -> String? {
-        get {
-            dictionary?[key.value] as? String
-        }
-
-        set {
-            dictionary?[key.value] = newValue
-        }
-    }
-
-    public var frames: [InfoFrame] {
-        guard let dictionary, dictionary.count > 0 else { return [] }
-
-        return dictionary.compactMap {
-            guard let key = $0.key as? String,
-                  let value = $0.value as? String,
-                  let frameKey = InfoFrameKey(value: key)
-            else { return nil }
-
-            return InfoFrame(key: frameKey, value: value)
-        }
-    }
-}
-
-public struct InfoFrame: Codable, Hashable, Equatable {
-    var key: InfoFrameKey
-    var value: String
-}

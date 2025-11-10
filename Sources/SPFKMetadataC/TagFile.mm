@@ -3,22 +3,8 @@
 #import <Foundation/Foundation.h>
 #import <iostream>
 
-#import <tag/aifffile.h>
 #import <tag/fileref.h>
-#import <tag/flacfile.h>
-#import <tag/id3v2tag.h>
-#import <tag/mp4file.h>
-#import <tag/mpegfile.h>
-#import <tag/oggfile.h>
-#import <tag/oggflacfile.h>
-#import <tag/opusfile.h>
-#import <tag/privateframe.h>
-#import <tag/rifffile.h>
-#import <tag/tag.h>
-#import <tag/tfilestream.h>
 #import <tag/tpropertymap.h>
-#import <tag/vorbisfile.h>
-#import <tag/wavfile.h>
 
 #import "StringUtil.h"
 #import "TagFile.h"
@@ -32,6 +18,7 @@ using namespace TagLib;
     self = [super init];
 
     _path = path;
+    _dictionary = [[NSMutableDictionary alloc] init];
 
     return self;
 }
@@ -48,8 +35,6 @@ using namespace TagLib;
     if (!tag) {
         return false;
     }
-
-    _dictionary = [[NSMutableDictionary alloc] init];
 
     PropertyMap properties = tag->properties();
 

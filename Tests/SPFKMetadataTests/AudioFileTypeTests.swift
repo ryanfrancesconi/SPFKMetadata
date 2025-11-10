@@ -24,7 +24,7 @@ class AudioFileTypeTests: BinTestCase {
     }
 
     @Test func tagFileType() throws {
-        for item in TagFileType.allCases {
+        for item in TagFileTypeDef.allCases {
             #expect(AudioFileType(tagType: item) != nil)
         }
     }

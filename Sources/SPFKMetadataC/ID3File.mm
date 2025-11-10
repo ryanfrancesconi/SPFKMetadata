@@ -8,14 +8,9 @@
 #import <tag/fileref.h>
 #import <tag/flacfile.h>
 #import <tag/id3v2tag.h>
-#import <tag/mp4file.h>
 #import <tag/mpegfile.h>
-#import <tag/oggfile.h>
 #import <tag/privateframe.h>
 #import <tag/rifffile.h>
-#import <tag/tag.h>
-#import <tag/tfilestream.h>
-#import <tag/tpropertymap.h>
 #import <tag/wavfile.h>
 
 #import "ID3File.h"
@@ -31,53 +26,19 @@ using namespace TagLib;
     self = [super init];
 
     _path = path;
+    _fileType = [TagFileType detectType:path];
+    _dictionary = [[NSMutableDictionary alloc] init];
+
     return self;
 }
 
 - (bool)update {
-    FileRef fileRef(_path.UTF8String);
+    ID3v2::FrameList frameList = [self parseTag];
 
-    if (fileRef.isNull()) {
+    if (frameList.isEmpty()) {
+        cout << "no frames were found" << endl;
         return false;
     }
-
-    _dictionary = [[NSMutableDictionary alloc] init];
-
-    NSString *fileType = [TagFileType detectType:_path];
-    ID3v2::Tag *id3v2;
-
-    if ([fileType isEqualToString:kTagFileTypeWave]) {
-        RIFF::WAV::File *f = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
-
-        if (f->hasID3v2Tag()) {
-            id3v2 = f->ID3v2Tag();
-        }
-    } else if ([fileType isEqualToString:kTagFileTypeAiff]) {
-        RIFF::AIFF::File *f = dynamic_cast<RIFF::AIFF::File *>(fileRef.file());
-
-        if (f->hasID3v2Tag()) {
-            id3v2 = f->tag();
-        }
-    } else if ([fileType isEqualToString:kTagFileTypeMp3]) {
-        MPEG::File *f = dynamic_cast<MPEG::File *>(fileRef.file());
-
-        if (f->hasID3v2Tag()) {
-            id3v2 = f->ID3v2Tag();
-        }
-    } else if ([fileType isEqualToString:kTagFileTypeFlac]) {
-        FLAC::File *f = dynamic_cast<FLAC::File *>(fileRef.file());
-
-        if (f->hasID3v2Tag()) {
-            id3v2 = f->ID3v2Tag();
-        }
-    }
-
-    if (id3v2 == nil) {
-        cout << "No ID3v2 tag found" << endl;
-        return false;
-    }
-
-    ID3v2::FrameList frameList = id3v2->frameList();
 
     for (auto it = frameList.begin(); it != frameList.end(); it++) {
         ByteVector frameID = (*it)->frameID();
@@ -105,12 +66,55 @@ using namespace TagLib;
 
         [_dictionary setValue:nsValue ? : @"" forKey:nsKey];
     }
-    
+
     return true;
 }
 
 - (bool)save {
     return [TagFile write:_dictionary path:_path];
+}
+
+- (ID3v2::FrameList)parseTag {
+    FileRef fileRef(_path.UTF8String);
+
+    if (fileRef.isNull()) {
+        return ID3v2::FrameList();
+    }
+
+    ID3v2::Tag *tag;
+
+    if ([_fileType isEqualToString:kTagFileTypeWave]) {
+        auto *f = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+
+        if (f->hasID3v2Tag()) {
+            tag = f->ID3v2Tag();
+        }
+    } else if ([_fileType isEqualToString:kTagFileTypeAiff]) {
+        auto *f = dynamic_cast<RIFF::AIFF::File *>(fileRef.file());
+
+        if (f->hasID3v2Tag()) {
+            tag = f->tag();
+        }
+    } else if ([_fileType isEqualToString:kTagFileTypeMp3]) {
+        auto *f = dynamic_cast<MPEG::File *>(fileRef.file());
+
+        if (f->hasID3v2Tag()) {
+            tag = f->ID3v2Tag();
+        }
+    } else if ([_fileType isEqualToString:kTagFileTypeFlac]) {
+        auto *f = dynamic_cast<FLAC::File *>(fileRef.file());
+
+        if (f->hasID3v2Tag()) {
+            tag = f->ID3v2Tag();
+        }
+    }
+
+    if (tag == NULL) {
+        cout << "Error: No ID3v2 tag found" << endl;
+        return ID3v2::FrameList();
+    }
+
+    return tag->frameList();
 }
 
 @end

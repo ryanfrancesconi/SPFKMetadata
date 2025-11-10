@@ -5,7 +5,7 @@ import Foundation
 import SPFKMetadataC
 import SPFKUtils
 
-/// Parse Chapters, works with a variety of file types. In particular
+/// ChapterParser, works with a variety of file types. In particular
 /// this is the MP4 chapter parser in SPFKMetadata.
 ///
 /// See MPEGChapterUtil.mm for writing mp3 chapters.
@@ -34,7 +34,11 @@ public enum ChapterParser {
             let name = (try? await title(from: group)) ?? "Chapter \(i + 1)"
 
             chapters.append(
-                ChapterMarker(name: name, startTime: cmStart.seconds, endTime: cmEnd.seconds)
+                ChapterMarker(
+                    name: name,
+                    startTime: cmStart.seconds,
+                    endTime: cmEnd.seconds
+                )
             )
         }
 

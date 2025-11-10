@@ -6,7 +6,10 @@ import SPFKUtils
 
 /// A Swift convenience wrapper to TagLibBridge (C++)
 public struct TagProperties: Hashable, Codable {
+    public private(set) var url: URL
     public var data = TagData()
+
+    // private var tagFile: TagFile
 
     private var tagLibPropertyMap: [String: String] {
         var dict: [String: String] = .init()
@@ -15,15 +18,19 @@ public struct TagProperties: Hashable, Codable {
             dict[item.key.taglibKey] = item.value
         }
 
+        for item in data.customTags {
+            dict[item.key] = item.value
+        }
+
         return dict
     }
-
-    public private(set) var url: URL
 
     /// Create a dictionary from an audio file url
     /// - Parameter url: the `URL` to parse for metadata
     public init(url: URL) throws {
         self.url = url
+
+        // tagFile = TagFile(path: url.path)
 
         try reload()
     }
@@ -40,7 +47,6 @@ public struct TagProperties: Hashable, Codable {
 
     /// Write the current tags dictionary back to the file
     public func save() throws {
-        // TODO: this is only saving standard tags, save customTags
         guard TagLibBridge.setProperties(
             url.path,
             dictionary: tagLibPropertyMap
@@ -49,9 +55,9 @@ public struct TagProperties: Hashable, Codable {
         }
     }
 
-    public mutating func removeAll() throws {
+    public mutating func removeAllTags() throws {
         do {
-            try Self.removeAll(in: url)
+            try Self.removeAllTags(in: url)
         } catch {
             Log.error(error)
         }
@@ -77,11 +83,11 @@ extension TagProperties {
     /// - Parameters:
     ///   - source: The file to read from
     ///   - destination: The file to write to
-    public static func copy(from source: URL, to destination: URL) throws {
+    public static func copyTags(from source: URL, to destination: URL) throws {
         TagLibBridge.copyTags(fromPath: source.path, toPath: destination.path)
     }
 
-    public static func removeAll(in url: URL) throws {
+    public static func removeAllTags(in url: URL) throws {
         guard TagLibBridge.removeAllTags(url.path) else {
             throw NSError(description: "Failed to removeAll tags in \(url.path)")
         }

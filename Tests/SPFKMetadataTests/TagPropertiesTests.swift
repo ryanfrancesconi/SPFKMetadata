@@ -52,7 +52,7 @@ class TagPropertiesTests: BinTestCase {
 
         // target
         var output = try TagProperties(url: tmpfile)
-        try output.removeAll()
+        try output.removeAllTags()
 
         #expect(output.tags.isEmpty)
 
@@ -96,7 +96,7 @@ class TagPropertiesTests: BinTestCase {
             do {
                 var copyProps = try TagProperties(url: copy)
 
-                try copyProps.removeAll()
+                try copyProps.removeAllTags()
                 copyProps.tags = source.tags
                 try copyProps.save()
                 try copyProps.reload()
@@ -120,7 +120,7 @@ class TagPropertiesTests: BinTestCase {
 
             do {
                 var copyProps = try TagProperties(url: copy)
-                try copyProps.removeAll()
+                try copyProps.removeAllTags()
                 try copyProps.reload()
 
                 Log.debug(copy.lastPathComponent, copyProps.description)
@@ -190,33 +190,3 @@ extension TagPropertiesTests {
         #expect(tags[.bpm] == "666")
     }
 }
-
-/*
- album (ID3: TALB) (INFO: IPRD) = This Is Spinal Tap
- albumArtist (ID3: TPE2) (INFO: ????) = Spinal Tap
- artist (ID3: TPE1) (INFO: IART) = Spinal Tap
- bpm (ID3: TBPM) (INFO: IBPM) = 666
- comment (ID3: COMM) (INFO: ICMT) = And oh how they dancedThe little children of StonehengeBeneath the haunted moonFor fear that daybreak might come too soon
- composer (ID3: TCOM) (INFO: IMUS) = Nigel Tufnel
- conductor (ID3: TPE3) (INFO: ????) = Derek Smalls
- copyright (ID3: TCOP) (INFO: ICOP) = 1984 Universal Records, a Division of UMG Recordings, Inc.
- date (ID3: TDRC) (INFO: ICRD) = 1984
- discNumber (ID3: TPOS) (INFO: ????) = 1/1
- encodedBy (ID3: TENC) (INFO: ITCH) = SPFKMetadata
- genre (ID3: TCON) (INFO: IGNR) = Soundtracks
- initialKey (ID3: TKEY) (INFO: ????) = E
- isrc (ID3: TSRC) (INFO: ISRC) = AA6Q72000047
- label (ID3: TPUB) (INFO: IPUB) = Sony/ATV Music Publishing LLC
- language (ID3: TLAN) (INFO: ILNG) = en_uk
- lyricist (ID3: TEXT) (INFO: IWRI) = David St. Hubbins
- lyrics (ID3: USLT) (INFO: ????) = Stonehenge! Where the demons dwellWhere the banshees live and they do live wellStonehenge! Where a man's a manAnd the children dance to the Pipes of Pan
- originalAlbum (ID3: TOAL) (INFO: ????) = This is Spinal Tap
- originalArtist (ID3: TOPE) (INFO: ????) = Spinal Tap
- originalDate (ID3: TDOR) (INFO: ????) = 1884
- originalLyricist (ID3: TOLY) (INFO: ????) = Viv Savage
- releaseCountry (ID3: ????) (INFO: ICNT) = UK
- remixer (ID3: TPE4) (INFO: IEDT) = SPFKMetadata
- subtitle (ID3: TIT3) (INFO: ????) = And oh how they dancedThe little children of StonehengeBeneath the haunted moonFor fear that daybreak might come too soon
- title (ID3: TIT2) (INFO: INAM) = Stonehenge
- trackNumber (ID3: TRCK) (INFO: IPRT) = 9/13
- */

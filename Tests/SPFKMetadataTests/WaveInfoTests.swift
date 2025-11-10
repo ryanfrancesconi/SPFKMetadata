@@ -10,32 +10,36 @@ import Testing
 @Suite(.serialized)
 class WaveInfoTests: BinTestCase {
     @Test func parseInfo() async throws {
-
         let url = TestBundleResources.shared.wav_bext_v2
-        let waveFile = try #require(WaveFile(path: url.path))
-        #expect(waveFile.update())
+        let file = try #require(WaveFile(path: url.path))
+        #expect(file.update())
 
-        let dictionary = try #require(waveFile.dictionary)
+        let dictionary = try #require(file.dictionary)
         Log.debug(dictionary)
 
-//        for (key, value) in dictionary {
-//            Log.debug("\(key) = \(value)")
-//        }
+        #expect(file[.product] == "This Is Spinal Tap")
+        #expect(file[.artist] == "Spinal Tap")
+        #expect(file[.comment] == "And oh how they danced. The little children of Stonehenge.Beneath the haunted moon.For fear that daybreak might come too soon.")
+        #expect(file[.editedBy] == "SPFKMetadata")
+        #expect(file[.title] == "Stonehenge")
+        #expect(file[.bpm] == "666")
     }
 
     @Test func writeCustom() async throws {
         deleteBinOnExit = false
         let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
 
-        let waveFile = try #require(WaveFile(path: tmpfile.path))
-        #expect(waveFile.update())
-        waveFile[.bpm] = "666"
-        waveFile.save()
+        let file = try #require(WaveFile(path: tmpfile.path))
+        #expect(file.update())
+        file[.bpm] = "667"
+        file.save()
 
         let newFile = try #require(WaveFile(path: tmpfile.path))
         #expect(newFile.update())
 
         let newDict = try #require(newFile.dictionary)
         Log.debug(newDict)
+        
+        #expect(newFile[.bpm] == "667")
     }
 }

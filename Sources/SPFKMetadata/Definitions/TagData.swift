@@ -9,7 +9,7 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable {
     public var tags: TagKeyDictionary
 
     /// TXXX, Unoffical, uncommon tags found in this file
-    /// Any tags that weren't matched to a `TagKey` value
+    /// Any tags that didn't match to a `TagKey` value
     public var customTags: [String: String]
 
     public init(tags: TagKeyDictionary = .init(), customTags: [String: String] = .init()) {

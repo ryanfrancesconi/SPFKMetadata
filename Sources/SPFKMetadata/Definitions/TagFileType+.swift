@@ -1,7 +1,7 @@
 import Foundation
 import SPFKMetadataC
 
-extension TagFileType {
+extension TagFileTypeDef: @retroactive CaseIterable {
     // convenience
     public static var allCases: [TagFileTypeDef] { [
         .aac,

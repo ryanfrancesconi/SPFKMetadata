@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic) NSMutableDictionary *dictionary;
 @property (nonatomic, strong, nonnull) NSString *path;
+@property (nonatomic, strong, nullable) NSString *fileType;
 
 /// Convert the frame list into a NSDictionary
 /// - Parameter path: the file to parse

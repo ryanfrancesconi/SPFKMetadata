@@ -13,20 +13,29 @@ class ID3FileTests: BinTestCase {
         // use the xmp file as it has the non standard PRIV frame
         let url = TestBundleResources.shared.mp3_xmp
 
-        let id3File = ID3File(path: url.path)
-        #expect(id3File.update())
+        let file = ID3File(path: url.path)
+        #expect(file.update())
 
-        Log.debug(id3File[.private])
+        // xmp
+        Log.debug(file[.private])
     }
 
-    @Test func frames() async throws {
+    @Test func parse() async throws {
         let url = TestBundleResources.shared.mp3_id3
 
-        let id3File = ID3File(path: url.path)
-        #expect(id3File.update())
+        let file = ID3File(path: url.path)
+        #expect(file.update())
 
-        Log.debug(id3File.frames)
-        
-        #expect(id3File.frames.count == 28)
+        #expect(file[.album] == "This Is Spinal Tap")
+        #expect(file[.artist] == "Spinal Tap")
+        #expect(file[.comment] == """
+            And oh how they danced. The little children of Stonehenge.
+            Beneath the haunted moon.
+            For fear that daybreak might come too soon.
+            """
+        )
+        #expect(file[.remixer] == "SPFKMetadata")
+        #expect(file[.title] == "Stonehenge")
+        #expect(file[.bpm] == "666")
     }
 }

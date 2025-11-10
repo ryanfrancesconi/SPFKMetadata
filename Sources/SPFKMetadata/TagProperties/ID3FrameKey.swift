@@ -146,6 +146,8 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
         case .trackNumber: return "TRCK"
         case .work: return "TIT1"
 
+        // MARK: Custom Tags
+
         case .userDefined: return "TXXX"
         }
     }
@@ -158,34 +160,4 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
 
         return nil
     }
-}
-
-extension ID3File {
-    public subscript(key: ID3FrameKey) -> String? {
-        get {
-            dictionary?[key.value] as? String
-        }
-
-        set {
-            dictionary?[key.value] = newValue
-        }
-    }
-
-    public var frames: [ID3Frame] {
-        guard let dictionary, dictionary.count > 0 else { return [] }
-
-        return dictionary.compactMap {
-            guard let key = $0.key as? String,
-                  let value = $0.value as? String,
-                  let frameKey = ID3FrameKey(value: key)
-            else { return nil }
-
-            return ID3Frame(key: frameKey, value: value)
-        }
-    }
-}
-
-public struct ID3Frame: Codable, Hashable, Equatable {
-    var key: ID3FrameKey
-    var value: String
 }

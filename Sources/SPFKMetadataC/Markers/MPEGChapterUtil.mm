@@ -53,6 +53,7 @@ using namespace TagLib;
         String elementName = String(frame->elementID());
 
         const char *name = elementName.toCString();
+        
         NSString *chapterName = @(name);
 
         const ID3v2::FrameList &embeddedFrames = frame->embeddedFrameList();
