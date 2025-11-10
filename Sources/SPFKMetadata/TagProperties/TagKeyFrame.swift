@@ -3,7 +3,7 @@
 import Foundation
 import SPFKMetadataC
 
-public struct TagKeyFrame: Codable, Hashable, Equatable {
+public struct TagKeyFrame: Codable,Hashable {
     var key: TagKey
     var value: String
 }

@@ -1,9 +1,10 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
-#import <Foundation/Foundation.h>
-
 #ifndef TAGFILE_H
 #define TAGFILE_H
+
+#import <Foundation/Foundation.h>
+#import "TagAudioPropertiesC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -11,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic) NSDictionary *dictionary;
 @property (nonatomic, strong, nonnull) NSString *path;
+@property (nullable, nonatomic) TagAudioPropertiesC *audioProperties;
 
 /// Convert the frame list into a NSDictionary
 /// - Parameter path: the file to parse

@@ -7,7 +7,9 @@
 #import <tag/tpropertymap.h>
 
 #import "StringUtil.h"
+#import "TagAudioPropertiesC.h"
 #import "TagFile.h"
+#import "TagLibBridge.h"
 
 @implementation TagFile
 
@@ -30,12 +32,18 @@ using namespace TagLib;
         return false;
     }
 
+    auto audioProperties = fileRef.audioProperties();
+
+    if (audioProperties != nullptr) {
+        _audioProperties = [[TagAudioPropertiesC alloc] init];
+        _audioProperties.sampleRate = (double)audioProperties->sampleRate();
+        _audioProperties.duration = (double)audioProperties->lengthInMilliseconds() / 1000;
+        _audioProperties.bitRate = audioProperties->bitrate();
+        _audioProperties.channelCount = audioProperties->channels();
+    }
+
     Tag *tag = fileRef.tag();
 
-    AudioProperties *audioProperties = fileRef.audioProperties();
-    
-    cout << "bitrate=" << audioProperties->bitrate() << endl;
-    
     if (!tag) {
         return false;
     }

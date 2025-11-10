@@ -67,7 +67,7 @@ class TagPropertiesTests: BinTestCase {
         output[.keywords] = "Keywords!"
         try output.save()
 
-        try output.reload()
+        try output.load()
         #expect(output[.title] == "New Title \(random)")
         #expect(output[.keywords] == "Keywords!")
     }
@@ -99,7 +99,7 @@ class TagPropertiesTests: BinTestCase {
                 try copyProps.removeAllTags()
                 copyProps.tags = source.tags
                 try copyProps.save()
-                try copyProps.reload()
+                try copyProps.load()
                 Log.debug(copy.lastPathComponent, copyProps.description)
 
                 #expect(copyProps.tags == source.tags)
@@ -121,7 +121,7 @@ class TagPropertiesTests: BinTestCase {
             do {
                 var copyProps = try TagProperties(url: copy)
                 try copyProps.removeAllTags()
-                try copyProps.reload()
+                try copyProps.load()
 
                 Log.debug(copy.lastPathComponent, copyProps.description)
 
@@ -152,6 +152,18 @@ class TagPropertiesTests: BinTestCase {
         id3File.load()
 
         Log.debug(id3File.dictionary)
+    }
+    
+    @Test func audioProperties() async throws {
+        let url = TestBundleResources.shared.mp3_id3
+        let file = try TagProperties(url: url)
+
+        let audioProperties = try #require(file.audioProperties)
+
+        #expect(audioProperties.sampleRate == 44100)
+        #expect(audioProperties.bitRate == 129)
+        #expect(audioProperties.channelCount == 2)
+        #expect(audioProperties.duration == 2.978)
     }
 }
 

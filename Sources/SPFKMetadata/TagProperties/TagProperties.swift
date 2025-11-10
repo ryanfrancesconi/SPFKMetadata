@@ -9,7 +9,7 @@ public struct TagProperties: Hashable, Codable {
     public private(set) var url: URL
     public var data = TagData()
 
-    // private var tagFile: TagFile
+    public private(set) var audioProperties: TagAudioProperties?
 
     private var tagLibPropertyMap: [String: String] {
         var dict: [String: String] = .init()
@@ -30,13 +30,18 @@ public struct TagProperties: Hashable, Codable {
     public init(url: URL) throws {
         self.url = url
 
-        // tagFile = TagFile(path: url.path)
-
-        try reload()
+        try load()
     }
 
-    public mutating func reload() throws {
-        guard let dict = TagLibBridge.getProperties(url.path) as? [String: String] else {
+    public mutating func load() throws {
+        let tagFile = TagFile(path: url.path)
+        tagFile.load()
+
+        if let value = tagFile.audioProperties {
+            audioProperties = TagAudioProperties(cObject: value)
+        }
+
+        guard let dict = tagFile.dictionary as? [String: String] else {
             throw NSError(description: "Failed to open file or no metadata for: \(url.path)")
         }
 
@@ -47,10 +52,10 @@ public struct TagProperties: Hashable, Codable {
 
     /// Write the current tags dictionary back to the file
     public func save() throws {
-        guard TagLibBridge.setProperties(
-            url.path,
-            dictionary: tagLibPropertyMap
-        ) else {
+        let tagFile = TagFile(path: url.path)
+        tagFile.dictionary = tagLibPropertyMap
+
+        guard tagFile.save() else {
             throw NSError(description: "Failed to update tags in \(url.path)")
         }
     }

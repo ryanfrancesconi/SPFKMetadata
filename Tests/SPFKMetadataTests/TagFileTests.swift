@@ -19,4 +19,17 @@ class TagFileTests: BinTestCase {
             tagFile.dictionary?["TITLE"] as? String == "Stonehenge"
         )
     }
+
+    @Test func audioProperties() async throws {
+        let url = TestBundleResources.shared.mp3_id3
+        let file = TagFile(path: url.path)
+        #expect(file.load())
+
+        let audioProperties = try #require(file.audioProperties)
+
+        #expect(audioProperties.sampleRate == 44100)
+        #expect(audioProperties.bitRate == 129)
+        #expect(audioProperties.channelCount == 2)
+        #expect(audioProperties.duration == 2.978)
+    }
 }
