@@ -12,7 +12,7 @@ class TagFileTests: BinTestCase {
     @Test func testParse() async throws {
         let tagFile = TagFile(path: TestBundleResources.shared.wav_bext_v2.path)
 
-        #expect(tagFile.update())
+        #expect(tagFile.load())
 
         // this is the TagLib properties map
         #expect(

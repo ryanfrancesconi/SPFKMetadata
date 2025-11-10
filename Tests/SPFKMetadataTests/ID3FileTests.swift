@@ -14,7 +14,7 @@ class ID3FileTests: BinTestCase {
         let url = TestBundleResources.shared.mp3_xmp
 
         let file = ID3File(path: url.path)
-        #expect(file.update())
+        #expect(file.load())
 
         // xmp
         Log.debug(file[.private])
@@ -24,7 +24,7 @@ class ID3FileTests: BinTestCase {
         let url = TestBundleResources.shared.mp3_id3
 
         let file = ID3File(path: url.path)
-        #expect(file.update())
+        #expect(file.load())
 
         #expect(file[.album] == "This Is Spinal Tap")
         #expect(file[.artist] == "Spinal Tap")

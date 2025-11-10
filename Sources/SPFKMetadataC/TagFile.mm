@@ -23,7 +23,7 @@ using namespace TagLib;
     return self;
 }
 
-- (bool)update {
+- (bool)load {
     FileRef fileRef(_path.UTF8String);
 
     if (fileRef.isNull()) {
@@ -32,6 +32,10 @@ using namespace TagLib;
 
     Tag *tag = fileRef.tag();
 
+    AudioProperties *audioProperties = fileRef.audioProperties();
+    
+    cout << "bitrate=" << audioProperties->bitrate() << endl;
+    
     if (!tag) {
         return false;
     }

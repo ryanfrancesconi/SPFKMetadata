@@ -32,8 +32,8 @@ using namespace TagLib;
     return self;
 }
 
-- (bool)update {
-    ID3v2::FrameList frameList = [self parseTag];
+- (bool)load {
+    ID3v2::FrameList frameList = [self parseID3FrameList];
 
     if (frameList.isEmpty()) {
         cout << "no frames were found" << endl;
@@ -74,14 +74,14 @@ using namespace TagLib;
     return [TagFile write:_dictionary path:_path];
 }
 
-- (ID3v2::FrameList)parseTag {
+- (ID3v2::FrameList)parseID3FrameList {
     FileRef fileRef(_path.UTF8String);
 
     if (fileRef.isNull()) {
         return ID3v2::FrameList();
     }
 
-    ID3v2::Tag *tag;
+    ID3v2::Tag *tag = nullptr;
 
     if ([_fileType isEqualToString:kTagFileTypeWave]) {
         auto *f = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
@@ -109,7 +109,7 @@ using namespace TagLib;
         }
     }
 
-    if (tag == NULL) {
+    if (tag == nullptr) {
         cout << "Error: No ID3v2 tag found" << endl;
         return ID3v2::FrameList();
     }

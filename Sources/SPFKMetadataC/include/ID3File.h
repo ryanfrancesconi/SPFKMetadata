@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Convert the frame list into a NSDictionary
 /// - Parameter path: the file to parse
 - (id)initWithPath:(nonnull NSString *)path;
-- (bool)update;
+- (bool)load;
 - (bool)save;
 
 @end

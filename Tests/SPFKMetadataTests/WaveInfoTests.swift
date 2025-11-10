@@ -12,7 +12,7 @@ class WaveInfoTests: BinTestCase {
     @Test func parseInfo() async throws {
         let url = TestBundleResources.shared.wav_bext_v2
         let file = try #require(WaveFile(path: url.path))
-        #expect(file.update())
+        #expect(file.load())
 
         let dictionary = try #require(file.dictionary)
         Log.debug(dictionary)
@@ -30,12 +30,12 @@ class WaveInfoTests: BinTestCase {
         let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
 
         let file = try #require(WaveFile(path: tmpfile.path))
-        #expect(file.update())
+        #expect(file.load())
         file[.bpm] = "667"
         file.save()
 
         let newFile = try #require(WaveFile(path: tmpfile.path))
-        #expect(newFile.update())
+        #expect(newFile.load())
 
         let newDict = try #require(newFile.dictionary)
         Log.debug(newDict)

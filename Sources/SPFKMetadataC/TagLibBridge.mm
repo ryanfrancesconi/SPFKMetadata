@@ -43,7 +43,7 @@ using namespace TagLib;
 + (nullable NSDictionary *)getProperties:(NSString *)path {
     TagFile *tagFile = [[TagFile alloc] initWithPath:path];
 
-    if (![tagFile update]) {
+    if (![tagFile load]) {
         return NULL;
     }
 

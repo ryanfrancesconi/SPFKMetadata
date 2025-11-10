@@ -69,7 +69,7 @@ class TagLibPictureTests: BinTestCase {
             #expect(outputPicture.cgImage.width == pictureRef.cgImage.width)
             #expect(outputPicture.cgImage.height == pictureRef.cgImage.height)
 
-            // not all formats support these? mp4 / m4a
+            // not all formats support text description? mp4 / m4a
             // #expect(outputPicture.pictureDescription == "Shit Sandwich", "\(tmpfile.lastPathComponent)")
             // #expect(outputPicture.pictureType == "Back Cover", "\(tmpfile.lastPathComponent)")
         }

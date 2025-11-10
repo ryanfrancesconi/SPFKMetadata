@@ -22,13 +22,13 @@ using namespace TagLib;
 
 @implementation TagPicture
 
-// NOTE: these are TagLib constants
+// MARK: TagLib string constants
 
-const TagLib::String pictureKey("PICTURE");
-const TagLib::String dataKey("data");
-const TagLib::String mimeTypeKey("mimeType");
-const TagLib::String descriptionKey("description");
-const TagLib::String pictureTypeKey("pictureType");
+const auto pictureKey = String("PICTURE");
+const auto dataKey = String("data");
+const auto mimeTypeKey = String("mimeType");
+const auto descriptionKey = String("description");
+const auto pictureTypeKey = String("pictureType");
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
     FileRef fileRef(path.UTF8String);
@@ -47,7 +47,7 @@ const TagLib::String pictureTypeKey("pictureType");
 
     auto pictures = tag->complexProperties(pictureKey);
 
-    if (pictures.size() == 0) {
+    if (pictures.isEmpty()) {
         return NULL;
     }
 

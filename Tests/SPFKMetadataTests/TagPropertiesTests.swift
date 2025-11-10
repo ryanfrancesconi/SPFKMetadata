@@ -149,7 +149,7 @@ class TagPropertiesTests: BinTestCase {
         Log.debug(newFile.customTags)
 
         let id3File = ID3File(path: tmpfile.path)
-        id3File.update()
+        id3File.load()
 
         Log.debug(id3File.dictionary)
     }

@@ -9,22 +9,23 @@
 
 using namespace std;
 using namespace TagLib;
+using namespace RIFF;
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
     self = [super init];
-    
+
     _path = path;
     return self;
 }
 
-- (bool)update {
+- (bool)load {
     FileRef fileRef(_path.UTF8String);
 
     if (fileRef.isNull()) {
         return false;
     }
 
-    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+    auto *waveFile = dynamic_cast<WAV::File *>(fileRef.file());
 
     if (!waveFile) {
         // not a wave file
@@ -33,7 +34,7 @@ using namespace TagLib;
 
     _dictionary = [[NSMutableDictionary alloc] init];
 
-    RIFF::Info::FieldListMap map = waveFile->InfoTag()->fieldListMap();
+    auto map = waveFile->InfoTag()->fieldListMap();
 
     if (map.isEmpty()) {
         return self;
@@ -67,14 +68,14 @@ using namespace TagLib;
         return false;
     }
 
-    RIFF::WAV::File *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+    auto *waveFile = dynamic_cast<WAV::File *>(fileRef.file());
 
     if (!waveFile) {
         // not a wave file
         return;
     }
 
-    RIFF::Info::FieldListMap map = RIFF::Info::FieldListMap();
+    auto map = Info::FieldListMap();
 
     for (NSString *key in [_dictionary allKeys]) {
         NSString *value = [_dictionary objectForKey:key];
