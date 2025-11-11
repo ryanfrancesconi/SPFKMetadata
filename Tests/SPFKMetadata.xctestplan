@@ -13,9 +13,8 @@
   },
   "testTargets" : [
     {
-      "parallelizable" : false,
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Packages\/SPFKMetadata",
         "identifier" : "SPFKMetadataTests",
         "name" : "SPFKMetadataTests"
       }
