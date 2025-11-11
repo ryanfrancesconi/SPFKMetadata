@@ -10,7 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) int channelCount;
 
 - (nonnull id)init;
-//- (nonnull id)initWithProperties:(nonnull TagLib::AudioProperties *)audioProperties;
 
 @end
 

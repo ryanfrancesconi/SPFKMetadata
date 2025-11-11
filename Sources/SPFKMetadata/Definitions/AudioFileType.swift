@@ -202,7 +202,6 @@ public enum AudioFileType: String, Hashable, Codable, CaseIterable {
 
     public var isAudio: Bool {
         guard let utType else { return false }
-
         return utType.conforms(to: .audio)
     }
 

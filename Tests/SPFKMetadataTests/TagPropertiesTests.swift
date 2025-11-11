@@ -161,7 +161,7 @@ class TagPropertiesTests: BinTestCase {
         let audioProperties = try #require(file.audioProperties)
 
         #expect(audioProperties.sampleRate == 44100)
-        #expect(audioProperties.bitRate == 129)
+        #expect(audioProperties.bitRate == 128)
         #expect(audioProperties.channelCount == 2)
         #expect(audioProperties.duration == 2.978)
     }

@@ -10,7 +10,8 @@ public struct TagAudioProperties: Codable, Hashable {
     public var channelCount: Int32
 
     public var bitRateString: String {
-        "\(bitRate) kbit/s"
+        guard bitRate > 0 else { return "" }
+        return "\(bitRate) kbit/s"
     }
 
     public init(cObject: TagAudioPropertiesC) {
