@@ -4,7 +4,7 @@ import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
 @testable import SPFKTesting
-import SPFKUtils
+import SPFKBase
 import Testing
 
 @Suite(.serialized)

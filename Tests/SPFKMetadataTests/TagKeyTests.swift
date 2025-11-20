@@ -1,6 +1,6 @@
 import Foundation
 @testable import SPFKMetadata
-import SPFKUtils
+import SPFKBase
 import Testing
 
 struct TagKeyTests {

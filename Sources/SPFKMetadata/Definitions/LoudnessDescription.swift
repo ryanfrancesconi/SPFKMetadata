@@ -1,6 +1,7 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
+import SPFKUtils
 
 public struct LoudnessDescription: Comparable, Hashable, Codable {
     public static func < (lhs: LoudnessDescription, rhs: LoudnessDescription) -> Bool {
@@ -49,19 +50,19 @@ extension LoudnessDescription {
         let lufs = array.compactMap { $0.lufs }.filter { !$0.isInfinite }
 
         if lufs.count > 0 {
-            out.lufs = lufs.reduce(0, +) / lufs.count.double
+            out.lufs = lufs.reduce(0, +) / Double(lufs.count)
         }
 
         let loudnessRange = array.compactMap { $0.loudnessRange }
 
         if loudnessRange.count > 0 {
-            out.loudnessRange = loudnessRange.reduce(0, +) / loudnessRange.count.double
+            out.loudnessRange = loudnessRange.reduce(0, +) / Double(loudnessRange.count)
         }
 
         let truePeak = array.compactMap { $0.truePeak }
 
         if truePeak.count > 0 {
-            out.truePeak = truePeak.reduce(0, +) / truePeak.count.float
+            out.truePeak = truePeak.reduce(0, +) / Float(truePeak.count)
         }
 
         return out

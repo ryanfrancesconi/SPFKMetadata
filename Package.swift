@@ -49,8 +49,7 @@ private let targets: [PackageDescription.Target] = [
         ],
         publicHeadersPath: "include",
         cSettings: [
-//            .headerSearchPath("include_private"),
-//            .headerSearchPath("../../Frameworks/tag.xcframework/macos-arm64_x86_64/tag.framework/Headers")
+
         ],
         cxxSettings: [
             .headerSearchPath("include_private"),

@@ -1,5 +1,5 @@
 import Foundation
-import SPFKUtils
+import SPFKBase
 
 public struct TagData: TagPropertiesContainerModel, Hashable, Codable {
     public var isEmpty: Bool {

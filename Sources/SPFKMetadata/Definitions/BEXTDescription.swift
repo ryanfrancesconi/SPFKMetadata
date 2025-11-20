@@ -3,7 +3,7 @@
 import AudioToolbox
 import Foundation
 import SPFKMetadataC
-import SPFKUtils
+//import SPFKUtils
 
 /// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC for swift
 public struct BEXTDescription: Hashable {
@@ -100,14 +100,14 @@ public struct BEXTDescription: Hashable {
 
     public var sampleRate: Double?
 
-    /// Convenience struct suitable for a UI display
-    public var loudnessDescription: LoudnessDescription {
-        LoudnessDescription(
-            lufs: loudnessValue?.double,
-            loudnessRange: loudnessRange?.double,
-            truePeak: maxTruePeakLevel
-        )
-    }
+//    /// Convenience struct suitable for a UI display
+//    public var loudnessDescription: LoudnessDescription {
+//        LoudnessDescription(
+//            lufs: loudnessValue?.double,
+//            loudnessRange: loudnessRange?.double,
+//            truePeak: maxTruePeakLevel
+//        )
+//    }
 
     public init() {}
 
@@ -128,8 +128,8 @@ public struct BEXTDescription: Hashable {
         originationDate = info.originationDate
         originationTime = info.originationTime
         originatorReference = info.originatorReference
-        timeReferenceLow = info.timeReferenceLow.uInt64
-        timeReferenceHigh = info.timeReferenceHigh.uInt64
+        timeReferenceLow = UInt64(info.timeReferenceLow)
+        timeReferenceHigh = UInt64(info.timeReferenceHigh)
 
         if version >= 1 {
             umid = info.umid
@@ -217,11 +217,11 @@ extension BEXTDescription {
         }
 
         if let timeReferenceLow {
-            info.timeReferenceLow = timeReferenceLow.uInt32
+            info.timeReferenceLow = UInt32(timeReferenceLow)
         }
 
         if let timeReferenceHigh {
-            info.timeReferenceHigh = timeReferenceHigh.uInt32
+            info.timeReferenceHigh = UInt32(timeReferenceHigh)
         }
 
         return info

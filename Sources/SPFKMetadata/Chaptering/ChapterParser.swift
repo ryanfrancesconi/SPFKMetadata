@@ -2,8 +2,8 @@
 
 import AVFoundation
 import Foundation
+import SPFKBase
 import SPFKMetadataC
-import SPFKUtils
 
 /// ChapterParser, works with a variety of file types. In particular
 /// this is the MP4 chapter parser in SPFKMetadata.
@@ -11,7 +11,7 @@ import SPFKUtils
 /// See MPEGChapterUtil.mm for writing mp3 chapters.
 public enum ChapterParser {
     public static func parse(url: URL) async throws -> [ChapterMarker] {
-        guard FileManager.default.fileExists(atPath: url.path) else {
+        guard url.exists else {
             throw NSError(description: "failed to open \(url.path)")
         }
 

@@ -2,7 +2,7 @@
 
 import Foundation
 import SPFKMetadataC
-import SPFKUtils
+import SPFKBase
 
 /// A Swift convenience wrapper to TagLibBridge (C++)
 public struct TagProperties: Hashable, Codable {
