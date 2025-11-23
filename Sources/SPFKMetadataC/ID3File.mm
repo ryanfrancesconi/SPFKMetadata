@@ -4,14 +4,14 @@
 #import <Foundation/Foundation.h>
 #import <iostream>
 
-#import <tag/aifffile.h>
-#import <tag/fileref.h>
-#import <tag/flacfile.h>
-#import <tag/id3v2tag.h>
-#import <tag/mpegfile.h>
-#import <tag/privateframe.h>
-#import <tag/rifffile.h>
-#import <tag/wavfile.h>
+#import <taglib/aifffile.h>
+#import <taglib/fileref.h>
+#import <taglib/flacfile.h>
+#import <taglib/id3v2tag.h>
+#import <taglib/mpegfile.h>
+#import <taglib/privateframe.h>
+#import <taglib/rifffile.h>
+#import <taglib/wavfile.h>
 
 #import "ID3File.h"
 #import "TagFile.h"

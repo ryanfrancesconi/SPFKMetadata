@@ -10,8 +10,8 @@
 #import <ImageIO/CGImageDestination.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
-#import <tag/fileref.h>
-#import <tag/tag.h>
+#import <taglib/fileref.h>
+#import <taglib/tag.h>
 
 #import "StringUtil.h"
 #import "TagPicture.h"

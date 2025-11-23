@@ -5,7 +5,7 @@
 
 #import <Foundation/Foundation.h>
 #import <iostream>
-#import <tag/tstring.h>
+#import <taglib/tstring.h>
 
 namespace StringUtil {
     /**

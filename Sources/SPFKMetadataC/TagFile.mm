@@ -3,8 +3,8 @@
 #import <Foundation/Foundation.h>
 #import <iostream>
 
-#import <tag/fileref.h>
-#import <tag/tpropertymap.h>
+#import <taglib/fileref.h>
+#import <taglib/tpropertymap.h>
 
 #import "StringUtil.h"
 #import "TagAudioPropertiesC.h"

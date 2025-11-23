@@ -1,7 +1,7 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
-#import <tag/fileref.h>
-#import <tag/wavfile.h>
+#import <taglib/fileref.h>
+#import <taglib/wavfile.h>
 
 #import "WaveFile.h"
 

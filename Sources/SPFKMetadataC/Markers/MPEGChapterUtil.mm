@@ -4,13 +4,13 @@
 #import <iostream>
 #import <stdio.h>
 
-#import <tag/chapterframe.h>
-#import <tag/fileref.h>
-#import <tag/mp4file.h>
-#import <tag/mpegfile.h>
-#import <tag/tag.h>
-#import <tag/textidentificationframe.h>
-#import <tag/tpropertymap.h>
+#import <taglib/chapterframe.h>
+#import <taglib/fileref.h>
+#import <taglib/mp4file.h>
+#import <taglib/mpegfile.h>
+#import <taglib/tag.h>
+#import <taglib/textidentificationframe.h>
+#import <taglib/tpropertymap.h>
 
 #import <StringUtil.h>
 #import "ChapterMarker.h"

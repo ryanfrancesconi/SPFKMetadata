@@ -28,6 +28,24 @@ private let dependencies: [PackageDescription.Package.Dependency] = [
     
 //    .package(url: "https://github.com/ryanfrancesconi/SPFKUtils", branch: "main"),
 //    .package(url: "https://github.com/ryanfrancesconi/SPFKTesting", branch: "main"),
+    
+    // Standalone dependencies from source
+    .package(url: "https://github.com/ryanfrancesconi/CXXTagLib", branch: "main"),
+    
+    // Standalone dependencies not easily packaged using SPM
+
+    // sndfile-binary-xcframework requires ogg-binary-xcframework, flac-binary-xcframework, opus-binary-xcframework, and vorbis-binary-xcframework
+    .package(url: "https://github.com/sbooth/sndfile-binary-xcframework", branch: "main"),
+
+    // Xiph ecosystem
+    .package(url: "https://github.com/sbooth/ogg-binary-xcframework", branch: "main"),
+    // flac-binary-xcframework requires ogg-binary-xcframework
+    .package(url: "https://github.com/sbooth/flac-binary-xcframework", branch: "main"),
+    // opus-binary-xcframework requires ogg-binary-xcframework
+    .package(url: "https://github.com/sbooth/opus-binary-xcframework", branch: "main"),
+    // vorbis-binary-xcframework requires ogg-binary-xcframework
+    .package(url: "https://github.com/sbooth/vorbis-binary-xcframework", branch: "main"),
+
 ]
 
 private let targets: [PackageDescription.Target] = [
@@ -44,8 +62,15 @@ private let targets: [PackageDescription.Target] = [
     .target(
         name: nameC,
         dependencies: [
-            .target(name: "tag"),
-            .target(name: "libsndfile")
+            .product(name: "taglib", package: "CXXTagLib"),
+
+            .product(name: "sndfile", package: "sndfile-binary-xcframework"),
+
+            // Xiph ecosystem
+            .product(name: "ogg", package: "ogg-binary-xcframework"),
+            .product(name: "FLAC", package: "flac-binary-xcframework"),
+            .product(name: "opus", package: "opus-binary-xcframework"),
+            .product(name: "vorbis", package: "vorbis-binary-xcframework"),
         ],
         publicHeadersPath: "include",
         cSettings: [
@@ -53,19 +78,9 @@ private let targets: [PackageDescription.Target] = [
         ],
         cxxSettings: [
             .headerSearchPath("include_private"),
-            .headerSearchPath("../../Frameworks/tag.xcframework/macos-arm64_x86_64/tag.framework/Headers")
         ]
     ),
     
-    .binaryTarget(
-        name: "tag",
-        path: "Frameworks/tag.xcframework"
-    ),
-    
-    .binaryTarget(
-        name: "libsndfile",
-        path: "Frameworks/libsndfile.xcframework"
-    ),
 
     .testTarget(
         name: "\(name)Tests",
