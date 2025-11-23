@@ -23,6 +23,7 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private let dependencies: [PackageDescription.Package.Dependency] = [
+    .package(name: "SPFKAudioBase", path: "../SPFKAudioBase"),
     .package(name: "SPFKUtils", path: "../SPFKUtils"),
     .package(name: "SPFKTesting", path: "../SPFKTesting"),
     
@@ -55,6 +56,8 @@ private let targets: [PackageDescription.Target] = [
         dependencies: [
             .target(name: nameC),
             .byNameItem(name: "SPFKUtils", condition: nil),
+            .byNameItem(name: "SPFKAudioBase", condition: nil),
+
         ]
     ),
     
