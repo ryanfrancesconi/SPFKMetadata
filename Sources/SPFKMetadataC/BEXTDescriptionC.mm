@@ -22,7 +22,7 @@ using namespace std;
 
     memset(&bext, 0, sizeof(bext));
 
-    // SF_TRUE if the file contained a Broadcast Extension chunk or SF_FALSE otherwise
+    // SF_TRUE if the file is able to be opened and contains a Broadcast Extension chunk or SF_FALSE otherwise
     if (file.command(SFC_GET_BROADCAST_INFO, &bext, sizeof(bext)) == SF_FALSE) {
         const char *errorString = sf_error_number(file.error());
         printf("Line %d : sf_command (SFC_GET_BROADCAST_INFO) failed, %s \n\n", __LINE__, errorString);
