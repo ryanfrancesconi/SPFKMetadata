@@ -1,10 +1,10 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
+import SPFKBase
 import SPFKMetadata
 import SPFKMetadataC
 import SPFKTesting
-import SPFKBase
 import Testing
 
 @Suite(.serialized)
@@ -30,21 +30,6 @@ class BEXTTests: BinTestCase {
 
         // <bext:timeReference>172800000</bext:timeReference>
         #expect(desc.timeReference == 172800000)
-    }
-
-    @Test func parseBEXT_dev() async throws {
-        deleteBinOnExit = false
-
-        let url = URL(fileURLWithPath: "/Users/rf/Downloads/TestResources/Home Economics 1.8.wav")
-        guard url.exists else { return }
-
-        let desc = try #require(BEXTDescription(url: url))
-        Log.debug(desc)
-
-        // BWF MetaEdit: "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F0"
-        #expect(
-            desc.umid == "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F00000000000000000000000000000000000000000000000000000000000000000"
-        )
     }
 
     @Test func parseBEXT_v2b() async throws {
@@ -109,9 +94,9 @@ class BEXTTests: BinTestCase {
         TagPicture.write(pictureRef, path: tmpfile.path)
 
         let source = try TagProperties(url: TestBundleResources.shared.mp3_id3)
-       
+
         var copyProps = try TagProperties(url: tmpfile)
-        
+
         copyProps.tags = source.tags
         try copyProps.save()
     }
@@ -157,5 +142,24 @@ class BEXTTests: BinTestCase {
         #expect(updated.maxTruePeakLevel == -22)
         #expect(updated.maxShortTermLoudness == -1)
         #expect(updated.maxMomentaryLoudness == -2)
+    }
+}
+
+extension BEXTTests {
+    @Test func parseBEXT_dev() async throws {
+        deleteBinOnExit = false
+
+        let url = TestBundleResources.shared.bundleURL.appendingPathComponent("Home Economics.wav")
+        guard url.exists else { return }
+
+        Log.debug(url.path)
+
+        let desc = try #require(BEXTDescription(url: url))
+        Log.debug(desc)
+
+        // BWF MetaEdit: "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F0"
+        #expect(
+            desc.umid == "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F00000000000000000000000000000000000000000000000000000000000000000"
+        )
     }
 }

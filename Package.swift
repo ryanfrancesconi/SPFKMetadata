@@ -12,7 +12,8 @@ private let name: String = "SPFKMetadata"
 private let nameC: String = "\(name)C"
 
 private let platforms: [PackageDescription.SupportedPlatform]? = [
-    .macOS(.v12)
+    .macOS(.v12),
+    .iOS(.v15),
 ]
 
 private let products: [PackageDescription.Product] = [
@@ -57,7 +58,6 @@ private let targets: [PackageDescription.Target] = [
             .target(name: nameC),
             .byNameItem(name: "SPFKUtils", condition: nil),
             .byNameItem(name: "SPFKAudioBase", condition: nil),
-
         ]
     ),
     

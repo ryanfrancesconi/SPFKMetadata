@@ -40,7 +40,7 @@ class MP3MarkerTests: BinTestCase {
             ChapterMarker(name: "New 2", startTime: 4, endTime: 6),
         ]
 
-        #expect(MPEGChapterUtil.update(tmpfile.path(), chapters: markers))
+        #expect(MPEGChapterUtil.update(tmpfile.path, chapters: markers))
 
         let editedMarkers = getChapters(in: tmpfile)
 

@@ -21,8 +21,8 @@ public enum ChapterParser {
     }
 
     private static func parseChapters(asset: AVAsset) async throws -> [ChapterMarker] {
-        let languages = asset.availableChapterLocales.map { $0.identifier }
-        let timedGroups = asset.chapterMetadataGroups(bestMatchingPreferredLanguages: languages)
+        let languages = try await asset.load(.availableChapterLocales).map { $0.identifier } //asset.availableChapterLocales.map { $0.identifier }
+        let timedGroups = try await asset.loadChapterMetadataGroups(bestMatchingPreferredLanguages: languages) ///asset.chapterMetadataGroups(bestMatchingPreferredLanguages: languages)
 
         var chapters = [ChapterMarker]()
 
@@ -31,7 +31,8 @@ public enum ChapterParser {
             let cmStart = group.timeRange.start
             let cmEnd = group.timeRange.end
 
-            let name = (try? await title(from: group)) ?? "Chapter \(i + 1)"
+            let groupTitle = try? await title(from: group)
+            let name = groupTitle ?? "Chapter \(i + 1)"
 
             chapters.append(
                 ChapterMarker(

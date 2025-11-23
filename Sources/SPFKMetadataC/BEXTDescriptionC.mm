@@ -17,6 +17,7 @@ using namespace std;
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
     SndfileHandle file = SndfileHandle(path.UTF8String);
+
     SF_BROADCAST_INFO bext = {};
 
     memset(&bext, 0, sizeof(bext));
