@@ -1,3 +1,4 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadataC
 
 #import "TagAudioPropertiesC.h"
 
@@ -9,17 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
     self = [super init];
     return self;
 }
-
-//- (nonnull id)initWithProperties:(nonnull TagLib::AudioProperties *)audioProperties {
-//    self = [super init];
-//
-//    _sampleRate = audioProperties->sampleRate();
-//    _duration = (double)audioProperties->lengthInMilliseconds() / 1000;
-//    _bitRate = audioProperties->bitrate();
-//    _channelCount = audioProperties->channels();
-//
-//    return self;
-//}
 
 @end
 
