@@ -3,7 +3,7 @@
 import AudioToolbox
 import Foundation
 import SPFKMetadataC
-//import SPFKUtils
+// import SPFKUtils
 
 /// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC for swift
 public struct BEXTDescription: Hashable {
@@ -99,15 +99,6 @@ public struct BEXTDescription: Hashable {
     }
 
     public var sampleRate: Double?
-
-//    /// Convenience struct suitable for a UI display
-//    public var loudnessDescription: LoudnessDescription {
-//        LoudnessDescription(
-//            lufs: loudnessValue?.double,
-//            loudnessRange: loudnessRange?.double,
-//            truePeak: maxTruePeakLevel
-//        )
-//    }
 
     public init() {}
 
