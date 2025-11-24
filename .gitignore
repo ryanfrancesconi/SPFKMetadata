@@ -35,4 +35,5 @@ DerivedData/
 Package.resolved
 
 UserInterfaceState.xcuserstate
+*.xcschememanagement.plist
 *.swiftpm
