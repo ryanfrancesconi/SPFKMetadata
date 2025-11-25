@@ -6,7 +6,7 @@ import Foundation
 /// TagKey is a predomiantly ID3 based label system which mostly follows TagLib's conventions.
 ///
 /// TagsProperties has a customKeys dictionary for any keys found that aren't documented here.
-public enum TagKey: String, CaseIterable, Codable, Comparable {
+public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     public static func < (lhs: TagKey, rhs: TagKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
