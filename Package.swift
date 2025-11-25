@@ -1,7 +1,6 @@
 // swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
-import Foundation
 import PackageDescription
 
 private let name: String = "SPFKMetadata" // Swift target
@@ -47,7 +46,7 @@ private let products: [PackageDescription.Product] = [
 private var packageDependencies: [PackageDescription.Package.Dependency] {
     let local: [PackageDescription.Package.Dependency] =
         dependencyNames.map {
-            .package(name: "\($0)", path: "../\($0)") // assumes the package garden is in one folder
+            .package(name: "\($0)", path: "../\($0)")
         }
 
     let remote: [PackageDescription.Package.Dependency] =
