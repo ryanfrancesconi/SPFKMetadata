@@ -8,7 +8,7 @@ private let name: String = "SPFKMetadata" // Swift target
 private let dependencyNames: [String] = ["SPFKBase", "SPFKAudioBase", "SPFKUtils", "SPFKTesting"]
 private let dependencyNamesC: [String] = []
 private let dependencyBranch = "main"
-private let useLocalDependencies: Bool = true
+private let useLocalDependencies: Bool = false
 private let platforms: [PackageDescription.SupportedPlatform]? = [
     .macOS(.v12),
     .iOS(.v15)
