@@ -1,10 +1,11 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/SPFKMetadata
 
 import Foundation
+import SPFKBase
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
 @testable import SPFKTesting
-import SPFKBase
+import SPFKUtils
 import Testing
 
 @Suite(.serialized)
