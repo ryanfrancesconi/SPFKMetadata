@@ -1,5 +1,5 @@
-// swift-tools-version: 6.2.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 6.2
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi
 
 import PackageDescription
 
