@@ -6,7 +6,7 @@ import PackageDescription
 private let name: String = "SPFKMetadata" // Swift target
 private let dependencyNames: [String] = ["SPFKBase", "SPFKAudioBase", "SPFKUtils", "SPFKTesting"]
 private let dependencyNamesC: [String] = []
-private let dependencyBranch: String = "main"
+private let dependencyBranch: String = "development"
 private let useLocalDependencies: Bool = false
 private let platforms: [PackageDescription.SupportedPlatform]? = [
     .macOS(.v12),
