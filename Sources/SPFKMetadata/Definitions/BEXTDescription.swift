@@ -3,10 +3,9 @@
 import AudioToolbox
 import Foundation
 import SPFKMetadataC
-// import SPFKUtils
 
 /// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC for swift
-public struct BEXTDescription: Hashable {
+public struct BEXTDescription: Hashable, Sendable {
     /// BWF Version 0, 1, or 2. This will be set based on the content provided.
     public var version: Int16 = 0
 

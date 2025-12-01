@@ -1,7 +1,7 @@
 import Foundation
 import SPFKBase
 
-public struct TagData: TagPropertiesContainerModel, Hashable, Codable {
+public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable {
     public var isEmpty: Bool {
         tags.isEmpty && customTags.isEmpty
     }

@@ -5,7 +5,7 @@ import SPFKMetadataC
 import SPFKBase
 
 /// A Swift convenience wrapper to TagLibBridge (C++)
-public struct TagProperties: Hashable, Codable {
+public struct TagProperties: Hashable, Codable, Sendable {
     public private(set) var url: URL
     public var data = TagData()
 

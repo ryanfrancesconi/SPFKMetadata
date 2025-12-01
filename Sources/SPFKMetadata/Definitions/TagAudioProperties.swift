@@ -3,7 +3,7 @@ import SPFKMetadataC
 
 /// Swift struct copy for Codable conformance. See `TagAudioPropertiesC`
 /// which is am objc copy of the TagLib::AudioProperties C++ class
-public struct TagAudioProperties: Codable, Hashable {
+public struct TagAudioProperties: Codable, Hashable, Sendable {
     public var sampleRate: Double
     public var duration: TimeInterval
     public var bitRate: Int32
