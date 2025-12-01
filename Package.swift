@@ -7,7 +7,7 @@ private let name: String = "SPFKMetadata" // Swift target
 private let dependencyNames: [String] = ["SPFKBase", "SPFKAudioBase", "SPFKUtils", "SPFKTesting"]
 private let dependencyNamesC: [String] = []
 private let dependencyBranch: String = "development"
-private let useLocalDependencies: Bool = false
+
 private let platforms: [PackageDescription.SupportedPlatform]? = [
     .macOS(.v12),
     .iOS(.v15)
@@ -44,23 +44,12 @@ private let products: [PackageDescription.Product] = [
 ]
 
 private var packageDependencies: [PackageDescription.Package.Dependency] {
-    let local: [PackageDescription.Package.Dependency] =
-        dependencyNames.map {
-            .package(name: "\($0)", path: "../\($0)")
-        }
-
-    let remote: [PackageDescription.Package.Dependency] =
+    var value: [PackageDescription.Package.Dependency] =
         dependencyNames.map {
             .package(url: "\(githubBase)/\($0)", branch: dependencyBranch)
         }
 
-    var value = useLocalDependencies ? local : remote
-
-    if !remoteDependenciesC.isEmpty {
-        value.append(contentsOf: remoteDependenciesC.map { $0.package })
-    }
-
-    return value
+    return value + remoteDependenciesC.map(\.package)
 }
 
 private var swiftTargetDependencies: [PackageDescription.Target.Dependency] {
@@ -106,7 +95,7 @@ private var cTargetDependencies: [PackageDescription.Target.Dependency] {
     }
 
     if !remoteDependenciesC.isEmpty {
-        value.append(contentsOf: remoteDependenciesC.map { $0.product })
+        value.append(contentsOf: remoteDependenciesC.map(\.product))
     }
 
     return value
