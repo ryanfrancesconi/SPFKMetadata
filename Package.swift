@@ -43,15 +43,6 @@ private let products: [PackageDescription.Product] = [
     .library(name: name, targets: [name, nameC])
 ]
 
-private var packageDependencies: [PackageDescription.Package.Dependency] {
-    var value: [PackageDescription.Package.Dependency] =
-        dependencyNames.map {
-            .package(url: "\(githubBase)/\($0)", branch: dependencyBranch)
-        }
-
-    return value + remoteDependenciesC.map(\.package)
-}
-
 private var swiftTargetDependencies: [PackageDescription.Target.Dependency] {
     let names = dependencyNames.filter { $0 != "SPFKTesting" }
 
@@ -116,6 +107,18 @@ private let cTarget: PackageDescription.Target = .target(
 private let targets: [PackageDescription.Target] = [
     swiftTarget, cTarget, testTarget
 ]
+
+let spfkDependencies: [RemoteDependency] =
+    dependencyNames.map {
+        RemoteDependency(
+            package: .package(url: "\(githubBase)/\($0)", branch: dependencyBranch),
+            product: .product(name: "$0", package: "$0")
+        )
+    }
+
+private var packageDependencies: [PackageDescription.Package.Dependency] {
+    spfkDependencies.map(\.package) + remoteDependenciesC.map(\.package)
+}
 
 let package = Package(
     name: name,
