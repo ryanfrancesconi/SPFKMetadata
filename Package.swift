@@ -5,23 +5,23 @@ import PackageDescription
 
 let name: String = "SPFKMetadata" // Swift target
 let dependencyNames: [String] = ["SPFKBase", "SPFKAudioBase", "SPFKUtils", "SPFKTesting"]
-let spfkDependencyBranch: String = "development"
 let remoteDependencies: [RemoteDependency] = []
+let resources: [PackageDescription.Resource]? = nil
 
 let nameC: String? = "\(name)C" // C/C++ target, nil if no C target
 let dependencyNamesC: [String] = []
 let remoteDependenciesC: [RemoteDependency] = [
-    .init(package: .package(url: "https://github.com/sbooth/CXXTagLib", branch: "main"),
+    .init(package: .package(url: "https://github.com/sbooth/CXXTagLib", from: "2.1.1"),
           product: .product(name: "taglib", package: "CXXTagLib")),
-    .init(package: .package(url: "https://github.com/sbooth/sndfile-binary-xcframework", branch: "main"),
+    .init(package: .package(url: "https://github.com/sbooth/sndfile-binary-xcframework", from: "0.1.2"),
           product: .product(name: "sndfile", package: "sndfile-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/ogg-binary-xcframework", branch: "main"),
+    .init(package: .package(url: "https://github.com/sbooth/ogg-binary-xcframework", from: "0.1.3"),
           product: .product(name: "ogg", package: "ogg-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/flac-binary-xcframework", branch: "main"),
+    .init(package: .package(url: "https://github.com/sbooth/flac-binary-xcframework", from: "0.2.0"),
           product: .product(name: "FLAC", package: "flac-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/opus-binary-xcframework", branch: "main"),
+    .init(package: .package(url: "https://github.com/sbooth/opus-binary-xcframework", from: "0.2.2"),
           product: .product(name: "opus", package: "opus-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/vorbis-binary-xcframework", branch: "main"),
+    .init(package: .package(url: "https://github.com/sbooth/vorbis-binary-xcframework", from: "0.1.2"),
           product: .product(name: "vorbis", package: "vorbis-binary-xcframework"))
 ]
 
@@ -31,6 +31,8 @@ let platforms: [PackageDescription.SupportedPlatform]? = [
 ]
 
 // MARK: - Reusable Code for a dual Swift + C package ---------------------------------------------------
+
+let spfkVersion: Version = .init(0, 0, 1)
 
 struct RemoteDependency {
     let package: PackageDescription.Package.Dependency
@@ -49,13 +51,15 @@ var swiftTarget: PackageDescription.Target {
             value.append(.target(name: nameC))
         }
 
+        value.append(contentsOf: remoteDependencies.map(\.product))
+
         return value
     }
 
     return .target(
         name: name,
         dependencies: targetDependencies,
-        resources: nil
+        resources: resources
     )
 }
 
@@ -102,7 +106,7 @@ var cTarget: PackageDescription.Target? {
         return value
     }
 
-    // all spfk c targets have the same folder structure currently
+    // all spfk C targets have the same folder structure currently
     return .target(
         name: nameC,
         dependencies: targetDependencies,
@@ -124,9 +128,11 @@ var packageDependencies: [PackageDescription.Package.Dependency] {
     var spfkDependencies: [RemoteDependency] {
         let githubBase = "https://github.com/ryanfrancesconi"
 
+        // .when(configuration: .debug)
+
         return dependencyNames.map {
             RemoteDependency(
-                package: .package(url: "\(githubBase)/\($0)", branch: spfkDependencyBranch),
+                package: .package(url: "\(githubBase)/\($0)", from: spfkVersion),
                 product: .product(name: "\($0)", package: "\($0)")
             )
         }
