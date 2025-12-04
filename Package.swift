@@ -3,171 +3,71 @@
 
 import PackageDescription
 
-let name: String = "SPFKMetadata" // Swift target
-var localDependencies: [RemoteDependency] { [
-    .init(package: .package(url: "\(githubBase)/spfk-base", from: "0.0.1"),
-          product: .product(name: "SPFKBase", package: "spfk-base")),
-    .init(package: .package(url: "\(githubBase)/spfk-audio-base", from: "0.0.1"),
-          product: .product(name: "SPFKAudioBase", package: "spfk-audio-base")),
-    .init(package: .package(url: "\(githubBase)/spfk-testing", from: "0.0.1"),
-          product: .product(name: "SPFKTesting", package: "spfk-testing")),
-    .init(package: .package(url: "\(githubBase)/spfk-utils", from: "0.0.1"),
-          product: .product(name: "SPFKUtils", package: "spfk-utils")),
-] }
-
-let remoteDependencies: [RemoteDependency] = []
-let resources: [PackageDescription.Resource]? = nil
-
-let nameC: String? = "\(name)C" // C/C++ target, nil if no C target
-let dependencyNamesC: [String] = []
-let remoteDependenciesC: [RemoteDependency] = [
-    .init(package: .package(url: "https://github.com/sbooth/CXXTagLib", from: "2.1.1"),
-          product: .product(name: "taglib", package: "CXXTagLib")),
-    .init(package: .package(url: "https://github.com/sbooth/sndfile-binary-xcframework", from: "0.1.2"),
-          product: .product(name: "sndfile", package: "sndfile-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/ogg-binary-xcframework", from: "0.1.3"),
-          product: .product(name: "ogg", package: "ogg-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/flac-binary-xcframework", from: "0.2.0"),
-          product: .product(name: "FLAC", package: "flac-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/opus-binary-xcframework", from: "0.2.2"),
-          product: .product(name: "opus", package: "opus-binary-xcframework")),
-    .init(package: .package(url: "https://github.com/sbooth/vorbis-binary-xcframework", from: "0.1.2"),
-          product: .product(name: "vorbis", package: "vorbis-binary-xcframework"))
-]
-var cSettings: [PackageDescription.CSetting]? { [
-    .headerSearchPath("include_private")
-] }
-var cxxSettings: [PackageDescription.CXXSetting]? { [
-    .headerSearchPath("include_private")
-] }
-
-let platforms: [PackageDescription.SupportedPlatform]? = [
-    .macOS(.v12),
-    .iOS(.v15)
-]
-
-// MARK: - Reusable Code for a dual Swift + C package --------------------------------------------------
-
-let githubBase = "https://github.com/ryanfrancesconi"
-
-struct RemoteDependency {
-    let package: PackageDescription.Package.Dependency
-    let product: PackageDescription.Target.Dependency
-}
-
-var localDependencyNames: [String] {
-    localDependencies.compactMap {
-        switch $0.product {
-        case let .productItem(name: productName, package: _, moduleAliases: _, condition: _):
-            productName
-        default:
-            nil
-        }
-    }
-}
-
-var swiftTarget: PackageDescription.Target {
-    var targetDependencies: [PackageDescription.Target.Dependency] {
-        let names = localDependencyNames.filter { $0 != "SPFKTesting" }
-
-        var value: [PackageDescription.Target.Dependency] = names.map {
-            .byNameItem(name: "\($0)", condition: nil)
-        }
-
-        if let nameC {
-            value.append(.target(name: nameC))
-        }
-
-        value.append(contentsOf: remoteDependencies.map(\.product))
-
-        return value
-    }
-
-    return .target(
-        name: name,
-        dependencies: targetDependencies,
-        resources: resources
-    )
-}
-
-var testTarget: PackageDescription.Target {
-    var targetDependencies: [PackageDescription.Target.Dependency] {
-        var array: [PackageDescription.Target.Dependency] = [
-            .byNameItem(name: name, condition: nil)
-        ]
-
-        if let nameC {
-            array.append(.byNameItem(name: nameC, condition: nil))
-        }
-
-        if localDependencyNames.contains("SPFKTesting") {
-            array.append(.byNameItem(name: "SPFKTesting", condition: nil))
-        }
-
-        return array
-    }
-
-    let nameTests: String = "\(name)Tests" // Test target
-
-    return .testTarget(
-        name: nameTests,
-        dependencies: targetDependencies,
-        resources: nil,
-        swiftSettings: [
-            .swiftLanguageMode(.v5),
-            .unsafeFlags(["-strict-concurrency=complete"]),
-        ],
-    )
-}
-
-var cTarget: PackageDescription.Target? {
-    guard let nameC else { return nil }
-
-    var targetDependencies: [PackageDescription.Target.Dependency] {
-        var value: [PackageDescription.Target.Dependency] = dependencyNamesC.map {
-            .byNameItem(name: "\($0)", condition: nil)
-        }
-
-        value.append(contentsOf: remoteDependenciesC.map(\.product))
-
-        return value
-    }
-
-    return .target(
-        name: nameC,
-        dependencies: targetDependencies,
-        publicHeadersPath: "include",
-        cSettings: cSettings,
-        cxxSettings: cxxSettings
-    )
-}
-
-var targets: [PackageDescription.Target] {
-    [swiftTarget, cTarget, testTarget].compactMap(\.self)
-}
-
-var packageDependencies: [PackageDescription.Package.Dependency] {
-    localDependencies.map(\.package) +
-        remoteDependencies.map(\.package) +
-        remoteDependenciesC.map(\.package)
-}
-
-var products: [PackageDescription.Product] {
-    let targets: [String] = [name, nameC].compactMap(\.self)
-
-    return [
-        .library(name: name, targets: targets)
-    ]
-}
-
-// This is required to be at the bottom
-
 let package = Package(
-    name: name,
+    name: "spfk-metadata",
     defaultLocalization: "en",
-    platforms: platforms,
-    products: products,
-    dependencies: packageDependencies,
-    targets: targets,
+    platforms: [
+        .macOS(.v12),
+        .iOS(.v15),
+    ],
+    products: [
+        .library(
+            name: "SPFKMetadata",
+            targets: [
+                "SPFKMetadata",
+                "SPFKMetadataC",
+            ]
+        ),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/ryanfrancesconi/spfk-audio-base", branch: "development"),
+        .package(url: "https://github.com/ryanfrancesconi/spfk-testing", branch: "development"),
+        .package(url: "https://github.com/ryanfrancesconi/spfk-utils", branch: "development"),
+
+        .package(url: "https://github.com/sbooth/CXXTagLib", from: "2.1.1"),
+        .package(url: "https://github.com/sbooth/sndfile-binary-xcframework", from: "0.1.2"),
+        .package(url: "https://github.com/sbooth/ogg-binary-xcframework", from: "0.1.3"),
+        .package(url: "https://github.com/sbooth/flac-binary-xcframework", from: "0.2.0"),
+        .package(url: "https://github.com/sbooth/opus-binary-xcframework", from: "0.2.2"),
+        .package(url: "https://github.com/sbooth/vorbis-binary-xcframework", from: "0.1.2"),
+    ],
+    targets: [
+        .target(
+            name: "SPFKMetadata",
+            dependencies: [
+                "SPFKMetadataC",
+                .product(name: "SPFKAudioBase", package: "spfk-audio-base"),
+                .product(name: "SPFKUtils", package: "spfk-utils"),
+            ]
+        ),
+
+        .target(
+            name: "SPFKMetadataC",
+            dependencies: [
+                .product(name: "taglib", package: "CXXTagLib"),
+                .product(name: "sndfile", package: "sndfile-binary-xcframework"),
+                .product(name: "ogg", package: "ogg-binary-xcframework"),
+                .product(name: "FLAC", package: "flac-binary-xcframework"),
+                .product(name: "opus", package: "opus-binary-xcframework"),
+                .product(name: "vorbis", package: "vorbis-binary-xcframework"),
+            ],
+            publicHeadersPath: "include",
+            cSettings: [
+                .headerSearchPath("include_private")
+            ],
+            cxxSettings: [
+                .headerSearchPath("include_private")
+            ]
+        ),
+
+        .testTarget(
+            name: "SPFKMetadataTests",
+            dependencies: [
+                "SPFKMetadata",
+                "SPFKMetadataC",
+                .product(name: "SPFKTesting", package: "spfk-testing"),
+            ]
+        ),
+    ],
     cxxLanguageStandard: .cxx20
 )
