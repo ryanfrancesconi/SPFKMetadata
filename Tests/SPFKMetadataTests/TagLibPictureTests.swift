@@ -4,7 +4,7 @@ import Foundation
 import SPFKBase
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
-@testable import SPFKTesting
+import SPFKTesting
 import SPFKUtils
 import Testing
 

@@ -21,7 +21,7 @@ There are two targets in the package: SPFKMetadata and SPFKMetadataC. The first 
      - Enter this URL: `https://github.com/ryanfrancesconi/SPFKMetadata`
    - In a Swift Package, add it to the Package.swift dependencies:
      ```swift
-     .package(url: "https://github.com/ryanfrancesconi/spfk-metadata", from: "0.0.1")
+     .package(url: "https://github.com/ryanfrancesconi/spfk-metadata", branch: "development")
      ```
 2. Import the libraries:
    ```swift

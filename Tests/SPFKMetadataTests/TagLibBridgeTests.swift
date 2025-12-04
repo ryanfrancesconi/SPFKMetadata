@@ -3,7 +3,7 @@
 import Foundation
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
-@testable import SPFKTesting
+import SPFKTesting
 import SPFKBase
 import Testing
 
