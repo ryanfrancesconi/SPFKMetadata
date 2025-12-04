@@ -40,7 +40,6 @@ let package = Package(
                 .product(name: "SPFKUtils", package: "spfk-utils"),
             ]
         ),
-
         .target(
             name: "SPFKMetadataC",
             dependencies: [
@@ -59,7 +58,6 @@ let package = Package(
                 .headerSearchPath("include_private")
             ]
         ),
-
         .testTarget(
             name: "SPFKMetadataTests",
             dependencies: [
