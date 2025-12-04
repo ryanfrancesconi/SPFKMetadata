@@ -5,13 +5,13 @@ import PackageDescription
 
 let name: String = "SPFKMetadata" // Swift target
 var localDependencies: [RemoteDependency] { [
-    .init(package: .package(url: "\(githubBase)/SPFKBase", from: "0.0.1"),
+    .init(package: .package(url: "\(githubBase)/spfk-base", from: "0.0.1"),
           product: .product(name: "SPFKBase", package: "spfk-base")),
-    .init(package: .package(url: "\(githubBase)/SPFKAudioBase", from: "0.0.1"),
+    .init(package: .package(url: "\(githubBase)/spfk-audio-base", from: "0.0.1"),
           product: .product(name: "SPFKAudioBase", package: "spfk-audio-base")),
-    .init(package: .package(url: "\(githubBase)/SPFKTesting", from: "0.0.1"),
+    .init(package: .package(url: "\(githubBase)/spfk-testing", from: "0.0.1"),
           product: .product(name: "SPFKTesting", package: "spfk-testing")),
-    .init(package: .package(url: "\(githubBase)/SPFKUtils", from: "0.0.1"),
+    .init(package: .package(url: "\(githubBase)/spfk-utils", from: "0.0.1"),
           product: .product(name: "SPFKUtils", package: "spfk-utils")),
 ] }
 
