@@ -66,7 +66,11 @@ let package = Package(
                 "SPFKMetadata",
                 "SPFKMetadataC",
                 .product(name: "SPFKTesting", package: "spfk-testing"),
-            ]
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v5),
+                .unsafeFlags(["-strict-concurrency=complete"]),
+            ],
         ),
     ],
     cxxLanguageStandard: .cxx20
