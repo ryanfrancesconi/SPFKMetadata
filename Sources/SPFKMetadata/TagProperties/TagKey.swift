@@ -116,10 +116,10 @@ extension TagKey {
     public var isNumeric: Bool {
         switch self {
         case .bpm:
-            return true
+            true
 
         default:
-            return false
+            false
         }
     }
 }
@@ -128,29 +128,28 @@ extension TagKey {
     /// IE, .trackNumber = Track Number
     public var displayName: String {
         switch self {
-        case .copyrightURL: return "Copyright URL"
-        case .podcastURL:   return "Podcast URL"
-        case .isrc:         return "ISRC"
-        case .bpm:          return "BPM"
-
+        case .copyrightURL: "Copyright URL"
+        case .podcastURL:   "Podcast URL"
+        case .isrc:         "ISRC"
+        case .bpm:          "BPM"
         default:
             // This works for any standard camelCase rawValue
-            return rawValue.titleCased
+            rawValue.titleCased
         }
     }
 
     /// TagLib uses an all caps string for its properties.
     public var taglibKey: String {
         switch self {
-        case .replayGainTrackGain:          return "REPLAYGAIN_TRACK_GAIN"
-        case .replayGainTrackPeak:          return "REPLAYGAIN_TRACK_PEAK"
-        case .replayGainTrackRange:         return "REPLAYGAIN_TRACK_RANGE"
-        case .replayGainAlbumGain:          return "REPLAYGAIN_ALBUM_GAIN"
-        case .replayGainAlbumPeak:          return "REPLAYGAIN_ALBUM_PEAK"
-        case .replayGainAlbumRange:         return "REPLAYGAIN_ALBUM_RANGE"
-        case .replayGainReferenceLoudness:  return "REPLAYGAIN_REFERENCE_LOUDNESS"
+        case .replayGainTrackGain:          "REPLAYGAIN_TRACK_GAIN"
+        case .replayGainTrackPeak:          "REPLAYGAIN_TRACK_PEAK"
+        case .replayGainTrackRange:         "REPLAYGAIN_TRACK_RANGE"
+        case .replayGainAlbumGain:          "REPLAYGAIN_ALBUM_GAIN"
+        case .replayGainAlbumPeak:          "REPLAYGAIN_ALBUM_PEAK"
+        case .replayGainAlbumRange:         "REPLAYGAIN_ALBUM_RANGE"
+        case .replayGainReferenceLoudness:  "REPLAYGAIN_REFERENCE_LOUDNESS"
         default:
-            return rawValue.uppercased()
+            rawValue.uppercased()
         }
     }
 
