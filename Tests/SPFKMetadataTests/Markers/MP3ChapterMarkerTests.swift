@@ -8,7 +8,7 @@ import SPFKBase
 import Testing
 
 @Suite(.serialized)
-class MP3MarkerTests: BinTestCase {
+class MP3ChapterMarkerTests: BinTestCase {
     func getChapters(in url: URL) -> [ChapterMarker] {
         let chapters = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
         Log.debug(chapters.map { ($0.name ?? "nil") + " @ \($0.startTime)" })

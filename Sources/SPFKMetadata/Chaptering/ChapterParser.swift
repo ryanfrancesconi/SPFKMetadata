@@ -5,10 +5,13 @@ import Foundation
 import SPFKBase
 import SPFKMetadataC
 
-/// ChapterParser, works with a variety of file types. In particular
-/// this is the MP4 chapter parser in SPFKMetadata.
+/// ChapterParser, works with a variety of file types (m4a, mp4, flac, ogg).
+/// Doesn't work with RIFF or MP3. Parse only, write isn't supported.
+///
+/// In particular this is the MP4 chapter parser in SPFKMetadata.
 ///
 /// See MPEGChapterUtil.mm for writing mp3 chapters.
+///
 public enum ChapterParser {
     public static func parse(url: URL) async throws -> [ChapterMarker] {
         guard url.exists else {
@@ -21,8 +24,8 @@ public enum ChapterParser {
     }
 
     private static func parseChapters(asset: AVAsset) async throws -> [ChapterMarker] {
-        let languages = try await asset.load(.availableChapterLocales).map { $0.identifier } //asset.availableChapterLocales.map { $0.identifier }
-        let timedGroups = try await asset.loadChapterMetadataGroups(bestMatchingPreferredLanguages: languages) ///asset.chapterMetadataGroups(bestMatchingPreferredLanguages: languages)
+        let languages = try await asset.load(.availableChapterLocales).map(\.identifier)
+        let timedGroups = try await asset.loadChapterMetadataGroups(bestMatchingPreferredLanguages: languages)
 
         var chapters = [ChapterMarker]()
 
