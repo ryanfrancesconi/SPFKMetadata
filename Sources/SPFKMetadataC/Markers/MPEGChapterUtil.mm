@@ -34,7 +34,7 @@ using namespace TagLib;
     MPEG::File *file = dynamic_cast<MPEG::File *>(fileRef.file());
 
     if (!file || !file->hasID3v2Tag()) {
-        cout << "getMP3Chapters: Not a MPEG File or no ID3v2 tag" << endl;
+        // cout << "getMP3Chapters: Not a MPEG File or no ID3v2 tag" << endl;
         return nil;
     }
 
