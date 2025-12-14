@@ -2,6 +2,7 @@
 // swiftformat:disable consecutiveSpaces
 
 import Foundation
+import SPFKBase
 
 /// TagKey is a predomiantly ID3 based label system which mostly follows TagLib's conventions.
 ///
