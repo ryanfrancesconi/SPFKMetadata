@@ -7,11 +7,11 @@ import SPFKMetadataC
 /// A format agnostic audio marker to be used to store either
 /// RIFF marker data or Chapter markers
 public struct AudioMarkerDescription: Codable, Hashable, Sendable {
-    public let name: String?
-    public let startTime: TimeInterval
-    public let endTime: TimeInterval?
-    public let sampleRate: Double?
-    public let markerID: Int?
+    public var name: String?
+    public var startTime: TimeInterval
+    public var endTime: TimeInterval?
+    public var sampleRate: Double?
+    public var markerID: Int?
 
     public init(
         name: String?,
