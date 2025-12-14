@@ -5,14 +5,26 @@ import SPFKAudioBase
 import SPFKMetadataC
 
 public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
-    public var markers: [AudioMarkerDescription] = []
+    public var markerDescriptions: [AudioMarkerDescription] = []
+    
+    public var description: String {
+        var out = ""
+        
+        for markerDescription in markerDescriptions {
+            out += "\(markerDescription)\n"
+        }
+        
+        return out
+    }
 
     /// ChapterParser: m4a, mp4, flac, ogg
     /// MPEGChapterUtil: mp3
     /// AudioMarkerUtil: aif, wav
     public init(url: URL, fileType: AudioFileType? = nil) async throws {
         guard let fileType = fileType ?? AudioFileType(url: url) else {
-            throw NSError(file: #file, function: #function, description: "Unable to determine file type from \(url.lastPathComponent)")
+            throw NSError(
+                file: #file, function: #function,
+                description: "Unable to determine file type from \(url.lastPathComponent)")
         }
 
         switch fileType {
@@ -26,18 +38,19 @@ public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
             try await parseMP3(url: url)
 
         default:
-            throw NSError(file: #file, function: #function, description: "Unsupported file type: \(url.lastPathComponent)")
+            throw NSError(
+                file: #file, function: #function, description: "Unsupported file type: \(url.lastPathComponent)")
         }
     }
 
-    public init(markers: [AudioMarkerDescription]) {
-        self.markers = markers
+    public init(markerDescriptions: [AudioMarkerDescription]) {
+        self.markerDescriptions = markerDescriptions
     }
 
     private mutating func parseChapters(url: URL) async throws {
         let value: [ChapterMarker] = try await ChapterParser.parse(url: url)
 
-        markers = value.map {
+        markerDescriptions = value.map {
             AudioMarkerDescription(chapterMarker: $0)
         }
     }
@@ -45,7 +58,7 @@ public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
     private mutating func parseMP3(url: URL) async throws {
         let value: [ChapterMarker] = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
 
-        markers = value.map {
+        markerDescriptions = value.map {
             AudioMarkerDescription(chapterMarker: $0)
         }
     }
@@ -53,7 +66,7 @@ public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
     private mutating func parseRIFF(url: URL) async throws {
         let value: [AudioMarker] = AudioMarkerUtil.getMarkers(url) as? [AudioMarker] ?? []
 
-        markers = value.map {
+        markerDescriptions = value.map {
             AudioMarkerDescription(riffMarker: $0)
         }
     }
