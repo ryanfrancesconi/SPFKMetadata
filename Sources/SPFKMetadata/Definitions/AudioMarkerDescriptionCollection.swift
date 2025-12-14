@@ -4,16 +4,16 @@ import Foundation
 import SPFKAudioBase
 import SPFKMetadataC
 
-public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
+public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
     public var markerDescriptions: [AudioMarkerDescription] = []
-    
+
     public var description: String {
         var out = ""
-        
+
         for markerDescription in markerDescriptions {
             out += "\(markerDescription)\n"
         }
-        
+
         return out
     }
 
@@ -24,7 +24,8 @@ public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
         guard let fileType = fileType ?? AudioFileType(url: url) else {
             throw NSError(
                 file: #file, function: #function,
-                description: "Unable to determine file type from \(url.lastPathComponent)")
+                description: "Unable to determine file type from \(url.lastPathComponent)"
+            )
         }
 
         switch fileType {
@@ -39,11 +40,12 @@ public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
 
         default:
             throw NSError(
-                file: #file, function: #function, description: "Unsupported file type: \(url.lastPathComponent)")
+                file: #file, function: #function, description: "Unsupported file type: \(url.lastPathComponent)"
+            )
         }
     }
 
-    public init(markerDescriptions: [AudioMarkerDescription]) {
+    public init(markerDescriptions: [AudioMarkerDescription] = []) {
         self.markerDescriptions = markerDescriptions
     }
 
@@ -69,5 +71,22 @@ public struct AudioMarkerDescriptionCollection: Codable, Hashable, Sendable {
         markerDescriptions = value.map {
             AudioMarkerDescription(riffMarker: $0)
         }
+    }
+}
+
+extension AudioMarkerDescriptionCollection: Codable {
+    enum CodingKeys: String, CodingKey {
+        case markerDescriptions
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        markerDescriptions = try container.decode([AudioMarkerDescription].self, forKey: .markerDescriptions)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(markerDescriptions, forKey: .markerDescriptions)
     }
 }

@@ -135,7 +135,7 @@ extension TagKey {
         case .bpm:          "BPM"
         default:
             // This works for any standard camelCase rawValue
-            rawValue.titleCased
+            rawValue.spacedTitleCased
         }
     }
 
