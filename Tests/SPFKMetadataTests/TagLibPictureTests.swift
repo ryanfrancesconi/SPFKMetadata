@@ -42,7 +42,8 @@ class TagLibPictureTests: BinTestCase {
         #expect(tagPicture == nil)
     }
 
-    @Test func setPicture() async throws {
+    @Test(arguments: TestBundleResources.shared.markerFormats)
+    func setPicture(url: URL) async throws {
         deleteBinOnExit = false
 
         let imageURL = TestBundleResources.shared.sharksandwich
@@ -57,22 +58,20 @@ class TagLibPictureTests: BinTestCase {
 
         #expect(pictureRef.utType == .jpeg)
 
-        for item in TestBundleResources.shared.formats {
-            let tmpfile = try copyToBin(url: item)
+        let tmpfile = try copyToBin(url: url)
 
-            Log.debug(tmpfile.path)
+        Log.debug(tmpfile.path)
 
-            let result = TagPicture.write(pictureRef, path: tmpfile.path)
-            #expect(result)
+        let result = TagPicture.write(pictureRef, path: tmpfile.path)
+        #expect(result)
 
-            // open the tmp file up and double check properties were correctly set
-            let outputPicture = try #require(TagPicture(path: tmpfile.path)?.pictureRef)
-            #expect(outputPicture.cgImage.width == pictureRef.cgImage.width)
-            #expect(outputPicture.cgImage.height == pictureRef.cgImage.height)
+        // open the tmp file up and double check properties were correctly set
+        let outputPicture = try #require(TagPicture(path: tmpfile.path)?.pictureRef)
+        #expect(outputPicture.cgImage.width == pictureRef.cgImage.width)
+        #expect(outputPicture.cgImage.height == pictureRef.cgImage.height)
 
-            // not all formats support text description? mp4 / m4a
-            // #expect(outputPicture.pictureDescription == "Shit Sandwich", "\(tmpfile.lastPathComponent)")
-            // #expect(outputPicture.pictureType == "Back Cover", "\(tmpfile.lastPathComponent)")
-        }
+        // not all formats support text description? mp4 / m4a
+        // #expect(outputPicture.pictureDescription == "Shit Sandwich", "\(tmpfile.lastPathComponent)")
+        // #expect(outputPicture.pictureType == "Back Cover", "\(tmpfile.lastPathComponent)")
     }
 }

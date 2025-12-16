@@ -1,15 +1,14 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata
 
 import Foundation
+import SPFKBase
 @testable import SPFKMetadata
 @testable import SPFKMetadataC
 import SPFKTesting
-import SPFKBase
 import Testing
 
 @Suite(.serialized)
 class TagPropertiesTests: BinTestCase {
-    
     @available(macOS 12, iOS 16, *)
     @Test func benchmarkTagLib() async throws {
         let tagLibElapsed = try ContinuousClock().measure {
@@ -74,15 +73,13 @@ class TagPropertiesTests: BinTestCase {
         #expect(output[.keywords] == "Keywords!")
     }
 
-    @Test func readFormats() async throws {
+    @Test(arguments: TestBundleResources.shared.markerFormats)
+    func readFormats(url: URL) async throws {
         let source = try TagProperties(url: TestBundleResources.shared.mp3_id3)
-        let files = TestBundleResources.shared.formats
 
-        for file in files {
-            Log.debug("Parsing", file.lastPathComponent)
-            let props = try TagProperties(url: file)
-            #expect(props.tags == source.tags)
-        }
+        Log.debug("Parsing", url.lastPathComponent)
+        let props = try TagProperties(url: url)
+        #expect(props.tags == source.tags)
     }
 
     @Test func writeFormats() async throws {
@@ -155,7 +152,7 @@ class TagPropertiesTests: BinTestCase {
 
         Log.debug(id3File.dictionary)
     }
-    
+
     @Test func audioProperties() async throws {
         let url = TestBundleResources.shared.mp3_id3
         let file = try TagProperties(url: url)
