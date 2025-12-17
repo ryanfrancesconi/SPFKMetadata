@@ -45,7 +45,7 @@ extension TagPropertiesContainerModel {
 
 extension TagPropertiesContainerModel {
     /// "TITLE": "Hello"
-    internal mutating func set(taglibKey key: String, value: String) {
+    mutating func set(taglibKey key: String, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
         guard let frame = TagKey(taglibKey: key) else {
@@ -57,7 +57,7 @@ extension TagPropertiesContainerModel {
     }
 
     /// TIT2 = Hello
-    internal mutating func set(id3Frame key: ID3FrameKey, value: String) {
+    mutating func set(id3Frame key: ID3FrameKey, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
         guard let frame = TagKey(id3Frame: key) else {

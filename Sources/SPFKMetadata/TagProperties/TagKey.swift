@@ -109,20 +109,24 @@ extension TagKey {
     // TODO: metadata groups
 
     public static let commonCases: [TagKey] = [
-        .title, .artist, .album, .genre, .trackNumber, .comment, .date,
+        .title, .artist, .album, .genre, .mood, .trackNumber, .comment, .keywords, .date,
     ]
 
-    public static let audioCases: [TagKey] = [.bpm]
-
-    public var isNumeric: Bool {
-        switch self {
-        case .bpm:
-            true
-
-        default:
-            false
-        }
-    }
+    public static let audioCases: [TagKey] = [
+        .title, .length, .bpm, .initialKey, .instrumentation,
+        .loudnessValue,
+        .loudnessRange,
+        .maxTruePeakLevel,
+        .maxMomentaryLoudness,
+        .maxShortTermLoudness,
+        .replayGainTrackGain,
+        .replayGainTrackPeak,
+        .replayGainTrackRange,
+        .replayGainAlbumGain,
+        .replayGainAlbumPeak,
+        .replayGainAlbumRange,
+        .replayGainReferenceLoudness
+    ]
 }
 
 extension TagKey {
@@ -150,6 +154,7 @@ extension TagKey {
         case .replayGainAlbumRange:         "REPLAYGAIN_ALBUM_RANGE"
         case .replayGainReferenceLoudness:  "REPLAYGAIN_REFERENCE_LOUDNESS"
         default:
+            // This works for most of the keys as it was planned that way
             rawValue.uppercased()
         }
     }
