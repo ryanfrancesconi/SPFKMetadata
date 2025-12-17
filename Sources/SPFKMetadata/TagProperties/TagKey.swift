@@ -113,7 +113,11 @@ extension TagKey {
     ]
 
     public static let audioCases: [TagKey] = [
-        .title, .length, .bpm, .initialKey, .instrumentation,
+        .title,
+        .length,
+        .bpm,
+        .initialKey,
+        .instrumentation,
         .loudnessValue,
         .loudnessRange,
         .maxTruePeakLevel,
@@ -157,41 +161,6 @@ extension TagKey {
             // This works for most of the keys as it was planned that way
             rawValue.uppercased()
         }
-    }
-
-    public init?(taglibKey: String) {
-        for item in Self.allCases where item.taglibKey == taglibKey {
-            self = item
-            return
-        }
-        return nil
-    }
-
-    public init?(id3Frame: ID3FrameKey) {
-        for item in Self.allCases where item.id3Frame == id3Frame {
-            self = item
-            return
-        }
-
-        return nil
-    }
-
-    public init?(infoFrame: InfoFrameKey) {
-        for item in Self.allCases where item.infoFrame == infoFrame {
-            self = item
-            return
-        }
-
-        return nil
-    }
-
-    public init?(displayName: String) {
-        for item in Self.allCases where item.displayName == displayName {
-            self = item
-            return
-        }
-
-        return nil
     }
 }
 

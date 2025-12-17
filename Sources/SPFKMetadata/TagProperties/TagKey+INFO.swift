@@ -10,33 +10,32 @@ extension TagKey {
     /// these are the primary INFO tags it will write.
     public var infoFrame: InfoFrameKey? {
         switch self {
-        case .album:            return .product
-        case .arranger:         return .engineer
-        case .artist:           return .artist
-        case .artistWebpage:    return .baseURL
-        case .bpm:              return .bpm
-        case .comment:          return .comment
-        case .composer:         return .musicBy
-        case .copyright:        return .copyright
-        case .date:             return .dateCreated
-        case .discSubtitle:     return .part
-        case .encodedBy:        return .technician
-        case .encoding:         return .software
-        case .encodingTime:     return .dateTimeOriginal
-        case .genre:            return .genre
-        case .isrc:             return .source
-        case .label:            return .publisher
-        case .language:         return .language
-        case .lyricist:         return .writtenBy
-        case .media:            return .medium
-        case .performer:        return .starring
-        case .releaseCountry:   return .country
-        case .remixer:          return .editedBy
-        case .title:            return .title
-        case .trackNumber:      return .trackNumber3
-
+        case .album:            .product
+        case .arranger:         .engineer
+        case .artist:           .artist
+        case .artistWebpage:    .baseURL
+        case .bpm:              .bpm
+        case .comment:          .comment
+        case .composer:         .musicBy
+        case .copyright:        .copyright
+        case .date:             .dateCreated
+        case .discSubtitle:     .part
+        case .encodedBy:        .technician
+        case .encoding:         .software
+        case .encodingTime:     .dateTimeOriginal
+        case .genre:            .genre
+        case .isrc:             .source
+        case .label:            .publisher
+        case .language:         .language
+        case .lyricist:         .writtenBy
+        case .media:            .medium
+        case .performer:        .starring
+        case .releaseCountry:   .country
+        case .remixer:          .editedBy
+        case .title:            .title
+        case .trackNumber:      .trackNumber3
         default:
-            return nil
+            nil
         }
     }
 }

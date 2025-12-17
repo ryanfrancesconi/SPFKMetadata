@@ -3,38 +3,40 @@
 import Foundation
 import SPFKMetadataC
 
+// swiftformat:disable consecutiveSpaces
+
 public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
     public static func < (lhs: ID3FrameKey, rhs: ID3FrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 
     case album
-    case albumArtist //  id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
-    case albumArtistSort // Apple proprietary frame
+    case albumArtist            // id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
+    case albumArtistSort        // Apple proprietary frame
     case albumSort
     case arranger
     case artist
     case artistSort
-    case artistWebpage // URL Frame
-    case audioSourceWebpage // URL Frame
+    case artistWebpage          // URL Frame
+    case audioSourceWebpage     // URL Frame
     case bpm
     case comment
-    case compilation // Apple proprietary frame
+    case compilation            // Apple proprietary frame
     case composer
     case composerSort
     case conductor
     case copyright
-    case copyrightUrl // URL Frame
-    case date // or year
+    case copyrightUrl           // URL Frame
+    case date                   // or year
     case discNumber
     case discSubtitle
     case encodedBy
     case encoding
     case encodingTime
-    case fileWebpage // URL Frame
+    case fileWebpage            // URL Frame
     case fileType
     case genre
-    case grouping // Apple proprietary frame
+    case grouping               // Apple proprietary frame
     case initialKey
     case isrc
     case label
@@ -44,29 +46,29 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
     case lyrics
     case media
     case mood
-    case movementName // Apple proprietary frame
-    case movementNumber // Apple proprietary frame
+    case movementName           // Apple proprietary frame
+    case movementNumber         // Apple proprietary frame
     case originalAlbum
     case originalArtist
     case originalDate
     case originalFilename
     case originalLyricist
     case owner
-    case paymentWebpage // URL Frame
+    case paymentWebpage         // URL Frame
     case playlistDelay
-    case podcast // Apple proprietary frame
-    case podcastCategory // Apple proprietary frame
-    case podcastDescription // Apple proprietary frame
-    case podcastId // Apple proprietary frame
-    case podcastURL // Apple proprietary frame
+    case podcast                // Apple proprietary frame
+    case podcastCategory        // Apple proprietary frame
+    case podcastDescription     // Apple proprietary frame
+    case podcastId              // Apple proprietary frame
+    case podcastURL             // Apple proprietary frame
     case `private`
     case producedNotice
-    case publisherWebpage // URL Frame
+    case publisherWebpage       // URL Frame
     case radioStation
     case radioStationOwner
-    case radioStationWebpage // URL Frame
+    case radioStationWebpage    // URL Frame
     case releaseDate
-    case remixer // Could also be ARRANGER
+    case remixer                // Could also be ARRANGER
     case subtitle
     case taggingDate
     case title
@@ -78,77 +80,77 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
 
     case userDefined
 
-    /// Return the associated ID3v2 label or TXXX if it is a non-standard frame
+    /// The associated ID3v2 label or TXXX if it is a non-standard `.userDefined` frame
     public var value: String {
         switch self {
-        case .album: return "TALB"
-        case .albumArtist: return "TPE2"
-        case .albumArtistSort: return "TSO2"
-        case .albumSort: return "TSOA"
-        case .arranger, .remixer: return "TPE4" // TagLib uses remixer, AV uses arranger
-        case .artist: return "TPE1"
-        case .artistSort: return "TSOP"
-        case .artistWebpage: return "WOAR"
-        case .audioSourceWebpage: return "WOAS"
-        case .bpm: return "TBPM"
-        case .comment: return "COMM"
-        case .compilation: return "TCMP"
-        case .composer: return "TCOM"
-        case .composerSort: return "TSOC"
-        case .conductor: return "TPE3"
-        case .copyright: return "TCOP"
-        case .copyrightUrl: return "WCOP"
-        case .date: return "TDRC"
-        case .discNumber: return "TPOS"
-        case .discSubtitle: return "TSST"
-        case .encodedBy: return "TENC"
-        case .encoding: return "TSSE"
-        case .encodingTime: return "TDEN"
-        case .fileWebpage: return "WOAF"
-        case .fileType: return "TFLT"
-        case .genre: return "TCON"
-        case .grouping: return "GRP1"
-        case .initialKey: return "TKEY"
-        case .isrc: return "TSRC"
-        case .label: return "TPUB"
-        case .language: return "TLAN"
-        case .length: return "TLEN"
-        case .lyricist: return "TEXT"
-        case .lyrics: return "USLT"
-        case .media: return "TMED"
-        case .mood: return "TMOO"
-        case .movementName: return "MVNM"
-        case .movementNumber: return "MVIN"
-        case .originalAlbum: return "TOAL"
-        case .originalArtist: return "TOPE"
-        case .originalDate: return "TDOR"
-        case .originalFilename: return "TOFN"
-        case .originalLyricist: return "TOLY"
-        case .owner: return "TOWN"
-        case .paymentWebpage: return "WPAY"
-        case .playlistDelay: return "TDLY"
-        case .podcast: return "PCST"
-        case .podcastCategory: return "TCAT"
-        case .podcastDescription: return "TDES"
-        case .podcastId: return "TGID"
-        case .podcastURL: return "WFED"
-        case .private: return "PRIV"
-        case .producedNotice: return "TPRO"
-        case .publisherWebpage: return "WPUB"
-        case .radioStation: return "TRSN"
-        case .radioStationOwner: return "TRSO"
-        case .radioStationWebpage: return "WORS"
-        case .releaseDate: return "TDRL"
-        case .subtitle: return "TIT3"
-        case .taggingDate: return "TDTG"
-        case .title: return "TIT2"
-        case .titleSort: return "TSOT"
-        case .trackNumber: return "TRCK"
-        case .work: return "TIT1"
+        case .album:                "TALB"
+        case .albumArtist:          "TPE2"
+        case .albumArtistSort:      "TSO2"
+        case .albumSort:            "TSOA"
+        case .arranger, // AV uses arranger, TagLib uses remixer
+             .remixer:              "TPE4"
+        case .artist:               "TPE1"
+        case .artistSort:           "TSOP"
+        case .artistWebpage:        "WOAR"
+        case .audioSourceWebpage:   "WOAS"
+        case .bpm:                  "TBPM"
+        case .comment:              "COMM"
+        case .compilation:          "TCMP"
+        case .composer:             "TCOM"
+        case .composerSort:         "TSOC"
+        case .conductor:            "TPE3"
+        case .copyright:            "TCOP"
+        case .copyrightUrl:         "WCOP"
+        case .date:                 "TDRC"
+        case .discNumber:           "TPOS"
+        case .discSubtitle:         "TSST"
+        case .encodedBy:            "TENC"
+        case .encoding:             "TSSE"
+        case .encodingTime:         "TDEN"
+        case .fileWebpage:          "WOAF"
+        case .fileType:             "TFLT"
+        case .genre:                "TCON"
+        case .grouping:             "GRP1"
+        case .initialKey:           "TKEY"
+        case .isrc:                 "TSRC"
+        case .label:                "TPUB"
+        case .language:             "TLAN"
+        case .length:               "TLEN"
+        case .lyricist:             "TEXT"
+        case .lyrics:               "USLT"
+        case .media:                "TMED"
+        case .mood:                 "TMOO"
+        case .movementName:         "MVNM"
+        case .movementNumber:       "MVIN"
+        case .originalAlbum:        "TOAL"
+        case .originalArtist:       "TOPE"
+        case .originalDate:         "TDOR"
+        case .originalFilename:     "TOFN"
+        case .originalLyricist:     "TOLY"
+        case .owner:                "TOWN"
+        case .paymentWebpage:       "WPAY"
+        case .playlistDelay:        "TDLY"
+        case .podcast:              "PCST"
+        case .podcastCategory:      "TCAT"
+        case .podcastDescription:   "TDES"
+        case .podcastId:            "TGID"
+        case .podcastURL:           "WFED"
+        case .private:              "PRIV"
+        case .producedNotice:       "TPRO"
+        case .publisherWebpage:     "WPUB"
+        case .radioStation:         "TRSN"
+        case .radioStationOwner:    "TRSO"
+        case .radioStationWebpage:  "WORS"
+        case .releaseDate:          "TDRL"
+        case .subtitle:             "TIT3"
+        case .taggingDate:          "TDTG"
+        case .title:                "TIT2"
+        case .titleSort:            "TSOT"
+        case .trackNumber:          "TRCK"
+        case .work:                 "TIT1"
 
         // MARK: Custom Tags
-
-        case .userDefined: return "TXXX"
+        case .userDefined:          "TXXX"
         }
     }
 
@@ -161,3 +163,5 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
         return nil
     }
 }
+
+// swiftformat:enable consecutiveSpaces

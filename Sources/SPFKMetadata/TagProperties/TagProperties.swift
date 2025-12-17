@@ -1,8 +1,8 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata
 
 import Foundation
-import SPFKMetadataC
 import SPFKBase
+import SPFKMetadataC
 
 /// A Swift convenience wrapper to TagLibBridge (C++)
 public struct TagProperties: Hashable, Codable, Sendable {
@@ -45,8 +45,8 @@ public struct TagProperties: Hashable, Codable, Sendable {
             throw NSError(description: "Failed to open file or no metadata for: \(url.path)")
         }
 
-        dict.forEach {
-            data.set(taglibKey: $0.key, value: $0.value)
+        for item in dict {
+            data.set(taglibKey: item.key, value: item.value)
         }
     }
 
