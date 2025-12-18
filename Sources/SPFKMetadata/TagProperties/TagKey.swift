@@ -9,7 +9,7 @@ import SPFKBase
 /// TagsProperties has a customKeys dictionary for any keys found that aren't documented here.
 public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     public static func < (lhs: TagKey, rhs: TagKey) -> Bool {
-        lhs.rawValue < rhs.rawValue
+        lhs.rawValue.standardCompare(with: rhs.rawValue)
     }
 
     case album
@@ -109,8 +109,8 @@ extension TagKey {
     // TODO: metadata groups
 
     public static let commonCases: [TagKey] = [
-        .title, .artist, .album, .genre, .mood, .trackNumber, .comment, .keywords, .date,
-    ]
+        .title, .artist, .album, .genre, .mood, .trackNumber, .comment, .keywords, .date
+    ].sorted()
 
     public static let audioCases: [TagKey] = [
         .title,
@@ -130,7 +130,7 @@ extension TagKey {
         .replayGainAlbumPeak,
         .replayGainAlbumRange,
         .replayGainReferenceLoudness
-    ]
+    ].sorted()
 }
 
 extension TagKey {
