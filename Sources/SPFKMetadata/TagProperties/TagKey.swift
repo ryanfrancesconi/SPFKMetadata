@@ -106,34 +106,44 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 // MARK: - Init
 
 extension TagKey {
-    // TODO: metadata groups
-
     public static let commonCases: [TagKey] = [
-        .title, .artist, .album, .genre, .mood, .trackNumber, .comment, .keywords, .date
-    ].sorted()
+        .album,
+        .artist,
+        .comment,
+        .date,
+        .genre,
+        .keywords,
+        .mood,
+        .title,
+        .trackNumber,
+    ]
 
     public static let audioCases: [TagKey] = [
-        .title,
-        .length,
         .bpm,
         .initialKey,
         .instrumentation,
-        .loudnessValue,
+        .length,
         .loudnessRange,
-        .maxTruePeakLevel,
+        .loudnessValue,
         .maxMomentaryLoudness,
         .maxShortTermLoudness,
-        .replayGainTrackGain,
-        .replayGainTrackPeak,
-        .replayGainTrackRange,
+        .maxTruePeakLevel,
         .replayGainAlbumGain,
         .replayGainAlbumPeak,
         .replayGainAlbumRange,
-        .replayGainReferenceLoudness
-    ].sorted()
+        .replayGainReferenceLoudness,
+        .replayGainTrackGain,
+        .replayGainTrackPeak,
+        .replayGainTrackRange,
+        .title,
+    ]
 }
 
 extension TagKey {
+    public var description: String {
+        "\(displayName) (ID3: \(id3Frame.value), INFO: \(infoFrame?.value ?? "X"))"
+    }
+
     /// IE, .trackNumber = Track Number
     public var displayName: String {
         switch self {

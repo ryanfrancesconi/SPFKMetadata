@@ -9,7 +9,7 @@ public protocol TagPropertiesContainerModel: CustomStringConvertible {
     /// Official ID3 or conventional tags found in this file
     var tags: TagKeyDictionary { get set }
 
-    /// Unoffical, uncommon tags found in this file
+    /// Unoffical, other custom tags found in this file
     var customTags: [String: String] { get set }
 }
 
@@ -36,7 +36,7 @@ extension TagPropertiesContainerModel {
     public var description: String {
         let strings = tags.map {
             let key: TagKey = $0.key
-            return "\(key.rawValue) (ID3: \(key.id3Frame.value)) (INFO: \(key.infoFrame?.value ?? "????")) = \($0.value)"
+            return "\(key.description) = \($0.value)"
         }
 
         return strings.sorted().joined(separator: "\n")
@@ -56,7 +56,7 @@ extension TagPropertiesContainerModel {
         tags[frame] = value
     }
 
-    /// TIT2 = Hello
+    /// .title = Hello
     mutating func set(id3Frame key: ID3FrameKey, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
