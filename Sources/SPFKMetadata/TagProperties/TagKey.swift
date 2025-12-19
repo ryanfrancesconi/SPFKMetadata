@@ -135,7 +135,6 @@ extension TagKey {
         .replayGainTrackGain,
         .replayGainTrackPeak,
         .replayGainTrackRange,
-        .title,
     ]
 }
 
