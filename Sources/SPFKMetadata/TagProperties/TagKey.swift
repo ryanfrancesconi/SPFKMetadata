@@ -106,39 +106,6 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 // MARK: - Init
 
 extension TagKey {
-    public static let commonCases: [TagKey] = [
-        .album,
-        .artist,
-        .comment,
-        .date,
-        .genre,
-        .keywords,
-        .mood,
-        .title,
-        .trackNumber,
-    ]
-
-    public static let audioCases: [TagKey] = [
-        .bpm,
-        .initialKey,
-        .instrumentation,
-        .length,
-        .loudnessRange,
-        .loudnessValue,
-        .maxMomentaryLoudness,
-        .maxShortTermLoudness,
-        .maxTruePeakLevel,
-        .replayGainAlbumGain,
-        .replayGainAlbumPeak,
-        .replayGainAlbumRange,
-        .replayGainReferenceLoudness,
-        .replayGainTrackGain,
-        .replayGainTrackPeak,
-        .replayGainTrackRange,
-    ]
-}
-
-extension TagKey {
     public var description: String {
         "\(displayName) (ID3: \(id3Frame.value), INFO: \(infoFrame?.value ?? "X"))"
     }
