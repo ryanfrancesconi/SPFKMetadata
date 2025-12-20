@@ -3,15 +3,15 @@
 import Foundation
 
 public enum TagSet: String, CaseIterable, Sendable {
-    case all
     case common
     case audio
+    case all
 
     public var title: String {
         switch self {
-        case .all: "All Tags"
         case .common: "Common Tags"
         case .audio: "Audio Tags"
+        case .all: "All Tags"
         }
     }
 
