@@ -44,6 +44,37 @@ extension TagPropertiesContainerModel {
 }
 
 extension TagPropertiesContainerModel {
+    public func tag(for tagKey: TagKey) -> String? {
+        tags[tagKey]
+    }
+
+    public func customTag(for key: String) -> String? {
+        customTags[key]
+    }
+
+    public mutating func set(tag key: TagKey, value: String) {
+        tags[key] = value
+    }
+
+    public mutating func set(customTag key: String, value: String) {
+        customTags[key] = value
+    }
+
+    public mutating func remove(tag key: TagKey) {
+        tags.removeValue(forKey: key)
+    }
+
+    public mutating func remove(customTag key: String) {
+        customTags.removeValue(forKey: key)
+    }
+
+    public mutating func removeAll() {
+        tags.removeAll()
+        customTags.removeAll()
+    }
+}
+
+extension TagPropertiesContainerModel {
     /// "TITLE": "Hello"
     mutating func set(taglibKey key: String, value: String) {
         let value = value.removing(.controlCharacters).trimmed

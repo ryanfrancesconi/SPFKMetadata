@@ -7,7 +7,9 @@ import SPFKMetadataC
 /// A Swift convenience wrapper to TagLibBridge (C++)
 public struct TagProperties: Hashable, Codable, Sendable {
     public private(set) var url: URL
-    public var data = TagData()
+
+    /// Use the various access methods in TagPropertiesContainerModel for mutation
+    public private(set) var data = TagData()
 
     public private(set) var audioProperties: TagAudioProperties?
 
@@ -60,14 +62,9 @@ public struct TagProperties: Hashable, Codable, Sendable {
         }
     }
 
-    public mutating func removeAllTags() throws {
-        do {
-            try Self.removeAllTags(in: url)
-        } catch {
-            Log.error(error)
-        }
-
-        data.removeAll()
+    public mutating func removeAllAndSave() throws {
+        try Self.removeAllTags(in: url)
+        removeAll()
     }
 }
 
