@@ -53,7 +53,7 @@ class TagPropertiesTests: BinTestCase {
 
         // target
         var output = try TagProperties(url: tmpfile)
-        try output.removeAllTags()
+        try output.removeAllAndSave()
 
         #expect(output.tags.isEmpty)
 
@@ -95,7 +95,7 @@ class TagPropertiesTests: BinTestCase {
             do {
                 var copyProps = try TagProperties(url: copy)
 
-                try copyProps.removeAllTags()
+                try copyProps.removeAllAndSave()
                 copyProps.tags = source.tags
                 try copyProps.save()
                 try copyProps.load()
@@ -119,7 +119,7 @@ class TagPropertiesTests: BinTestCase {
 
             do {
                 var copyProps = try TagProperties(url: copy)
-                try copyProps.removeAllTags()
+                try copyProps.removeAllAndSave()
                 try copyProps.load()
 
                 Log.debug(copy.lastPathComponent, copyProps.description)
