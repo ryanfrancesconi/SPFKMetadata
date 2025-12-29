@@ -2,25 +2,27 @@
 
 import Foundation
 
-public enum TagSet: CaseIterable, Sendable {
+public enum TagSet: CaseIterable, Hashable, Sendable {
     case common
     case audio
-    case all
+    case other
 
     public var title: String {
         switch self {
         case .common: "Common Tags"
         case .audio: "Audio Tags"
-        case .all: "All Tags"
+        case .other: "Other Tags"
         }
     }
 
     public var keys: [TagKey] {
         switch self {
-        case .all:
-            TagSet.allTags
+        case .other:
+            TagSet.otherTags
+
         case .common:
             TagSet.commonTags
+
         case .audio:
             TagSet.audioTags
         }
@@ -37,7 +39,10 @@ public enum TagSet: CaseIterable, Sendable {
 }
 
 extension TagSet {
-    private static let allTags: [TagKey] = TagKey.allCases
+    private static let otherTags: [TagKey] = TagKey.allCases.filter {
+        !commonTags.contains($0) &&
+            !audioTags.contains($0)
+    }
 
     private static let commonTags: [TagKey] = [
         .album,
