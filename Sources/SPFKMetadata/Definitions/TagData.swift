@@ -23,3 +23,26 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
         customTags.removeAll()
     }
 }
+
+extension TagData {
+    /// load all combination tags for all files and add Multiple Values placeholderStrings if values differ
+    public nonisolated static func merge(_ elements: [TagData]) async -> TagData {
+        let allTags = elements.compactMap(\.tags)
+
+        let allCustomTags = elements.compactMap(\.customTags)
+
+        var mergedTags: TagKeyDictionary = .init()
+        var mergedCustomTags: [String: String] = .init()
+
+        for item in allTags {
+            // keep old value if duplicate key
+            mergedTags = mergedTags.merging(item, uniquingKeysWith: { old, _ in old })
+        }
+
+        for item in allCustomTags {
+            mergedCustomTags = mergedCustomTags.merging(item, uniquingKeysWith: { old, _ in old })
+        }
+
+        return TagData(tags: mergedTags, customTags: mergedCustomTags)
+    }
+}

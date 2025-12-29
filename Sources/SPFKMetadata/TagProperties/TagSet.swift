@@ -2,12 +2,10 @@
 
 import Foundation
 
-public enum TagSet: Int, CaseIterable, Sendable {
-    case common = 100
+public enum TagSet: CaseIterable, Sendable {
+    case common
     case audio
     case all
-
-    public var tag: Int { rawValue }
 
     public var title: String {
         switch self {
