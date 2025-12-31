@@ -107,7 +107,15 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 
 extension TagKey {
     public var description: String {
-        "\(displayName) (ID3: \(id3Frame.value), INFO: \(infoFrame?.value ?? "X"))"
+        var value = "\(displayName) (ID3: \(id3Frame.value)"
+
+        if let infoFrame {
+            value += ", INFO: \(infoFrame.value)"
+        }
+
+        value += ")"
+
+        return value
     }
 
     /// IE, .trackNumber = Track Number
