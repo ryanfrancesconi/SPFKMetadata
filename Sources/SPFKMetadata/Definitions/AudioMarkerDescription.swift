@@ -3,6 +3,7 @@
 import Foundation
 import SPFKAudioBase
 import SPFKMetadataC
+import SPFKUtils
 
 /// A format agnostic audio marker to be used to store either
 /// RIFF marker data or Chapter markers
@@ -12,19 +13,22 @@ public struct AudioMarkerDescription: Hashable, Sendable {
     public var endTime: TimeInterval?
     public var sampleRate: Double?
     public var markerID: Int?
+    public var hexColor: HexColor?
 
     public init(
         name: String?,
         startTime: TimeInterval,
         endTime: TimeInterval? = nil,
         sampleRate: Double? = nil,
-        markerID: Int? = nil
+        markerID: Int? = nil,
+        hexColor: HexColor? = nil
     ) {
         self.name = name
         self.startTime = startTime
         self.endTime = endTime
         self.sampleRate = sampleRate
         self.markerID = markerID
+        self.hexColor = hexColor
     }
 
     public init(riffMarker marker: AudioMarker) {
@@ -51,6 +55,7 @@ extension AudioMarkerDescription: Codable {
         case endTime
         case sampleRate
         case markerID
+        case hexColor
     }
 
     public init(from decoder: any Decoder) throws {
@@ -61,6 +66,7 @@ extension AudioMarkerDescription: Codable {
         endTime = try? container.decodeIfPresent(TimeInterval.self, forKey: .endTime)
         sampleRate = try? container.decodeIfPresent(Double.self, forKey: .sampleRate)
         markerID = try? container.decodeIfPresent(Int.self, forKey: .markerID)
+        hexColor = try? container.decodeIfPresent(HexColor.self, forKey: .hexColor)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -72,5 +78,6 @@ extension AudioMarkerDescription: Codable {
         try? container.encodeIfPresent(endTime, forKey: .endTime)
         try? container.encodeIfPresent(sampleRate, forKey: .sampleRate)
         try? container.encodeIfPresent(markerID, forKey: .markerID)
+        try? container.encodeIfPresent(hexColor, forKey: .hexColor)
     }
 }

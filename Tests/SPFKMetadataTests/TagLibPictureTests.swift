@@ -26,10 +26,10 @@ class TagLibPictureTests: BinTestCase {
         #expect(desc == "Smell the glove")
 
         // test export to file
-        let exportType: CGImage.ExportType = .jpeg
-        let filename = "\(type) - \(desc).\(exportType.rawValue)"
-        let url = bin.appendingPathComponent(filename, conformingTo: exportType.utType)
-        try cgImage.export(type: exportType, to: url)
+        let exportType: UTType = .jpeg
+        let filename = "\(type) - \(desc).\(exportType.preferredFilenameExtension ?? "jpeg")"
+        let url = bin.appendingPathComponent(filename, conformingTo: exportType)
+        try cgImage.export(utType: exportType, to: url)
 
         Log.debug(tagPicture.cgImage)
     }
