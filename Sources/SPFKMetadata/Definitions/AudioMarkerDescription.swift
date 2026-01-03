@@ -7,7 +7,7 @@ import SPFKUtils
 
 /// A format agnostic audio marker to be used to store either
 /// RIFF marker data or Chapter markers
-public struct AudioMarkerDescription: Hashable, Sendable {
+public struct AudioMarkerDescription: Hashable, Sendable, Equatable {
     public var name: String?
     public var startTime: TimeInterval
     public var endTime: TimeInterval?
@@ -60,8 +60,8 @@ extension AudioMarkerDescription: Codable {
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        startTime = try container.decode(TimeInterval.self, forKey: .startTime)
 
+        startTime = try container.decode(TimeInterval.self, forKey: .startTime)
         name = try? container.decodeIfPresent(String.self, forKey: .name)
         endTime = try? container.decodeIfPresent(TimeInterval.self, forKey: .endTime)
         sampleRate = try? container.decodeIfPresent(Double.self, forKey: .sampleRate)
@@ -73,7 +73,6 @@ extension AudioMarkerDescription: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(startTime, forKey: .startTime)
-
         try? container.encodeIfPresent(name, forKey: .name)
         try? container.encodeIfPresent(endTime, forKey: .endTime)
         try? container.encodeIfPresent(sampleRate, forKey: .sampleRate)
