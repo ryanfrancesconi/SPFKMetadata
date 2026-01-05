@@ -8,6 +8,16 @@ import SPFKUtils
 /// A format agnostic audio marker to be used to store either
 /// RIFF marker data or Chapter markers
 public struct AudioMarkerDescription: Hashable, Sendable, Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        guard let id1 = lhs.markerID, let id2 = rhs.markerID else {
+            return lhs.name == rhs.name &&
+                lhs.startTime == rhs.startTime &&
+                lhs.endTime == rhs.endTime
+        }
+
+        return id1 == id2
+    }
+
     public var name: String?
     public var startTime: TimeInterval
     public var endTime: TimeInterval?
