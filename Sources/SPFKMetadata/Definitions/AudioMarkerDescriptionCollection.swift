@@ -5,7 +5,7 @@ import SPFKAudioBase
 import SPFKMetadataC
 
 public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
-    public var markerDescriptions: [AudioMarkerDescription] = []
+    public private(set) var markerDescriptions: [AudioMarkerDescription] = []
 
     public var description: String {
         var out = ""
@@ -71,6 +71,17 @@ public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
         markerDescriptions = value.map {
             AudioMarkerDescription(riffMarker: $0)
         }
+    }
+}
+
+extension AudioMarkerDescriptionCollection {
+    public mutating func append(marker markerDescription: AudioMarkerDescription) {
+        markerDescriptions.append(markerDescription)
+        markerDescriptions = markerDescriptions.sorted()
+    }
+    
+    public mutating func remove(marker markerDescription: AudioMarkerDescription) throws {
+        
     }
 }
 
