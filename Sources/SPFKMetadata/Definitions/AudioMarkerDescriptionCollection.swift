@@ -2,6 +2,7 @@
 
 import Foundation
 import SPFKAudioBase
+import SPFKBase
 import SPFKMetadataC
 
 public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
@@ -79,9 +80,13 @@ extension AudioMarkerDescriptionCollection {
         markerDescriptions.append(markerDescription)
         markerDescriptions = markerDescriptions.sorted()
     }
-    
+
     public mutating func remove(marker markerDescription: AudioMarkerDescription) throws {
-        
+        Log.fault("TODO")
+    }
+    
+    public mutating func update(markerDescriptions: [AudioMarkerDescription]) {
+        self.markerDescriptions = markerDescriptions
     }
 }
 

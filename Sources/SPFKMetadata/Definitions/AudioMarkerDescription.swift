@@ -94,3 +94,28 @@ extension AudioMarkerDescription: Codable {
         try? container.encodeIfPresent(hexColor, forKey: .hexColor)
     }
 }
+
+extension AudioMarkerDescription: CustomStringConvertible {
+    public var description: String {
+        var color = ""
+        var id = ""
+        var end = ""
+
+        if let value = markerID {
+            id = " ID: \(value)"
+        }
+
+        if let value = hexColor?.hexString {
+            color = " Color: \(value)"
+        }
+
+        if let value = endTime {
+            end = "...\(value.truncated(decimalPlaces: 3))"
+        }
+
+        let name = name ?? "Marker"
+        let start = startTime.truncated(decimalPlaces: 3)
+
+        return "\(name) @ \(start)\(end)\(id)\(color)"
+    }
+}
