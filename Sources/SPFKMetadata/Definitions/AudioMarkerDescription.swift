@@ -97,25 +97,8 @@ extension AudioMarkerDescription: Codable {
 
 extension AudioMarkerDescription: CustomStringConvertible {
     public var description: String {
-        var color = ""
-        var id = ""
-        var end = ""
-
-        if let value = markerID {
-            id = " ID: \(value)"
-        }
-
-        if let value = hexColor?.hexString {
-            color = " Color: \(value)"
-        }
-
-        if let value = endTime {
-            end = "...\(value.truncated(decimalPlaces: 3))"
-        }
-
-        let name = name ?? "Marker"
-        let start = startTime.truncated(decimalPlaces: 3)
-
-        return "\(name) @ \(start)\(end)\(id)\(color)"
+        "AudioMarkerDescription(name: \(name ?? "nil"), startTime: \(startTime), "
+            + "endTime: \(endTime?.string ?? "nil"), sampleRate: \(sampleRate?.string ?? "nil"), "
+            + "markerID: \(markerID?.string ?? "nil"))"
     }
 }

@@ -6,7 +6,7 @@ import SPFKBase
 import SPFKMetadataC
 
 public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
-    public private(set) var markerDescriptions: [AudioMarkerDescription] = []
+    public var markerDescriptions: [AudioMarkerDescription] = []
 
     public var description: String {
         var out = ""
@@ -47,46 +47,79 @@ public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
     }
 
     public init(markerDescriptions: [AudioMarkerDescription] = []) {
-        self.markerDescriptions = markerDescriptions
+        update(markerDescriptions: markerDescriptions)
     }
 
     private mutating func parseChapters(url: URL) async throws {
         let value: [ChapterMarker] = try await ChapterParser.parse(url: url)
 
-        markerDescriptions = value.map {
+        update(markerDescriptions: value.map {
             AudioMarkerDescription(chapterMarker: $0)
-        }
+        })
     }
 
     private mutating func parseMP3(url: URL) async throws {
         let value: [ChapterMarker] = MPEGChapterUtil.getChapters(url.path) as? [ChapterMarker] ?? []
 
-        markerDescriptions = value.map {
+        update(markerDescriptions: value.map {
             AudioMarkerDescription(chapterMarker: $0)
-        }
+        })
     }
 
     private mutating func parseRIFF(url: URL) async throws {
         let value: [AudioMarker] = AudioMarkerUtil.getMarkers(url) as? [AudioMarker] ?? []
 
-        markerDescriptions = value.map {
+        update(markerDescriptions: value.map {
             AudioMarkerDescription(riffMarker: $0)
-        }
+        })
     }
 }
 
 extension AudioMarkerDescriptionCollection {
     public mutating func append(marker markerDescription: AudioMarkerDescription) {
         markerDescriptions.append(markerDescription)
-        markerDescriptions = markerDescriptions.sorted()
+        sort()
     }
 
     public mutating func remove(marker markerDescription: AudioMarkerDescription) throws {
-        Log.fault("TODO")
+        guard let markerID = markerDescription.markerID else {
+            throw NSError(description: "markerID is nil")
+        }
+
+        for i in 0 ..< markerDescriptions.count where markerDescriptions[i].markerID == markerID {
+            markerDescriptions.remove(at: i)
+            sort()
+            return
+        }
+
+        throw NSError(description: "Failed to find markerID \(markerID)")
     }
-    
+
     public mutating func update(markerDescriptions: [AudioMarkerDescription]) {
         self.markerDescriptions = markerDescriptions
+        sort()
+    }
+
+    public mutating func replace(markerDescription: AudioMarkerDescription) throws {
+        guard let markerID = markerDescription.markerID else {
+            throw NSError(description: "markerID is nil")
+        }
+
+        for i in 0 ..< markerDescriptions.count where markerDescriptions[i].markerID == markerID {
+            markerDescriptions[i] = markerDescription
+            sort()
+            return
+        }
+
+        throw NSError(description: "Failed to find markerID \(markerID), all ids are \(markerDescriptions.compactMap(\.markerID))")
+    }
+
+    public mutating func sort() {
+        markerDescriptions = markerDescriptions.sorted()
+
+        for i in 0 ..< markerDescriptions.count {
+            markerDescriptions[i].markerID = i
+        }
     }
 }
 
@@ -98,6 +131,7 @@ extension AudioMarkerDescriptionCollection: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         markerDescriptions = try container.decode([AudioMarkerDescription].self, forKey: .markerDescriptions)
+        sort()
     }
 
     public func encode(to encoder: any Encoder) throws {
