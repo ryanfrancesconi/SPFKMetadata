@@ -10,6 +10,7 @@ import SPFKUtils
 public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         guard let id1 = lhs.markerID, let id2 = rhs.markerID else {
+            //
             return lhs.name == rhs.name &&
                 lhs.startTime == rhs.startTime &&
                 lhs.endTime == rhs.endTime
@@ -19,7 +20,15 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable 
     }
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.startTime < rhs.startTime
+        guard lhs.startTime != rhs.startTime else {
+            if let name1 = lhs.name, let name2 = rhs.name {
+                return name1.standardCompare(with: name2)
+            }
+
+            return true
+        }
+
+        return lhs.startTime < rhs.startTime
     }
 
     public var name: String?
@@ -95,8 +104,8 @@ extension AudioMarkerDescription: Codable {
     }
 }
 
-extension AudioMarkerDescription: CustomStringConvertible {
-    public var description: String {
+extension AudioMarkerDescription: CustomDebugStringConvertible {
+    public var debugDescription: String {
         "AudioMarkerDescription(name: \(name ?? "nil"), startTime: \(startTime), "
             + "endTime: \(endTime?.string ?? "nil"), sampleRate: \(sampleRate?.string ?? "nil"), "
             + "markerID: \(markerID?.string ?? "nil"))"
