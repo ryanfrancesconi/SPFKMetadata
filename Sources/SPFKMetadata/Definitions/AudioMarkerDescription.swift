@@ -104,10 +104,32 @@ extension AudioMarkerDescription: Codable {
     }
 }
 
-extension AudioMarkerDescription: CustomDebugStringConvertible {
+extension AudioMarkerDescription: CustomStringConvertible, CustomDebugStringConvertible {
+    public var description: String {
+        let name = name ?? "Untitled"
+        let start = startTime.truncated(decimalPlaces: 3)
+
+        var color = ""
+        if let value = hexColor?.hexString {
+            color = ", Color: \(value)"
+        }
+
+        var id = ""
+        if let markerID {
+            id = ", ID: \(markerID)"
+        }
+
+        var end = ""
+        if let endTime, endTime != startTime {
+            end = "...\(endTime.truncated(decimalPlaces: 3))s"
+        }
+
+        return "\(name) @ \(start)s\(end)\(color)\(id)"
+    }
+
     public var debugDescription: String {
         "AudioMarkerDescription(name: \(name ?? "nil"), startTime: \(startTime), "
             + "endTime: \(endTime?.string ?? "nil"), sampleRate: \(sampleRate?.string ?? "nil"), "
-            + "markerID: \(markerID?.string ?? "nil"))"
+            + "markerID: \(markerID?.string ?? "nil"), hexColor: \(hexColor?.hexString ?? "nil")"
     }
 }
