@@ -16,7 +16,9 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable 
                 lhs.endTime == rhs.endTime
         }
 
-        return id1 == id2
+        return id1 == id2 &&
+            lhs.startTime == rhs.startTime &&
+            lhs.endTime == rhs.endTime
     }
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
@@ -57,7 +59,6 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable 
     public init(riffMarker marker: AudioMarker) {
         name = marker.name
         startTime = marker.time
-        endTime = marker.time
         sampleRate = marker.sampleRate
         markerID = Int(marker.markerID)
     }
