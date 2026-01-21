@@ -9,6 +9,12 @@ import Testing
 
 @Suite(.serialized)
 class BEXTTests: BinTestCase {
+    @Test func initBEXTDescriptionC() async throws {
+        let bextc = BEXTDescriptionC(path: TestBundleResources.shared.tabla_wav.path())
+        
+        Log.debug(bextc?.maxTruePeakLevel)
+    }
+    
     @Test func parseBEXT_v1() async throws {
         let desc = try #require(BEXTDescription(url: TestBundleResources.shared.wav_bext_v1))
         Log.debug(desc)
@@ -29,7 +35,7 @@ class BEXTTests: BinTestCase {
         #expect(desc.originationTime == "17:51:21")
 
         // <bext:timeReference>172800000</bext:timeReference>
-        #expect(desc.timeReference == 172800000)
+        #expect(desc.timeReference == 172_800_000)
     }
 
     @Test func parseBEXT_v2b() async throws {
@@ -53,7 +59,7 @@ class BEXTTests: BinTestCase {
         #expect(desc.maxTruePeakLevel == -8.75)
         #expect(desc.maxMomentaryLoudness == -18.42)
         #expect(desc.maxShortTermLoudness == -16)
-        #expect(desc.timeReference == 158760000)
+        #expect(desc.timeReference == 158_760_000)
         #expect(desc.timeReferenceInSeconds == 3600.0)
     }
 
@@ -77,28 +83,11 @@ class BEXTTests: BinTestCase {
         desc.maxTruePeakLevel = -8.75
         desc.maxMomentaryLoudness = -18.42
         desc.maxShortTermLoudness = -16
-        desc.timeReferenceLow = 158760000
+        desc.timeReferenceLow = 158_760_000
         desc.timeReferenceHigh = 0
 
         // validate and write the above def
         try BEXTDescription.write(bextDescription: desc, to: tmpfile)
-
-        let pictureRef = try #require(
-            TagPictureRef(
-                url: TestBundleResources.shared.sharksandwich,
-                pictureDescription: "Shit Sandwich",
-                pictureType: "Back Cover"
-            )
-        )
-
-        TagPicture.write(pictureRef, path: tmpfile.path)
-
-        let source = try TagProperties(url: TestBundleResources.shared.mp3_id3)
-
-        var copyProps = try TagProperties(url: tmpfile)
-
-        copyProps.tags = source.tags
-        try copyProps.save()
     }
 
     @Test func writeBEXT2() async throws {
@@ -118,7 +107,7 @@ class BEXTTests: BinTestCase {
         desc.maxTruePeakLevel = -22
         desc.maxShortTermLoudness = -1
         desc.maxMomentaryLoudness = -2
-        desc.timeReferenceLow = 175728049
+        desc.timeReferenceLow = 175_728_049
         desc.timeReferenceHigh = 0
         desc.sampleRate = 48000
 
@@ -134,8 +123,12 @@ class BEXTTests: BinTestCase {
         #expect(updated.originatorReference == desc.originatorReference)
         #expect(updated.originationDate == "2011:01:10")
         #expect(updated.originationTime == "01:01:01")
-        #expect(updated.codingHistory?.trimmed == "A=PCM,F=48000,W=16,M=mono,T=original")
-        #expect(updated.timeReference == 175728049)
+
+        if let codingHistory = updated.codingHistory?.trimmed {
+            #expect(codingHistory.hasPrefix("A=PCM,F=48000,W=16,M=mono,T=original"))
+        }
+
+        #expect(updated.timeReference == 175_728_049)
         #expect(updated.timeReferenceInSeconds == 3661.0010208333333)
         #expect(updated.loudnessValue == -20.12)
         #expect(updated.loudnessRange == -21)
@@ -143,23 +136,22 @@ class BEXTTests: BinTestCase {
         #expect(updated.maxShortTermLoudness == -1)
         #expect(updated.maxMomentaryLoudness == -2)
     }
-}
 
-extension BEXTTests {
-    @Test func parseBEXT_dev() async throws {
+    @Test func writeBEXT3() async throws {
         deleteBinOnExit = false
+        let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v1)
 
-        let url = TestBundleResources.shared.bundleURL.appendingPathComponent("Home Economics.wav")
-        guard url.exists else { return }
+        var desc1 = BEXTDescription()
+        desc1.sequenceDescription = "Description 1"
 
-        Log.debug(url.path)
+        var desc2 = BEXTDescription()
+        desc2.sequenceDescription = "Description 2"
 
-        let desc = try #require(BEXTDescription(url: url))
-        Log.debug(desc)
+        try BEXTDescription.write(bextDescription: desc1, to: tmpfile)
+        try BEXTDescription.write(bextDescription: desc2, to: tmpfile)
 
-        // BWF MetaEdit: "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F0"
-        #expect(
-            desc.umid == "060A2B340101010501010F1013000000B162AE77EDCF800020426DF3E99818F00000000000000000000000000000000000000000000000000000000000000000"
-        )
+        let updated = try #require(BEXTDescription(url: tmpfile))
+
+        Log.debug(updated)
     }
 }

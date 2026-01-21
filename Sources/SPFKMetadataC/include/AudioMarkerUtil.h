@@ -19,4 +19,7 @@
 /// @param url NSURL to the file
 + (BOOL)removeAllMarkers:(NSURL *)url;
 
++ (BOOL)copyMarkers:(NSURL *)url
+            to:(NSURL *)destination;
+
 @end

@@ -2,6 +2,7 @@
 
 import AudioToolbox
 import Foundation
+import OrderedCollections
 import SPFKMetadataC
 
 /// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC for swift
@@ -79,7 +80,7 @@ public struct BEXTDescription: Hashable, Sendable {
 
     /// Time reference in samples
     /// First sample count since midnight, high word
-    /// Keep 64 for larger headroom for invalid time values.
+    /// Keep `UInt64` for larger headroom for invalid time values.
     public var timeReferenceHigh: UInt64?
 
     /// Combined 64bit time value of low and high words
