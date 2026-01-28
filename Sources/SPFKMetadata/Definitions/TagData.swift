@@ -24,12 +24,10 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
     }
 }
 
-extension TagData {
-    /// load all combination tags for all files and add Multiple Values placeholderStrings if values differ
-    public nonisolated static func merge(_ elements: [TagData]) async -> TagData {
-        let allTags = elements.compactMap(\.tags)
-
-        let allCustomTags = elements.compactMap(\.customTags)
+extension [TagData] {
+    public func merge() async -> TagData {
+        let allTags = compactMap(\.tags)
+        let allCustomTags = compactMap(\.customTags)
 
         var mergedTags: TagKeyDictionary = .init()
         var mergedCustomTags: [String: String] = .init()

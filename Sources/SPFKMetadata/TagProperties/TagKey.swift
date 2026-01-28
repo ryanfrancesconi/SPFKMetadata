@@ -121,10 +121,17 @@ extension TagKey {
     /// IE, .trackNumber = Track Number
     public var displayName: String {
         switch self {
-        case .copyrightURL: "Copyright URL"
-        case .podcastURL:   "Podcast URL"
-        case .isrc:         "ISRC"
-        case .bpm:          "BPM"
+        case .copyrightURL:         "Copyright URL"
+        case .podcastURL:           "Podcast URL"
+        case .isrc:                 "ISRC"
+        case .bpm:                  "BPM"
+        case .loudnessValue:        "Loudness Integrated (LUFS)"
+        case .loudnessRange:        "Loudness Range (LRA)"
+        case .maxTruePeakLevel:     "Loudness True Peak (dBTP)"
+        case .maxMomentaryLoudness: "Loudness Max Momentary"
+        case .maxShortTermLoudness: "Loudness Max Short-Term"
+
+        //
         default:
             // This works for any standard camelCase rawValue
             rawValue.spacedTitleCased

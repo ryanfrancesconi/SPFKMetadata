@@ -9,9 +9,9 @@ public struct TagProperties: Hashable, Codable, Sendable {
     public private(set) var url: URL
 
     /// Use the various access methods in TagPropertiesContainerModel for mutation
-    public private(set) var data = TagData()
+    public var data = TagData()
 
-    public private(set) var audioProperties: TagAudioProperties?
+    public var audioProperties: TagAudioProperties?
 
     private var tagLibPropertyMap: [String: String] {
         var dict: [String: String] = .init()

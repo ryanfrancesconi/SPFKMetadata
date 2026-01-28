@@ -72,6 +72,27 @@ extension TagPropertiesContainerModel {
         tags.removeAll()
         customTags.removeAll()
     }
+
+    public mutating func merging(tags array: [TagKeyDictionary]) async {
+        var mergedTags: TagKeyDictionary = .init()
+
+        for item in array {
+            // keep old value if duplicate key
+            mergedTags = mergedTags.merging(item, uniquingKeysWith: { old, _ in old })
+        }
+
+        tags = mergedTags
+    }
+
+    public mutating func merging(customTags array: [[String: String]]) async {
+        var mergedCustomTags: [String: String] = .init()
+
+        for item in array {
+            mergedCustomTags = mergedCustomTags.merging(item, uniquingKeysWith: { old, _ in old })
+        }
+
+        customTags = mergedCustomTags
+    }
 }
 
 extension TagPropertiesContainerModel {
