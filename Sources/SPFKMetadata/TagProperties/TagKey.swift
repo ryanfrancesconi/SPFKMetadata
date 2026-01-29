@@ -12,8 +12,9 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
         lhs.rawValue.standardCompare(with: rhs.rawValue)
     }
 
+    /// The album of the song
     case album
-    case albumArtist            //  id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
+    case albumArtist            // id3's spec says 'PERFORMER', but most programs use 'ALBUMARTIST'
     case albumArtistSort        // Apple proprietary frame
     case albumSort
     case arranger
@@ -23,7 +24,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case audioSourceWebpage     // URL Frame
     case bpm
     case comment
-    case compilation            // Apple proprietary frame
+    case compilation
     case composer
     case composerSort
     case conductor
@@ -38,7 +39,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case fileWebpage            // URL Frame
     case fileType
     case genre
-    case grouping               // Apple proprietary frame
+    case grouping
     case initialKey
     case instrumentation        // TXXX non standard id3
     case isrc
@@ -50,8 +51,8 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case lyrics
     case media
     case mood
-    case movementName           // Apple proprietary frame
-    case movementNumber         // Apple proprietary frame
+    case movementName
+    case movementNumber
     case originalAlbum
     case originalArtist
     case originalDate
@@ -84,13 +85,13 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 
     // MARK: TXXX Non-Standard frames
 
-    // BEXT: Loudness Tags. Defined by this package.
+    // TXXX Loudness Tags. Defined by SPFKMetadata. These are present in BEXT but absent for ID3.
 
-    case loudnessValue
+    case loudnessIntegrated
     case loudnessRange
-    case maxTruePeakLevel
-    case maxMomentaryLoudness
-    case maxShortTermLoudness
+    case loudnessTruePeak
+    case loudnessMaxMomentary
+    case loudnessMaxShortTerm
 
     // Replay Gain. Proposed ID3 addition. Some adoptance.
 
@@ -103,21 +104,9 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case replayGainReferenceLoudness
 }
 
-// MARK: - Init
+// MARK: - overrides
 
 extension TagKey {
-    public var description: String {
-        var value = "\(displayName) (ID3: \(id3Frame.value)"
-
-        if let infoFrame {
-            value += ", INFO: \(infoFrame.value)"
-        }
-
-        value += ")"
-
-        return value
-    }
-
     /// IE, .trackNumber = Track Number
     public var displayName: String {
         switch self {
@@ -125,11 +114,11 @@ extension TagKey {
         case .podcastURL:           "Podcast URL"
         case .isrc:                 "ISRC"
         case .bpm:                  "BPM"
-        case .loudnessValue:        "Loudness Integrated (LUFS)"
+        case .loudnessIntegrated:   "Loudness Integrated (LUFS)"
         case .loudnessRange:        "Loudness Range (LRA)"
-        case .maxTruePeakLevel:     "Loudness True Peak (dBTP)"
-        case .maxMomentaryLoudness: "Loudness Max Momentary"
-        case .maxShortTermLoudness: "Loudness Max Short-Term"
+        case .loudnessTruePeak:     "Loudness True Peak (dBTP)"
+        case .loudnessMaxMomentary: "Loudness Max Momentary (LUFS)"
+        case .loudnessMaxShortTerm: "Loudness Max Short-Term (LUFS)"
 
         //
         default:
@@ -138,7 +127,8 @@ extension TagKey {
         }
     }
 
-    /// TagLib uses an all caps string for its properties.
+    /// TagLib uses an all caps string for its properties. In most cases just uppercasing the rawValue is correct.
+    /// This allows for custom overrides.
     public var taglibKey: String {
         switch self {
         case .replayGainTrackGain:          "REPLAYGAIN_TRACK_GAIN"

@@ -4,13 +4,19 @@ import Foundation
 
 public enum TagSet: CaseIterable, Hashable, Sendable {
     case common
-    case audio
+    case music
+    case loudness
+    case replayGain
+    case utility
     case other
 
     public var title: String {
         switch self {
         case .common: "Common Tags"
-        case .audio: "Audio Tags"
+        case .music: "Music Tags"
+        case .loudness: "Loudness"
+        case .replayGain: "Replay Gain"
+        case .utility: "Utility"
         case .other: "Other Tags"
         }
     }
@@ -23,8 +29,17 @@ public enum TagSet: CaseIterable, Hashable, Sendable {
         case .common:
             TagSet.commonTags
 
-        case .audio:
-            TagSet.audioTags
+        case .music:
+            TagSet.musicTags
+
+        case .loudness:
+            TagSet.loudnessTags
+
+        case .replayGain:
+            TagSet.replayGainTags
+
+        case .utility:
+            TagSet.utilityTags
         }
     }
 
@@ -41,12 +56,16 @@ public enum TagSet: CaseIterable, Hashable, Sendable {
 extension TagSet {
     private static let otherTags: [TagKey] = TagKey.allCases.filter {
         !commonTags.contains($0) &&
-            !audioTags.contains($0)
+            !musicTags.contains($0) &&
+            !loudnessTags.contains($0) &&
+            !replayGainTags.contains($0) &&
+            !utilityTags.contains($0)
     }
 
     private static let commonTags: [TagKey] = [
         .album,
         .artist,
+        .bpm,
         .comment,
         .date,
         .genre,
@@ -56,16 +75,28 @@ extension TagSet {
         .trackNumber,
     ]
 
-    private static let audioTags: [TagKey] = [
-        .bpm,
+    private static let musicTags: [TagKey] = [
+        .arranger,
+        .composer,
+        .conductor,
         .initialKey,
         .instrumentation,
-        .length,
+        .lyrics,
+        .movementName,
+        .movementNumber,
+        .remixer,
+        .work
+    ]
+
+    private static let loudnessTags: [TagKey] = [
         .loudnessRange,
-        .loudnessValue,
-        .maxMomentaryLoudness,
-        .maxShortTermLoudness,
-        .maxTruePeakLevel,
+        .loudnessIntegrated,
+        .loudnessMaxMomentary,
+        .loudnessMaxShortTerm,
+        .loudnessTruePeak,
+    ]
+
+    private static let replayGainTags: [TagKey] = [
         .replayGainAlbumGain,
         .replayGainAlbumPeak,
         .replayGainAlbumRange,
@@ -73,5 +104,25 @@ extension TagSet {
         .replayGainTrackGain,
         .replayGainTrackPeak,
         .replayGainTrackRange,
+    ]
+
+    private static let utilityTags: [TagKey] = [
+        .isrc,
+        .date,
+        .taggingDate,
+        .releaseDate,
+
+        .artistWebpage,
+        .fileWebpage,
+        .paymentWebpage,
+        .publisherWebpage,
+        .audioSourceWebpage,
+        .radioStationWebpage,
+
+        .titleSort,
+        .albumSort,
+        .artistSort,
+        .albumArtistSort,
+        .composerSort
     ]
 }
