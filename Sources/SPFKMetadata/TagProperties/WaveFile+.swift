@@ -3,11 +3,11 @@
 import Foundation
 import SPFKMetadataC
 
-extension WaveFile {
+extension WaveFileC {
     public subscript(key: InfoFrameKey) -> String? {
-        get { dictionary?[key.value] as? String }
+        get { infoDictionary?[key.value] as? String }
         set {
-            dictionary?[key.value] = newValue
+            infoDictionary?[key.value] = newValue
         }
     }
 }

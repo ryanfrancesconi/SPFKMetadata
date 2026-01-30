@@ -5,11 +5,19 @@
 
 #import <Foundation/Foundation.h>
 
+#include "BEXTDescriptionC.h"
+#include "TagPicture.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WaveFile : NSObject
+@interface WaveFileC : NSObject
 
-@property (nullable, nonatomic) NSMutableDictionary *dictionary;
+@property (nullable, nonatomic) NSMutableDictionary *infoDictionary;
+@property (nullable, nonatomic) NSMutableDictionary *id3Dictionary;
+@property (nullable, nonatomic) BEXTDescriptionC *bextDescription;
+@property (nullable, nonatomic) NSString *ixmlString;
+@property (nullable, nonatomic) TagPicture *tagPicture;
+@property (nonatomic, strong, nonnull) NSArray *markers;
 @property (nonatomic, strong, nonnull) NSString *path;
 
 /// Convert the frame list into a NSDictionary

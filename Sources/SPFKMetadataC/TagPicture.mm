@@ -30,6 +30,11 @@ const auto mimeTypeKey = String("mimeType");
 const auto descriptionKey = String("description");
 const auto pictureTypeKey = String("pictureType");
 
+- (nullable id)initWithPicture:(nonnull TagPictureRef *)pictureRef {
+    _pictureRef = pictureRef;
+    return self;
+}
+
 - (nullable id)initWithPath:(nonnull NSString *)path {
     FileRef fileRef(path.UTF8String);
 
@@ -123,7 +128,6 @@ const auto pictureTypeKey = String("pictureType");
 
 + (bool)write:(TagPictureRef *)picture
          path:(nonnull NSString *)path {
-    //
 
     VariantMap map;
 

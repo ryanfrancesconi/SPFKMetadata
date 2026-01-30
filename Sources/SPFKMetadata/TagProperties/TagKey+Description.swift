@@ -22,11 +22,17 @@ extension TagKey {
         case .label:
             "The record label or publisher."
 
+        case .media:
+            "Media type, the medium from which the sound originated. (e.g., CD/VID/PAL/VHS)"
+
         case .movementName:
             "Classical music movements or multi-part track. (Apple proprietary frame)"
 
         case .movementNumber:
-            "Classical music movement number, (e.g.,F 1/3) (Apple proprietary frame)"
+            "Classical music movement number, (e.g., 1/3) (Apple proprietary frame)"
+
+        case .owner:
+            "The ‘File owner/licensee frame contains the name of the owner or licensee of the file."
 
         case .performer:
             "Same as artist."

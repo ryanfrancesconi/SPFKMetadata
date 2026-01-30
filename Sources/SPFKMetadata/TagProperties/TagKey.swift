@@ -5,8 +5,9 @@ import Foundation
 import SPFKBase
 
 /// TagKey is a predomiantly ID3 based label system which mostly follows TagLib's conventions.
+/// RIFF INFO tags are also merged into this collection where they differ from ID3.
 ///
-/// TagsProperties has a customKeys dictionary for any keys found that aren't documented here.
+/// `TagProperties` has a customKeys dictionary for any keys found that aren't documented here.
 public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     public static func < (lhs: TagKey, rhs: TagKey) -> Bool {
         lhs.rawValue.standardCompare(with: rhs.rawValue)
@@ -107,7 +108,9 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 // MARK: - overrides
 
 extension TagKey {
-    /// IE, .trackNumber = Track Number
+    /// User facing string value for the tag.
+    ///
+    /// e.g., `.trackNumber` = "Track Number"
     public var displayName: String {
         switch self {
         case .copyrightURL:         "Copyright URL"
@@ -128,7 +131,7 @@ extension TagKey {
     }
 
     /// TagLib uses an all caps string for its properties. In most cases just uppercasing the rawValue is correct.
-    /// This allows for custom overrides.
+    /// This switch allows for custom overrides where necessary.
     public var taglibKey: String {
         switch self {
         case .replayGainTrackGain:          "REPLAYGAIN_TRACK_GAIN"

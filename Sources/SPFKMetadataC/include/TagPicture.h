@@ -11,8 +11,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic) TagPictureRef *pictureRef;
 
 - (nullable id)initWithPath:(nonnull NSString *)path;
+- (nullable id)initWithPicture:(nonnull TagPictureRef *)pictureRef;
 
-/// Set the Broadcast Extension Chunk for WAV (and related) files.
+/// Set the picture data
 + (bool)write:(TagPictureRef *)picture
          path:(nonnull NSString *)path;
 

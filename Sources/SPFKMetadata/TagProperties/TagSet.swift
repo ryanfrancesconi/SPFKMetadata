@@ -65,7 +65,6 @@ extension TagSet {
     private static let commonTags: [TagKey] = [
         .album,
         .artist,
-        .bpm,
         .comment,
         .date,
         .genre,
@@ -77,10 +76,12 @@ extension TagSet {
 
     private static let musicTags: [TagKey] = [
         .arranger,
+        .bpm,
         .composer,
         .conductor,
         .initialKey,
         .instrumentation,
+        .label,
         .lyrics,
         .movementName,
         .movementNumber,
@@ -107,22 +108,23 @@ extension TagSet {
     ]
 
     private static let utilityTags: [TagKey] = [
-        .isrc,
-        .date,
-        .taggingDate,
-        .releaseDate,
-
         .artistWebpage,
+        .audioSourceWebpage,
+        .date,
         .fileWebpage,
+        .isrc,
         .paymentWebpage,
         .publisherWebpage,
-        .audioSourceWebpage,
         .radioStationWebpage,
+        .releaseDate,
+        .taggingDate,
+    ]
 
-        .titleSort,
+    private static let sortTags: [TagKey] = [
+        .albumArtistSort,
         .albumSort,
         .artistSort,
-        .albumArtistSort,
-        .composerSort
+        .composerSort,
+        .titleSort,
     ]
 }

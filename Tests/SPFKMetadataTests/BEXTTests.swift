@@ -154,4 +154,27 @@ class BEXTTests: BinTestCase {
 
         Log.debug(updated)
     }
+    
+    @Test func ixmlBext() async throws {
+        deleteBinOnExit = false
+        let tmpfile = try copyToBin(url: TestBundleResources.shared.ixml_chunk)
+        
+        let file = try #require(WaveFileC(path: tmpfile.path))
+        #expect(file.load())
+        Log.debug("ixmlString=", file.ixmlString)
+        file[.title] = "Updated"
+        file.save()
+        Log.debug("INFO", file.infoDictionary)
+
+        var desc = try #require(BEXTDescription(url: tmpfile))
+        desc.sequenceDescription = "UPDATED"
+        try BEXTDescription.write(bextDescription: desc, to: tmpfile) // will strip all other tags
+
+        Log.debug(desc)
+        
+        #expect(file.load())
+        Log.debug("ixmlString=", file.ixmlString)
+        Log.debug("INFO", file.infoDictionary)
+
+    }
 }

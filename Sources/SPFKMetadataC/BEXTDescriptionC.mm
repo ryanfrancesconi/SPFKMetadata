@@ -1,5 +1,4 @@
-// Copyright Ryan Francesconi. All Rights Reserved. Revision History at
-// https://github.com/ryanfrancesconi/spfk-metadata
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata
 
 #import <Foundation/Foundation.h>
 #import <sndfile/sndfile.hh>
@@ -21,16 +20,14 @@ using namespace std;
 }
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
-    //    SndfileHandle file = SndfileHandle(path.UTF8String);
-
-    SF_BROADCAST_INFO bext = {};
-    // memset(&bext, 0, sizeof(bext));
+    SF_BROADCAST_INFO bext = {
+        0
+    };
 
     SF_INFO sfinfo = {};
     SNDFILE *infile = sf_open(path.UTF8String, SFM_READ, &sfinfo);
 
-    if (SF_FALSE ==
-        sf_command(infile, SFC_GET_BROADCAST_INFO, &bext, sizeof(bext))) {
+    if (SF_FALSE == sf_command(infile, SFC_GET_BROADCAST_INFO, &bext, sizeof(bext))) {
         cerr << "Failed to read BEXT from file: " <<
             [path cStringUsingEncoding:NSUTF8StringEncoding] << endl;
         return nil;
@@ -63,24 +60,16 @@ using namespace std;
         _maxShortTermLoudness = ((float)bext.max_shortterm_loudness) / 100;
     }
 
-    _sequenceDescription =
-        StringUtil::asciiString(bext.description, sizeof(bext.description));
-    _originator =
-        StringUtil::asciiString(bext.originator, sizeof(bext.originator));
-    _originationDate = StringUtil::asciiString(bext.origination_date,
-                                               sizeof(bext.origination_date));
-    _originationTime = StringUtil::asciiString(bext.origination_time,
-                                               sizeof(bext.origination_time));
-    _originatorReference = StringUtil::asciiString(
-        bext.originator_reference, sizeof(bext.originator_reference));
-
+    _sequenceDescription = StringUtil::asciiString(bext.description, sizeof(bext.description));
+    _originator = StringUtil::asciiString(bext.originator, sizeof(bext.originator));
+    _originationDate = StringUtil::asciiString(bext.origination_date, sizeof(bext.origination_date));
+    _originationTime = StringUtil::asciiString(bext.origination_time, sizeof(bext.origination_time));
+    _originatorReference = StringUtil::asciiString(bext.originator_reference, sizeof(bext.originator_reference));
     _timeReferenceLow = (uint32_t)bext.time_reference_low;
     _timeReferenceHigh = (uint32_t)bext.time_reference_high;
 
     // read only properties
-    _timeReference =
-        (uint64_t(self.timeReferenceHigh) << 32) | self.timeReferenceLow;
-
+    _timeReference = (uint64_t(self.timeReferenceHigh) << 32) | self.timeReferenceLow;
     _sampleRate = double(sfinfo.samplerate); // double(infile.samplerate());
     _timeReferenceInSeconds = double(self.timeReference) / self.sampleRate;
 
@@ -106,12 +95,12 @@ using namespace std;
 }
 
 + (bool)write:(BEXTDescriptionC *)info path:(nonnull NSString *)path {
-
     SF_INFO sfinfo = {};
     SNDFILE *infile = sf_open(path.UTF8String, SFM_READ, &sfinfo);
 
     NSString *pathExtension = path.pathExtension;
     NSString *outpath = [path stringByDeletingPathExtension];
+
     outpath = [outpath stringByAppendingString:@"_temp"];
     outpath = [outpath stringByAppendingPathExtension:pathExtension];
 
@@ -123,33 +112,33 @@ using namespace std;
 
     const char *umid = StringUtil::asciiCString(info.umid);
     const char *codingHistory = StringUtil::asciiCString(info.codingHistory);
-    const char *sequenceDescription =
-        StringUtil::asciiCString(info.sequenceDescription);
+    const char *sequenceDescription = StringUtil::asciiCString(info.sequenceDescription);
     const char *originator = StringUtil::asciiCString(info.originator);
-    const char *originatorReference =
-        StringUtil::asciiCString(info.originatorReference);
-    const char *originationDate =
-        StringUtil::asciiCString(info.originationDate);
-    const char *originationTime =
-        StringUtil::asciiCString(info.originationTime);
+    const char *originatorReference = StringUtil::asciiCString(info.originatorReference);
+    const char *originationDate = StringUtil::asciiCString(info.originationDate);
+    const char *originationTime = StringUtil::asciiCString(info.originationTime);
 
     if (codingHistory) {
-        size_t chsize = StringUtil::strncpy_validate(
-            bext.coding_history, codingHistory, sizeof(bext.coding_history));
+        size_t chsize = StringUtil::strncpy_validate(bext.coding_history,
+                                                     codingHistory,
+                                                     sizeof(bext.coding_history));
         bext.coding_history_size = (uint32_t)chsize;
     }
 
     if (info.version >= 1 && umid) {
-        StringUtil::strncpy_pad0(bext.umid, umid, sizeof(bext.umid), true);
+        StringUtil::strncpy_pad0(bext.umid, umid,
+                                 sizeof(bext.umid), true);
     }
 
     if (sequenceDescription) {
-        StringUtil::strncpy_validate(bext.description, sequenceDescription,
+        StringUtil::strncpy_validate(bext.description,
+                                     sequenceDescription,
                                      sizeof(bext.description));
     }
 
     if (originator) {
-        StringUtil::strncpy_validate(bext.originator, originator,
+        StringUtil::strncpy_validate(bext.originator,
+                                     originator,
                                      sizeof(bext.originator));
     }
 
@@ -160,12 +149,14 @@ using namespace std;
     }
 
     if (originationDate) {
-        StringUtil::strncpy_pad0(bext.origination_date, originationDate,
+        StringUtil::strncpy_pad0(bext.origination_date,
+                                 originationDate,
                                  sizeof(bext.origination_date), false);
     }
 
     if (originationTime) {
-        StringUtil::strncpy_pad0(bext.origination_time, originationTime,
+        StringUtil::strncpy_pad0(bext.origination_time,
+                                 originationTime,
                                  sizeof(bext.origination_time), false);
     }
 
@@ -173,17 +164,14 @@ using namespace std;
         bext.loudness_value = (int16_t)(info.loudnessValue * 100);
         bext.loudness_range = (int16_t)(info.loudnessRange * 100);
         bext.max_true_peak_level = (int16_t)(info.maxTruePeakLevel * 100);
-        bext.max_momentary_loudness =
-            (int16_t)(info.maxMomentaryLoudness * 100);
-        bext.max_shortterm_loudness =
-            (int16_t)(info.maxShortTermLoudness * 100);
+        bext.max_momentary_loudness = (int16_t)(info.maxMomentaryLoudness * 100);
+        bext.max_shortterm_loudness = (int16_t)(info.maxShortTermLoudness * 100);
     }
 
     bext.time_reference_low = info.timeReferenceLow;
     bext.time_reference_high = info.timeReferenceHigh;
 
-    if (SF_FALSE ==
-        sf_command(outfile, SFC_SET_BROADCAST_INFO, &bext, sizeof(bext))) {
+    if (SF_FALSE == sf_command(outfile, SFC_SET_BROADCAST_INFO, &bext, sizeof(bext))) {
         cerr << "Failed to write BEXT to file " << outpath << endl;
         return false;
     }
@@ -192,20 +180,19 @@ using namespace std;
     double data[BUFFER_LEN];
 
     // copy samples to file
-    while ((readcount = (int)sf_read_double(infile, data, BUFFER_LEN))) {
+    while ((readcount = (int)sf_read_double(infile, data, BUFFER_LEN)))
         sf_write_double(outfile, data, readcount);
-    };
 
     sf_close(infile);
     sf_close(outfile);
 
     NSURL *inputURL = [NSURL fileURLWithPath:path];
     NSURL *outputURL = [NSURL fileURLWithPath:outpath];
-    [AudioMarkerUtil copyMarkers:inputURL to:outputURL];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     NSError *error = nil;
+
     if ([fileManager removeItemAtURL:inputURL error:&error]) {
         NSLog(@"File removed successfully");
     } else {

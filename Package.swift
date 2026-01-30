@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/ryanfrancesconi/spfk-audio-base", branch: "development"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-testing", branch: "development"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-utils", branch: "development"),
-        .package(url: "https://github.com/sbooth/CXXTagLib", from: "2.1.1"),
+        .package(url: "https://github.com/ryanfrancesconi/CXXTagLib", branch: "development"), //from: "2.1.1"
         .package(url: "https://github.com/sbooth/sndfile-binary-xcframework", from: "0.1.2"),
         .package(url: "https://github.com/sbooth/ogg-binary-xcframework", from: "0.1.3"),
         .package(url: "https://github.com/sbooth/flac-binary-xcframework", from: "0.2.0"),
