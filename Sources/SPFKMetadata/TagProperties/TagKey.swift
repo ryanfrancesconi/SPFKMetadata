@@ -84,9 +84,9 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case trackNumber
     case work
 
-    // MARK: TXXX Non-Standard frames
+    // MARK: TXXX Non-Standard packageDefined frames
 
-    // TXXX Loudness Tags. Defined by SPFKMetadata. These are present in BEXT but absent for ID3.
+    // TXXX Loudness Tags. Defined by SPFKMetadata. These are present in BEXT chunks but missing in standard ID3.
 
     case loudnessIntegrated
     case loudnessRange
@@ -108,6 +108,11 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 // MARK: - overrides
 
 extension TagKey {
+    public static let userDefinedKeys: [TagKey] =
+        allCases.filter {
+            $0.id3Frame == .userDefined
+        }
+
     /// User facing string value for the tag.
     ///
     /// e.g., `.trackNumber` = "Track Number"

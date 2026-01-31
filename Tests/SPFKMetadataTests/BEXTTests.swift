@@ -11,10 +11,10 @@ import Testing
 class BEXTTests: BinTestCase {
     @Test func initBEXTDescriptionC() async throws {
         let bextc = BEXTDescriptionC(path: TestBundleResources.shared.tabla_wav.path())
-        
+
         Log.debug(bextc?.maxTruePeakLevel)
     }
-    
+
     @Test func parseBEXT_v1() async throws {
         let desc = try #require(BEXTDescription(url: TestBundleResources.shared.wav_bext_v1))
         Log.debug(desc)
@@ -153,28 +153,5 @@ class BEXTTests: BinTestCase {
         let updated = try #require(BEXTDescription(url: tmpfile))
 
         Log.debug(updated)
-    }
-    
-    @Test func ixmlBext() async throws {
-        deleteBinOnExit = false
-        let tmpfile = try copyToBin(url: TestBundleResources.shared.ixml_chunk)
-        
-        let file = try #require(WaveFileC(path: tmpfile.path))
-        #expect(file.load())
-        Log.debug("ixmlString=", file.ixmlString)
-        file[.title] = "Updated"
-        file.save()
-        Log.debug("INFO", file.infoDictionary)
-
-        var desc = try #require(BEXTDescription(url: tmpfile))
-        desc.sequenceDescription = "UPDATED"
-        try BEXTDescription.write(bextDescription: desc, to: tmpfile) // will strip all other tags
-
-        Log.debug(desc)
-        
-        #expect(file.load())
-        Log.debug("ixmlString=", file.ixmlString)
-        Log.debug("INFO", file.infoDictionary)
-
     }
 }

@@ -31,6 +31,7 @@ const auto descriptionKey = String("description");
 const auto pictureTypeKey = String("pictureType");
 
 - (nullable id)initWithPicture:(nonnull TagPictureRef *)pictureRef {
+    self = [super init];
     _pictureRef = pictureRef;
     return self;
 }
@@ -56,6 +57,8 @@ const auto pictureTypeKey = String("pictureType");
         return NULL;
     }
 
+    self = [super init];
+    
     // take the first picture only
     auto picture = pictures.front();
 

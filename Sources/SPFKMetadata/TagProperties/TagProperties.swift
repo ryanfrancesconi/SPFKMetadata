@@ -4,9 +4,9 @@ import Foundation
 import SPFKBase
 import SPFKMetadataC
 
-/// A Swift convenience wrapper to TagLibBridge (C++)
+/// A Swift convenience wrapper to TagFile access
 public struct TagProperties: Hashable, Codable, Sendable {
-    public private(set) var url: URL
+    public var url: URL?
 
     /// Use the various access methods in TagPropertiesContainerModel for mutation
     public var data = TagData()
@@ -27,15 +27,17 @@ public struct TagProperties: Hashable, Codable, Sendable {
         return dict
     }
 
+    public init() {}
+
     /// Create a dictionary from an audio file url
     /// - Parameter url: the `URL` to parse for metadata
     public init(url: URL) throws {
-        self.url = url
-
-        try load()
+        try load(url: url)
     }
 
-    public mutating func load() throws {
+    public mutating func load(url: URL) throws {
+        self.url = url
+
         let tagFile = TagFile(path: url.path)
         tagFile.load()
 
@@ -54,6 +56,10 @@ public struct TagProperties: Hashable, Codable, Sendable {
 
     /// Write the current tags dictionary back to the file
     public func save() throws {
+        guard let url else {
+            throw NSError(description: "URL is nil")
+        }
+
         let tagFile = TagFile(path: url.path)
         tagFile.dictionary = tagLibPropertyMap
 
@@ -63,6 +69,10 @@ public struct TagProperties: Hashable, Codable, Sendable {
     }
 
     public mutating func removeAllAndSave() throws {
+        guard let url else {
+            throw NSError(description: "URL is nil")
+        }
+
         try Self.removeAllTags(in: url)
         removeAll()
     }

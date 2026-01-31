@@ -7,7 +7,7 @@ import Foundation
 extension TagKey {
     /// Wave INFO frames as mapped by TagLib.
     /// TagLib defines this mapping in its infotag.cpp and
-    /// these are the primary INFO tags it will write.
+    /// these are the INFO tags it will write by default.
     public var infoFrame: InfoFrameKey? {
         switch self {
         case .album:            .product

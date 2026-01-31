@@ -7,10 +7,12 @@
 
 #import <taglib/fileref.h>
 #import <taglib/privateframe.h>
+#import <taglib/textidentificationframe.h>
 #import <taglib/tpropertymap.h>
 #import <taglib/wavfile.h>
 
 #import "AudioMarkerUtil.h"
+#import "TagFile.h"
 #import "WaveFileC.h"
 
 @implementation WaveFileC
@@ -19,13 +21,19 @@ using namespace std;
 using namespace TagLib;
 using namespace RIFF;
 
-- (nullable id)initWithPath:(nonnull NSString *)path {
+- (id)init {
+    self = [super init];
+    _id3Dictionary = [[NSMutableDictionary alloc] init];
+    _infoDictionary = [[NSMutableDictionary alloc] init];
+    return self;
+}
+
+- (id)initWithPath:(nonnull NSString *)path {
     self = [super init];
 
     _path = path;
     _id3Dictionary = [[NSMutableDictionary alloc] init];
     _infoDictionary = [[NSMutableDictionary alloc] init];
-
     return self;
 }
 
@@ -43,6 +51,19 @@ using namespace RIFF;
         return false;
     }
 
+    [_id3Dictionary removeAllObjects];
+    [_infoDictionary removeAllObjects];
+
+    auto audioProperties = fileRef.audioProperties();
+
+    if (audioProperties != nullptr) {
+        _audioProperties = [[TagAudioPropertiesC alloc] init];
+        _audioProperties.sampleRate = (double)audioProperties->sampleRate();
+        _audioProperties.duration = (double)audioProperties->lengthInMilliseconds() / 1000;
+        _audioProperties.bitRate = audioProperties->bitrate();
+        _audioProperties.channelCount = audioProperties->channels();
+    }
+
     NSURL *url = [NSURL URLWithString:_path];
     _markers = [AudioMarkerUtil getMarkers:url];
 
@@ -53,8 +74,8 @@ using namespace RIFF;
     }
 
     if (waveFile->hasiXMLTag()) {
-        _ixmlString = [[NSString alloc] initWithCString:waveFile->iXMLTag.data(String::UTF8).data()
-                                               encoding:NSUTF8StringEncoding];
+        _iXML = [[NSString alloc] initWithCString:waveFile->iXMLTag.data(String::UTF8).data()
+                                         encoding:NSUTF8StringEncoding];
     }
 
     if (waveFile->hasInfoTag()) {
@@ -62,8 +83,6 @@ using namespace RIFF;
 
         if (!infoMap.isEmpty()) {
             for (const auto &[key, val] : infoMap) {
-                // cout << key << " = " << val << endl;
-
                 const char *bytes = key.data();
                 const unsigned int length = key.size();
 
@@ -74,7 +93,7 @@ using namespace RIFF;
                 NSString *nsValue = [[NSString alloc] initWithCString:val.toCString()
                                                              encoding:NSUTF8StringEncoding];
 
-                NSLog(@"%@ = %@", nsKey, nsValue);
+                // NSLog(@"%@ = %@", nsKey, nsValue);
 
                 [_infoDictionary setValue:nsValue ? : @"" forKey:nsKey];
             }
@@ -89,15 +108,26 @@ using namespace RIFF;
             ByteVector frameID = (*it)->frameID();
             String value = (*it)->toString();
 
-            cout << frameID << " = " << value << endl;
-
             // custom frame handling
-            if (frameID == "PRIV") {
-                ID3v2::PrivateFrame *privateFrame = dynamic_cast<ID3v2::PrivateFrame *>(*it);
-                cout << "owner() = " << privateFrame->owner() << endl;
 
-                value = privateFrame->data();
+            if (frameID == "TXXX") {
+                ID3v2::UserTextIdentificationFrame *txxxFrame = dynamic_cast<ID3v2::UserTextIdentificationFrame *>(*it);
+
+                // in taglib fashion, we'll call the the description the ID
+                frameID = txxxFrame->description().data(String::UTF8);
+                
+                // the fieldList() has all text items, so the description() is first and the actual value is last
+                value = txxxFrame->fieldList().back();
+
+                // cout << txxxFrame->description() << " = " << txxxFrame->fieldList().back() << endl;
+            } else if (frameID == "PRIV") {
+                ID3v2::PrivateFrame *privFrame = dynamic_cast<ID3v2::PrivateFrame *>(*it);
+                cout << "owner() = " << privFrame->owner() << endl;
+
+                value = privFrame->data();
             }
+
+            cout << frameID << " = " << value << endl;
 
             const char *bytes = frameID.data();
             const unsigned int length = frameID.size();
@@ -118,23 +148,10 @@ using namespace RIFF;
     return true;
 }
 
-- (bool)save {
-    FileRef fileRef(_path.UTF8String);
-
-    if (fileRef.isNull()) {
-        return false;
-    }
-
-    auto *waveFile = dynamic_cast<WAV::File *>(fileRef.file());
-
-    if (!waveFile) {
-        // not a wave file
-        return false;
-    }
-
+- (void)saveExtras {
     // write bext first as it will only write the bext chunk and audio data
     if (![BEXTDescriptionC write:_bextDescription path:_path]) {
-        return false;
+        cout << "BEXTDescriptionC write failed" << endl;
     }
 
     // write image data
@@ -143,27 +160,49 @@ using namespace RIFF;
     }
 
     // write markers
-    NSURL *url = [NSURL URLWithString:_path];
-    [AudioMarkerUtil update:url markers:_markers];
+    if (_markers.count > 0) {
+        NSURL *url = [NSURL URLWithString:_path];
+        [AudioMarkerUtil update:url markers:_markers];
+    }
+}
+
+- (bool)save {
+    [self saveExtras];
+
+    FileRef fileRef(_path.UTF8String);
+
+    if (fileRef.isNull()) {
+        cout << "FileRef is nil" << endl;
+        return false;
+    }
+
+    auto *waveFile = dynamic_cast<WAV::File *>(fileRef.file());
+
+    if (!waveFile) {
+        cout << "Not a wave file" << endl;
+        return false;
+    }
 
     // write ixml
-    if (_ixmlString) {
-        waveFile->iXMLTag = String(_ixmlString.UTF8String);
+    if (_iXML) {
+        waveFile->iXMLTag = String(_iXML.UTF8String);
     }
 
     // write id3
     if (_id3Dictionary.count > 0) {
-        PropertyMap properties;
+        PropertyMap properties = PropertyMap();
 
         for (NSString *key in [_id3Dictionary allKeys]) {
             NSString *value = [_id3Dictionary objectForKey:key];
 
+            // can be taglib key or 4 char id3 frameID
             String tagKey = String(key.UTF8String);
-            String tagValue = String(value.UTF8String);
+            StringList tagValue = StringList(value.UTF8String);
 
             properties.insert(tagKey, tagValue);
         }
 
+        properties.removeEmpty();
         waveFile->ID3v2Tag()->setProperties(properties);
     }
 
@@ -172,14 +211,14 @@ using namespace RIFF;
         for (NSString *key in [_infoDictionary allKeys]) {
             NSString *value = [_infoDictionary objectForKey:key];
 
-            String tagKey = String(key.UTF8String);
+            ByteVector tagKey = String(key.UTF8String).data(String::UTF8);
             String tagValue = String(value.UTF8String);
 
-            waveFile->InfoTag()->setFieldText(tagKey.data(String::UTF8), tagValue);
+            waveFile->InfoTag()->setFieldText(tagKey, tagValue);
         }
     }
 
-    waveFile->save();
+    return waveFile->save();
 }
 
 @end

@@ -34,10 +34,26 @@ extension TagPropertiesContainerModel {
     }
 
     public var description: String {
-        let strings = tags.map {
+        let tagsStrings = tags.map {
             let key: TagKey = $0.key
-            return "\(key.description) = \($0.value)"
+            return "\(key.descriptionKey) = \($0.value)"
         }
+
+        let customStrings = customTags.map {
+            let key: String = $0.key
+
+            if let frame = ID3FrameKey(rawValue: key) {
+                return "\(frame.displayName) (Custom ID3: \(frame.value) = \($0.value)"
+
+            } else if let frame = InfoFrameKey(rawValue: key) {
+                return "\(frame.displayName) (Custom INFO: \(frame.value)) = \($0.value)"
+
+            } else {
+                return "\(key) (Custom) = \($0.value)"
+            }
+        }
+
+        let strings = tagsStrings + customStrings
 
         return strings.sorted().joined(separator: "\n")
     }
@@ -97,7 +113,7 @@ extension TagPropertiesContainerModel {
 
 extension TagPropertiesContainerModel {
     /// "TITLE": "Hello"
-    mutating func set(taglibKey key: String, value: String) {
+    public mutating func set(taglibKey key: String, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
         guard let frame = TagKey(taglibKey: key) else {
@@ -109,11 +125,27 @@ extension TagPropertiesContainerModel {
     }
 
     /// .title = Hello
-    mutating func set(id3Frame key: ID3FrameKey, value: String) {
+    public mutating func set(id3Frame key: ID3FrameKey, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
-        guard let frame = TagKey(id3Frame: key) else {
+        if key == .userDefined {
             customTags[key.rawValue] = value
+            return
+        }
+
+        guard let frame = TagKey(id3Frame: key) else {
+            customTags[key.taglibKey] = value
+            return
+        }
+
+        tags[frame] = value
+    }
+
+    public mutating func set(infoFrame key: InfoFrameKey, value: String) {
+        let value = value.removing(.controlCharacters).trimmed
+
+        guard let frame = TagKey(infoFrame: key) else {
+            customTags[key.taglibKey] = value
             return
         }
 

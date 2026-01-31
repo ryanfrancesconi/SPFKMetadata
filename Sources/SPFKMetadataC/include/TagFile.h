@@ -10,9 +10,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TagFile : NSObject
 
+@property (nullable, nonatomic) TagAudioPropertiesC *audioProperties;
 @property (nullable, nonatomic) NSDictionary *dictionary;
 @property (nonatomic, strong, nonnull) NSString *path;
-@property (nullable, nonatomic) TagAudioPropertiesC *audioProperties;
 
 /// Convert the frame list into a NSDictionary
 /// - Parameter path: the file to parse

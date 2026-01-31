@@ -63,8 +63,7 @@ extension TagKey {
         }
     }
 
-    /// Text description of tag suitable for display in an UI
-    public var description: String {
+    public var descriptionKey: String {
         var value = "\(displayName) (ID3: \(id3Frame.value)"
 
         if let infoFrame {
@@ -72,6 +71,13 @@ extension TagKey {
         }
 
         value += ")"
+
+        return value
+    }
+
+    /// Text description of tag suitable for display in an UI
+    public var description: String {
+        var value = descriptionKey
 
         if let readableDescription {
             value += "\n\(readableDescription)"

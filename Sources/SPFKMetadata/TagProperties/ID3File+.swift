@@ -4,7 +4,7 @@ import Foundation
 import SPFKMetadataC
 
 extension ID3File {
-    public subscript(key: ID3FrameKey) -> String? {
+    public subscript(id3 key: ID3FrameKey) -> String? {
         get { dictionary?[key.value] as? String }
         set {
             dictionary?[key.value] = newValue

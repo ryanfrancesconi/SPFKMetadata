@@ -94,7 +94,7 @@ public struct BEXTDescription: Hashable, Sendable {
 
     /// Convenience time reference is seconds, requires sampleRate to be set
     public var timeReferenceInSeconds: TimeInterval? {
-        guard let timeReference, let sampleRate else { return nil }
+        guard let timeReference, let sampleRate, sampleRate > 0 else { return nil }
         return TimeInterval(timeReference) / sampleRate
     }
 
@@ -142,7 +142,7 @@ public struct BEXTDescription: Hashable, Sendable {
 
 extension BEXTDescription {
     /// Returns the objc representation for C portability
-    private func validateAndConvert() -> BEXTDescriptionC {
+    public func validateAndConvert() -> BEXTDescriptionC {
         let info = BEXTDescriptionC()
 
         func updateVersion(_ requiredVersion: Int16) {

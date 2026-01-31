@@ -5,7 +5,8 @@ import SPFKMetadataC
 
 // swiftformat:disable consecutiveSpaces
 
-public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
+/// Relatively complete collection of v2.4 ID3
+public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable {
     public static func < (lhs: ID3FrameKey, rhs: ID3FrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
@@ -55,6 +56,7 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
     case originalLyricist
     case owner
     case paymentWebpage         // URL Frame
+    case picture
     case playlistDelay
     case podcast                // Apple proprietary frame
     case podcastCategory        // Apple proprietary frame
@@ -128,6 +130,7 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
         case .originalFilename:     "TOFN"
         case .originalLyricist:     "TOLY"
         case .owner:                "TOWN"
+        case .picture:              "APIC"
         case .paymentWebpage:       "WPAY"
         case .playlistDelay:        "TDLY"
         case .podcast:              "PCST"
@@ -154,14 +157,39 @@ public enum ID3FrameKey: String, CaseIterable, Codable, Comparable {
         }
     }
 
-    public init?(value: String) {
-        for item in Self.allCases where item.value == value {
-            self = item
-            return
-        }
-
-        return nil
-    }
+//    public var taglibKey: String {
+//        rawValue.uppercased()
+//    }
+//
+//    public var displayName: String {
+//        rawValue.spacedTitleCased
+//    }
+//
+//    public init?(value: String) {
+//        for item in Self.allCases where item.value == value {
+//            self = item
+//            return
+//        }
+//
+//        return nil
+//    }
+//
+//    public init?(displayName: String) {
+//        for item in Self.allCases where item.displayName == displayName {
+//            self = item
+//            return
+//        }
+//
+//        return nil
+//    }
+//
+//    public init?(taglibKey: String) {
+//        for item in Self.allCases where item.taglibKey == taglibKey {
+//            self = item
+//            return
+//        }
+//        return nil
+//    }
 }
 
 // swiftformat:enable consecutiveSpaces

@@ -17,7 +17,7 @@ class ID3FileTests: BinTestCase {
         #expect(file.load())
 
         // xmp
-        Log.debug(file[.private])
+        Log.debug(file[id3: .private])
     }
 
     @Test func parse() async throws {
@@ -26,16 +26,16 @@ class ID3FileTests: BinTestCase {
         let file = ID3File(path: url.path)
         #expect(file.load())
 
-        #expect(file[.album] == "This Is Spinal Tap")
-        #expect(file[.artist] == "Spinal Tap")
-        #expect(file[.comment] == """
+        #expect(file[id3: .album] == "This Is Spinal Tap")
+        #expect(file[id3: .artist] == "Spinal Tap")
+        #expect(file[id3: .comment] == """
             And oh how they danced. The little children of Stonehenge.
             Beneath the haunted moon.
             For fear that daybreak might come too soon.
             """
         )
-        #expect(file[.remixer] == "SPFKMetadata")
-        #expect(file[.title] == "Stonehenge")
-        #expect(file[.bpm] == "666")
+        #expect(file[id3: .remixer] == "SPFKMetadata")
+        #expect(file[id3: .title] == "Stonehenge")
+        #expect(file[id3: .bpm] == "666")
     }
 }

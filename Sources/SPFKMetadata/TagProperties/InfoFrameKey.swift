@@ -6,7 +6,7 @@ import SPFKMetadataC
 // swiftformat:disable consecutiveSpaces
 
 /// A fairly complete list of Wave INFO tags. Not all are currently written.
-public enum InfoFrameKey: String, CaseIterable, Codable, Comparable {
+public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
     public static func < (lhs: InfoFrameKey, rhs: InfoFrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
@@ -87,7 +87,7 @@ public enum InfoFrameKey: String, CaseIterable, Codable, Comparable {
     case trackNumber3
     case url
     case vegasVersionMajor
-    case vegasVersionMir
+    case vegasVersionMinor
     case version
     case watermarkURL
     case writtenBy
@@ -171,21 +171,12 @@ public enum InfoFrameKey: String, CaseIterable, Codable, Comparable {
         case .trackNumber3:         "IPRT"
         case .url:                  "TURL"
         case .vegasVersionMajor:    "VMAJ"
-        case .vegasVersionMir:      "VMIN"
+        case .vegasVersionMinor:    "VMIN"
         case .version:              "TVER"
         case .watermarkURL:         "IWMU"
         case .writtenBy:            "IWRI"
         case .year:                 "YEAR"
         }
-    }
-
-    public init?(value: String) {
-        for item in Self.allCases where item.value == value {
-            self = item
-            return
-        }
-
-        return nil
     }
 }
 

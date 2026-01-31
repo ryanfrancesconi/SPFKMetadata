@@ -6,23 +6,28 @@
 #import <Foundation/Foundation.h>
 
 #include "BEXTDescriptionC.h"
+#include "TagAudioPropertiesC.h"
 #include "TagPicture.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface WaveFileC : NSObject
 
-@property (nullable, nonatomic) NSMutableDictionary *infoDictionary;
-@property (nullable, nonatomic) NSMutableDictionary *id3Dictionary;
+@property (nullable, nonatomic) TagAudioPropertiesC *audioProperties;
+@property (nonatomic) NSMutableDictionary *infoDictionary;
+@property (nonatomic) NSMutableDictionary *id3Dictionary;
 @property (nullable, nonatomic) BEXTDescriptionC *bextDescription;
-@property (nullable, nonatomic) NSString *ixmlString;
+@property (nullable, nonatomic) NSString *iXML;
 @property (nullable, nonatomic) TagPicture *tagPicture;
 @property (nonatomic, strong, nonnull) NSArray *markers;
+
 @property (nonatomic, strong, nonnull) NSString *path;
 
-/// Convert the frame list into a NSDictionary
+- (id)init;
+
+/// Parse all objects from the passed in path
 /// - Parameter path: the file to parse
-- (nullable id)initWithPath:(nonnull NSString *)path;
+- (id)initWithPath:(nonnull NSString *)path;
 - (bool)load;
 - (bool)save;
 

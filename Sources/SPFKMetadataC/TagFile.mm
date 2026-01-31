@@ -86,19 +86,17 @@ using namespace TagLib;
         return false;
     }
 
-    PropertyMap tags = PropertyMap();
+    PropertyMap properties = PropertyMap();
 
     for (NSString *key in [dictionary allKeys]) {
         NSString *value = [dictionary objectForKey:key];
-
         String tagKey = String(key.UTF8String);
         StringList tagValue = StringList(value.UTF8String);
-
-        tags.insert(tagKey, tagValue);
+        properties.insert(tagKey, tagValue);
     }
 
-    tags.removeEmpty();
-    fileRef.setProperties(tags);
+    properties.removeEmpty();
+    fileRef.setProperties(properties);
 
     return fileRef.save();
 }
