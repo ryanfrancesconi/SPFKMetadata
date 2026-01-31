@@ -12,14 +12,15 @@
 #import <taglib/wavfile.h>
 
 #import "AudioMarkerUtil.h"
+#import "ID3File.h"
 #import "TagFile.h"
+#import "TagUtil.h"
 #import "WaveFileC.h"
 
 @implementation WaveFileC
 
 using namespace std;
 using namespace TagLib;
-using namespace RIFF;
 
 - (id)init {
     self = [super init];
@@ -44,7 +45,7 @@ using namespace RIFF;
         return false;
     }
 
-    auto *waveFile = dynamic_cast<WAV::File *>(fileRef.file());
+    auto *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
 
     if (!waveFile) {
         // not a wave file
@@ -80,72 +81,59 @@ using namespace RIFF;
 
     if (waveFile->hasInfoTag()) {
         auto infoMap = waveFile->InfoTag()->fieldListMap();
-
-        if (!infoMap.isEmpty()) {
-            for (const auto &[key, val] : infoMap) {
-                const char *bytes = key.data();
-                const unsigned int length = key.size();
-
-                NSString *nsKey = [[NSString alloc] initWithBytes:bytes
-                                                           length:length
-                                                         encoding:NSUTF8StringEncoding];
-
-                NSString *nsValue = [[NSString alloc] initWithCString:val.toCString()
-                                                             encoding:NSUTF8StringEncoding];
-
-                // NSLog(@"%@ = %@", nsKey, nsValue);
-
-                [_infoDictionary setValue:nsValue ? : @"" forKey:nsKey];
-            }
-        }
+        _infoDictionary = TagUtil::convertToDictionary(infoMap);
     }
 
     if (waveFile->hasID3v2Tag()) {
         ID3v2::Tag *tag = waveFile->ID3v2Tag();
         ID3v2::FrameList frameList = tag->frameList();
-
-        for (auto it = frameList.begin(); it != frameList.end(); it++) {
-            ByteVector frameID = (*it)->frameID();
-            String value = (*it)->toString();
-
-            // custom frame handling
-
-            if (frameID == "TXXX") {
-                ID3v2::UserTextIdentificationFrame *txxxFrame = dynamic_cast<ID3v2::UserTextIdentificationFrame *>(*it);
-
-                // in taglib fashion, we'll call the the description the ID
-                frameID = txxxFrame->description().data(String::UTF8);
-                
-                // the fieldList() has all text items, so the description() is first and the actual value is last
-                value = txxxFrame->fieldList().back();
-
-                // cout << txxxFrame->description() << " = " << txxxFrame->fieldList().back() << endl;
-            } else if (frameID == "PRIV") {
-                ID3v2::PrivateFrame *privFrame = dynamic_cast<ID3v2::PrivateFrame *>(*it);
-                cout << "owner() = " << privFrame->owner() << endl;
-
-                value = privFrame->data();
-            }
-
-            cout << frameID << " = " << value << endl;
-
-            const char *bytes = frameID.data();
-            const unsigned int length = frameID.size();
-
-            NSString *nsKey = [[NSString alloc] initWithBytes:bytes
-                                                       length:length
-                                                     encoding:NSUTF8StringEncoding];
-
-            NSString *nsValue = [[NSString alloc] initWithCString:value.toCString()
-                                                         encoding:NSUTF8StringEncoding];
-
-            [_id3Dictionary setValue:nsValue ? : @"" forKey:nsKey];
-        }
+        _id3Dictionary = TagUtil::convertToDictionary(frameList);
     }
 
     _tagPicture = [[TagPicture alloc] initWithPath:_path];
 
     return true;
+}
+
+- (bool)save {
+    [self saveExtras];
+
+    FileRef fileRef(_path.UTF8String);
+
+    if (fileRef.isNull()) {
+        cout << "FileRef is nil" << endl;
+        return false;
+    }
+
+    auto *waveFile = dynamic_cast<RIFF::WAV::File *>(fileRef.file());
+
+    if (!waveFile) {
+        cout << "Not a wave file" << endl;
+        return false;
+    }
+
+    // write ixml
+    if (_iXML) {
+        waveFile->iXMLTag = String(_iXML.UTF8String);
+    }
+
+    // write id3
+    PropertyMap properties = TagUtil::convertToPropertyMap(_id3Dictionary);
+    waveFile->ID3v2Tag()->setProperties(properties);
+
+    // write info values directly
+    if (_infoDictionary.count > 0) {
+        for (NSString *key in [_infoDictionary allKeys]) {
+            NSString *value = [_infoDictionary objectForKey:key];
+
+            ByteVector tagKey = String(key.UTF8String).data(String::UTF8);
+            String tagValue = String(value.UTF8String);
+
+            waveFile->InfoTag()->setFieldText(tagKey, tagValue);
+        }
+    }
+
+    return waveFile->save();
 }
 
 - (void)saveExtras {
@@ -164,61 +152,6 @@ using namespace RIFF;
         NSURL *url = [NSURL URLWithString:_path];
         [AudioMarkerUtil update:url markers:_markers];
     }
-}
-
-- (bool)save {
-    [self saveExtras];
-
-    FileRef fileRef(_path.UTF8String);
-
-    if (fileRef.isNull()) {
-        cout << "FileRef is nil" << endl;
-        return false;
-    }
-
-    auto *waveFile = dynamic_cast<WAV::File *>(fileRef.file());
-
-    if (!waveFile) {
-        cout << "Not a wave file" << endl;
-        return false;
-    }
-
-    // write ixml
-    if (_iXML) {
-        waveFile->iXMLTag = String(_iXML.UTF8String);
-    }
-
-    // write id3
-    if (_id3Dictionary.count > 0) {
-        PropertyMap properties = PropertyMap();
-
-        for (NSString *key in [_id3Dictionary allKeys]) {
-            NSString *value = [_id3Dictionary objectForKey:key];
-
-            // can be taglib key or 4 char id3 frameID
-            String tagKey = String(key.UTF8String);
-            StringList tagValue = StringList(value.UTF8String);
-
-            properties.insert(tagKey, tagValue);
-        }
-
-        properties.removeEmpty();
-        waveFile->ID3v2Tag()->setProperties(properties);
-    }
-
-    // write info
-    if (_infoDictionary.count > 0) {
-        for (NSString *key in [_infoDictionary allKeys]) {
-            NSString *value = [_infoDictionary objectForKey:key];
-
-            ByteVector tagKey = String(key.UTF8String).data(String::UTF8);
-            String tagValue = String(value.UTF8String);
-
-            waveFile->InfoTag()->setFieldText(tagKey, tagValue);
-        }
-    }
-
-    return waveFile->save();
 }
 
 @end

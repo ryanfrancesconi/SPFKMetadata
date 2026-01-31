@@ -82,11 +82,9 @@ namespace StringUtil {
     asciiString(const char *s, size_t maxLength) {
         size_t len = MIN(maxLength, strlen(s));
 
-        return [
-            [NSString alloc] initWithBytes:s
-                                    length:len
-                                  encoding:NSASCIIStringEncoding
-        ];
+        return [[NSString alloc] initWithBytes:s
+                                        length:len
+                                      encoding:NSASCIIStringEncoding];
     }
 
     static NSString *
