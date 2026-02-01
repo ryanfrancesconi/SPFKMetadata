@@ -12,7 +12,7 @@ public struct AudioFormatProperties: Hashable, Sendable {
     public private(set) var bitRate: Int32?
     public private(set) var duration: TimeInterval = 0
 
-    // MARK: Transients, cached descriptions for displaying in the UI
+    // MARK: cached descriptions
 
     public private(set) var durationDescription: String = ""
     public private(set) var formatDescription: String = ""
@@ -40,8 +40,7 @@ public struct AudioFormatProperties: Hashable, Sendable {
         sampleRate = audioFile.fileFormat.sampleRate
         duration = audioFile.duration
         bitsPerChannel = audioFile.fileFormat.bitsPerChannel.int
-
-        bitRate = calculateBitRate(audioFile: audioFile)
+        bitRate = audioFile.dataRate?.int32
 
         initialize()
     }
@@ -52,15 +51,7 @@ public struct AudioFormatProperties: Hashable, Sendable {
         updateFormatDescription()
     }
 
-    private func calculateBitRate(audioFile: AVAudioFile) -> Int32? {
-        guard duration > 0,
-              let fileSize = audioFile.url.fileSize?.double else { return nil }
 
-        // (File Size in bits) / (Duration in seconds) / 1000 (for kbps)
-        let avg: Double = (fileSize * 8) / duration / 1000
-
-        return Int32(avg)
-    }
 
     public init(cObject: TagAudioPropertiesC) {
         channelCount = AVAudioChannelCount(cObject.channelCount)

@@ -39,7 +39,10 @@ class MetaAudioFileDescriptionTests: BinTestCase {
         for url in TestBundleResources.shared.formats {
             let maf = try await MetaAudioFileDescription(parsing: url)
 
-            Log.debug(maf.tagProperties.audioProperties)
+            Log.debug(maf.fileType, maf.audioFormat?.formatDescription)
+            
+            let estimatedDataRate = try await AVAudioFile(forReading: url).estimatedDataRate()
+            Log.debug(estimatedDataRate)
         }
     }
 }
