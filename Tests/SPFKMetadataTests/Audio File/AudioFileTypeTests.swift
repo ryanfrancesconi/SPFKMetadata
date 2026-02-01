@@ -3,10 +3,11 @@
 import AVFoundation
 import SPFKAudioBase
 import SPFKBase
-@testable import SPFKMetadata
 import SPFKMetadataC
 import SPFKTesting
 import Testing
+
+@testable import SPFKMetadata
 
 @Suite(.serialized, .tags(.file))
 class AudioFileTypeTests: BinTestCase {
@@ -41,7 +42,7 @@ class AudioFileTypeTests: BinTestCase {
         let type = AudioFileType(url: target)
         #expect(type == .m4a)
     }
-    
+
     @Test func utType() throws {
         let formats = TestBundleResources.shared.formats
 

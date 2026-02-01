@@ -25,13 +25,15 @@ class WaveFileTests: BinTestCase {
         #expect(file[info: .bpm] == "666")
     }
 
-    @Test func writeCustom() async throws {
+    @Test func writeInfo() async throws {
         deleteBinOnExit = false
         let tmpfile = try copyToBin(url: TestBundleResources.shared.wav_bext_v2)
 
         let file = WaveFileC(path: tmpfile.path)
         #expect(file.load())
         file[info: .bpm] = "667"
+        file[info: .numColors] = "256"
+
         file.save()
 
         let newFile = WaveFileC(path: tmpfile.path)
@@ -41,6 +43,7 @@ class WaveFileTests: BinTestCase {
         Log.debug(newDict)
 
         #expect(newFile[info: .bpm] == "667")
+        #expect(newFile[info: .numColors] == "256")
     }
 
     @Test func chunks() async throws {
@@ -49,7 +52,7 @@ class WaveFileTests: BinTestCase {
         let url = try copyToBin(url: TestBundleResources.shared.ixml_chunk)
         let file = WaveFileC(path: url.path)
         file.load()
-        
+
         func dump(_ file: WaveFileC) {
             Log.debug("iXML:", file.iXML)
             Log.debug("infoDictionary:", file.infoDictionary)
@@ -63,7 +66,7 @@ class WaveFileTests: BinTestCase {
         file[info: .title] = "an info title"
         file[info: .lightness] = "Lightness"
         file[info: .numColors] = "256"
-        
+
         file[id3: .title] = "an id3 title"
         file[id3: .remixer] = "an id3 remixer"
 
@@ -85,7 +88,7 @@ class WaveFileTests: BinTestCase {
 
         let updated = WaveFileC(path: url.path)
         updated.load()
-        
+
         dump(updated)
     }
 }

@@ -54,7 +54,7 @@ namespace TagUtil {
                 value = privFrame->data();
             }
 
-            cout << frameID << " = " << value << endl;
+            // cout << frameID << " = " << value << endl;
 
             const char *bytes = frameID.data();
             const unsigned int length = frameID.size();
@@ -99,7 +99,7 @@ namespace TagUtil {
     convertToDictionary(RIFF::Info::FieldListMap infoMap) {
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
-        if (!infoMap.isEmpty()) {
+        if (infoMap.isEmpty()) {
             return dict;
         }
 

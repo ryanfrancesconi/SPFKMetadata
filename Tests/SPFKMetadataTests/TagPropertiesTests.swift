@@ -53,20 +53,20 @@ class TagPropertiesTests: BinTestCase {
 
         // target
         var output = try TagProperties(url: tmpfile)
-        try output.removeAllAndSave()
+        try output.removeAllAndSave(to: tmpfile)
 
         #expect(output.tags.isEmpty)
 
         // replace all tags
         output.tags = source.tags
-        try output.save()
+        try output.save(to: tmpfile)
 
         #expect(output.tags.count == 28)
 
         let random = Float.random(in: Float.unitIntervalRange)
         output[.title] = "New Title \(random)"
         output[.keywords] = "Keywords!"
-        try output.save()
+        try output.save(to: tmpfile)
 
         try output.load(url: tmpfile)
         #expect(output[.title] == "New Title \(random)")
@@ -95,9 +95,9 @@ class TagPropertiesTests: BinTestCase {
             do {
                 var copyProps = try TagProperties(url: copy)
 
-                try copyProps.removeAllAndSave()
+                try copyProps.removeAllAndSave(to: copy)
                 copyProps.tags = source.tags
-                try copyProps.save()
+                try copyProps.save(to: copy)
                 try copyProps.load(url: copy)
                 Log.debug(copy.lastPathComponent, copyProps.description)
 
@@ -119,7 +119,7 @@ class TagPropertiesTests: BinTestCase {
 
             do {
                 var copyProps = try TagProperties(url: copy)
-                try copyProps.removeAllAndSave()
+                try copyProps.removeAllAndSave(to: copy)
                 try copyProps.load(url: copy)
 
                 Log.debug(copy.lastPathComponent, copyProps.description)

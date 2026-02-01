@@ -1,0 +1,184 @@
+// Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata
+
+import AVFoundation
+import Foundation
+import SPFKAudioBase
+import SPFKMetadataC
+import SPFKUtils
+
+extension MetaAudioFileDescription {
+    public init(parsing url: URL) async throws {
+        self.url = url
+        urlProperties = URLProperties(url: url)
+        fileType = AudioFileType(url: url)
+        audioFormat = try AudioFormatProperties(audioFile: AVAudioFile(forReading: url))
+
+        if fileType == .wav {
+            try loadWave()
+
+        } else {
+            try await load()
+        }
+
+        if let bitRate = tagProperties.audioProperties?.bitRate {
+            audioFormat?.update(bitRate: bitRate)
+        }
+
+        await updateDefaultImage()
+    }
+
+    private mutating func loadWave() throws {
+        let waveFile = WaveFileC(path: url.path)
+
+        guard waveFile.load() else {
+            throw NSError(description: "Failed to load wave file at \(url.path)")
+        }
+
+        if let audioProperties = waveFile.audioProperties {
+            tagProperties.audioProperties = AudioFormatProperties(cObject: audioProperties)
+        }
+
+        iXMLMetadata = waveFile.iXML
+        bextDescription = waveFile.bext ?? BEXTDescription()
+
+        if let audioMarkers = waveFile.markers as? [AudioMarker] {
+            markerCollection = AudioMarkerDescriptionCollection(audioMarkers: audioMarkers)
+        }
+
+        // INFO
+        if let dict = waveFile.infoDictionary as? [String: String] {
+            for item in dict {
+                guard let key = InfoFrameKey(value: item.key) else {
+                    Log.error("Unhandled INFO frame", item)
+                    continue
+                }
+
+                tagProperties.data.set(infoFrame: key, value: item.value)
+            }
+        }
+
+        // ID3
+        if let dict = waveFile.id3Dictionary as? [String: String] {
+            for item in dict {
+                guard let key = ID3FrameKey(value: item.key) else {
+                    tagProperties.data.set(taglibKey: item.key, value: item.value)
+                    continue
+                }
+
+                switch key {
+                case .picture:
+                    continue
+                case .userDefined:
+                    Log.error("User Defined", item.value)
+                default:
+                    tagProperties.data.set(id3Frame: key, value: item.value)
+                }
+            }
+        }
+
+        imageDescription.pictureRef = waveFile.tagPicture?.pictureRef
+    }
+
+    private mutating func load() async throws {
+        tagProperties = try TagProperties(url: url)
+
+        if let value = try? await AudioMarkerDescriptionCollection(url: url) {
+            markerCollection = value
+        }
+
+        imageDescription.pictureRef = try? await TagPictureRef.parsing(url: url)
+    }
+
+    private mutating func updateDefaultImage() async {
+        if imageDescription.cgImage == nil {
+            imageDescription.cgImage = url.bestImageRepresentation?.cgImage
+            imageDescription.description = url.path
+        }
+
+        await imageDescription.createThumbnail()
+    }
+}
+
+extension MetaAudioFileDescription {
+    public mutating func save(imageNeedsSave: Bool = false) throws {
+        Log.debug("Saving", url)
+
+        if fileType == .wav {
+            try saveWave()
+
+        } else {
+            try saveOther(imageNeedsSave: imageNeedsSave)
+        }
+
+        let finderTags = urlProperties.finderTags
+        try url.set(finderTags: finderTags)
+        try url.updateModificationDate()
+
+        urlProperties = URLProperties(url: url)
+    }
+
+    private mutating func saveOther(imageNeedsSave: Bool = false) throws {
+        try tagProperties.save(to: url)
+
+        if imageNeedsSave {
+            try saveImage(to: url)
+        }
+    }
+
+    public mutating func saveImage(to url: URL) throws {
+        guard let pictureRef = imageDescription.pictureRef else {
+            throw NSError(description: "pictureRef is nil")
+        }
+
+        guard TagPicture.write(pictureRef, path: url.path) else {
+            throw NSError(description: "Failed to update image")
+        }
+    }
+
+    /// In the case of waves all chunks are written out so all properties must be updated.
+    /// This is due to the BEXT chunk handler in libsndfile only supporting writing a new file
+    /// rather than updating a header. This is a point to improve in the future.
+    private mutating func saveWave() throws {
+        let waveFile = WaveFileC(path: url.path)
+
+        // extras
+        waveFile.bextDescription = bextDescription?.validateAndConvert()
+        waveFile.iXML = iXMLMetadata
+        waveFile.markers = audioMarkers
+
+        // image
+        if let pictureRef = imageDescription.pictureRef {
+            waveFile.tagPicture = TagPicture(picture: pictureRef)
+        }
+
+        // metadata
+        for item in tagProperties.tags {
+            if item.key.id3Frame == .userDefined {
+                waveFile.id3Dictionary[item.key.taglibKey] = item.value
+            } else {
+                waveFile[id3: item.key.id3Frame] = item.value
+            }
+
+            if let infoFrame = item.key.infoFrame {
+                waveFile[info: infoFrame] = item.value
+            }
+        }
+
+        for item in tagProperties.customTags {
+            let uppercaseKey = item.key.uppercased()
+
+            waveFile.id3Dictionary[uppercaseKey] = item.value
+
+            if let infoFrame = InfoFrameKey(taglibKey: uppercaseKey) {
+                waveFile[info: infoFrame] = item.value
+            }
+        }
+
+        Log.debug("id3Dictionary", waveFile.id3Dictionary)
+        Log.debug("infoDictionary", waveFile.infoDictionary)
+
+        guard waveFile.save() else {
+            throw NSError(description: "Failed to save \(url.path)")
+        }
+    }
+}

@@ -4,24 +4,24 @@ import Foundation
 import SPFKBase
 import SPFKMetadataC
 
-/// A Swift convenience wrapper to TagFile access
+/// A Swift file format agnostic wrapper to TagLib metadata properties I/O
 public struct TagProperties: Hashable, Codable, Sendable {
-    public var url: URL?
-
     /// Use the various access methods in TagPropertiesContainerModel for mutation
     public var data = TagData()
 
-    public var audioProperties: TagAudioProperties?
+    public var audioProperties: AudioFormatProperties?
 
     private var tagLibPropertyMap: [String: String] {
         var dict: [String: String] = .init()
 
+        // ID3 and INFO
         for item in data.tags {
             dict[item.key.taglibKey] = item.value
         }
 
+        // Custom ID3, TXXX
         for item in data.customTags {
-            dict[item.key] = item.value
+            dict[item.key.uppercased()] = item.value
         }
 
         return dict
@@ -36,13 +36,11 @@ public struct TagProperties: Hashable, Codable, Sendable {
     }
 
     public mutating func load(url: URL) throws {
-        self.url = url
-
         let tagFile = TagFile(path: url.path)
         tagFile.load()
 
         if let value = tagFile.audioProperties {
-            audioProperties = TagAudioProperties(cObject: value)
+            audioProperties = AudioFormatProperties(cObject: value)
         }
 
         guard let dict = tagFile.dictionary as? [String: String] else {
@@ -55,11 +53,7 @@ public struct TagProperties: Hashable, Codable, Sendable {
     }
 
     /// Write the current tags dictionary back to the file
-    public func save() throws {
-        guard let url else {
-            throw NSError(description: "URL is nil")
-        }
-
+    public func save(to url: URL) throws {
         let tagFile = TagFile(path: url.path)
         tagFile.dictionary = tagLibPropertyMap
 
@@ -68,13 +62,9 @@ public struct TagProperties: Hashable, Codable, Sendable {
         }
     }
 
-    public mutating func removeAllAndSave() throws {
-        guard let url else {
-            throw NSError(description: "URL is nil")
-        }
-
-        try Self.removeAllTags(in: url)
+    public mutating func removeAllAndSave(to url: URL) throws {
         removeAll()
+        try Self.removeAllTags(in: url)
     }
 }
 

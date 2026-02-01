@@ -2,10 +2,11 @@
 
 import Foundation
 import SPFKBase
-@testable import SPFKMetadata
-@testable import SPFKMetadataC
 import SPFKTesting
 import Testing
+
+@testable import SPFKMetadata
+@testable import SPFKMetadataC
 
 @Suite(.serialized)
 class ChapterMarkerTests: BinTestCase {
@@ -27,10 +28,12 @@ class ChapterMarkerTests: BinTestCase {
 
     // Writing MP4 chapters is currenty unsupported
 
-    @Test(arguments: [TestBundleResources.shared.tabla_flac,
-                      TestBundleResources.shared.tabla_ogg,
-                      TestBundleResources.shared.tabla_m4a,
-                      TestBundleResources.shared.tabla_mp4])
+    @Test(arguments: [
+        TestBundleResources.shared.tabla_flac,
+        TestBundleResources.shared.tabla_ogg,
+        TestBundleResources.shared.tabla_m4a,
+        TestBundleResources.shared.tabla_mp4,
+    ])
     func parseFormat(url: URL) async throws {
         let markers = try await getChapters(in: url)
         let names = markers.compactMap(\.name)
