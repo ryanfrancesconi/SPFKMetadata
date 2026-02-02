@@ -1,5 +1,6 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata
 
+import AEXML
 import AVFoundation
 import Foundation
 import SPFKAudioBase
@@ -38,7 +39,11 @@ extension MetaAudioFileDescription {
             tagProperties.audioProperties = AudioFormatProperties(cObject: audioProperties)
         }
 
-        iXMLMetadata = waveFile.iXML
+        if let xml = waveFile.iXML {
+            // validate and respace xml
+            iXMLMetadata = (try? AEXMLDocument(xml: xml).xml) ?? xml
+        }
+
         bextDescription = waveFile.bext ?? BEXTDescription()
 
         if let audioMarkers = waveFile.markers as? [AudioMarker] {
@@ -109,6 +114,8 @@ extension MetaAudioFileDescription {
         } else {
             try saveOther(imageNeedsSave: imageNeedsSave)
         }
+
+        // could write XMP here
 
         let finderTags = urlProperties.finderTags
         try url.set(finderTags: finderTags)
