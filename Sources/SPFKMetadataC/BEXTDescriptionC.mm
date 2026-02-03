@@ -20,10 +20,7 @@ using namespace std;
 }
 
 - (nullable id)initWithPath:(nonnull NSString *)path {
-    SF_BROADCAST_INFO bext = {
-        0
-    };
-
+    SF_BROADCAST_INFO bext = {};
     SF_INFO sfinfo = {};
     SNDFILE *infile = sf_open(path.UTF8String, SFM_READ, &sfinfo);
 
@@ -95,18 +92,16 @@ using namespace std;
 }
 
 + (bool)write:(BEXTDescriptionC *)info path:(nonnull NSString *)path {
-    SF_INFO sfinfo = {};
-    SNDFILE *infile = sf_open(path.UTF8String, SFM_READ, &sfinfo);
-
     NSString *pathExtension = path.pathExtension;
     NSString *outpath = [path stringByDeletingPathExtension];
 
     outpath = [outpath stringByAppendingString:@"_temp"];
     outpath = [outpath stringByAppendingPathExtension:pathExtension];
 
+    SF_INFO sfinfo = {};
+    SNDFILE *infile = sf_open(path.UTF8String, SFM_READ, &sfinfo);
     SNDFILE *outfile = sf_open(outpath.UTF8String, SFM_WRITE, &sfinfo);
     SF_BROADCAST_INFO bext = {};
-    memset(&bext, 0, sizeof(bext));
 
     bext.version = info.version;
 

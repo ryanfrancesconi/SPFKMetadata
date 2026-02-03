@@ -15,6 +15,7 @@ extension MetaAudioFileDescription {
         tagProperties.tags[.bpm]?.double
     }
 
+    /// From TagProperties metadata not BEXT
     public var loudnessDescription: LoudnessDescription {
         LoudnessDescription(
             loudnessValue: tagProperties[.loudnessIntegrated]?.double,

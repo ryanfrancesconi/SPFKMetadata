@@ -3,20 +3,21 @@
 import Foundation
 import SPFKMetadataC
 
+/// convenience swift accessors ontop of the objc class
 extension WaveFileC {
-    public var bext: BEXTDescription? {
+    public var bextDescription: BEXTDescription? {
         get {
-            guard let bextDescription else { return nil }
-            return BEXTDescription(info: bextDescription)
+            guard let bextDescriptionC else { return nil }
+            return BEXTDescription(info: bextDescriptionC)
         }
 
         set {
             guard let newValue else {
-                bextDescription = nil
+                bextDescriptionC = nil
                 return
             }
 
-            bextDescription = newValue.validateAndConvert()
+            bextDescriptionC = newValue.bextDescriptionC
         }
     }
 

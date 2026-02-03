@@ -1,13 +1,10 @@
 import Foundation
+import SPFKAudioBase
 
 extension BEXTDescription: Codable {
     enum CodingKeys: String, CodingKey {
         case codingHistory
-        case loudnessRange
-        case loudnessValue
-        case maxMomentaryLoudness
-        case maxShortTermLoudness
-        case maxTruePeakLevel
+        case loudnessDescription
         case originationDate
         case originationTime
         case originator
@@ -41,12 +38,8 @@ extension BEXTDescription: Codable {
             umid = try? container.decodeIfPresent(String.self, forKey: .umid)
         }
 
-        if version >= 2 {
-            loudnessValue = try? container.decodeIfPresent(Float.self, forKey: .loudnessValue)
-            loudnessRange = try? container.decodeIfPresent(Float.self, forKey: .loudnessRange)
-            maxTruePeakLevel = try? container.decodeIfPresent(Float.self, forKey: .maxTruePeakLevel)
-            maxMomentaryLoudness = try? container.decodeIfPresent(Float.self, forKey: .maxMomentaryLoudness)
-            maxShortTermLoudness = try? container.decodeIfPresent(Float.self, forKey: .maxShortTermLoudness)
+        if version >= 2, let value = try? container.decodeIfPresent(LoudnessDescription.self, forKey: .loudnessDescription) {
+            loudnessDescription = value
         }
     }
 
@@ -71,11 +64,7 @@ extension BEXTDescription: Codable {
         }
 
         if version >= 2 {
-            try? container.encodeIfPresent(loudnessValue, forKey: .loudnessValue)
-            try? container.encodeIfPresent(loudnessRange, forKey: .loudnessRange)
-            try? container.encodeIfPresent(maxTruePeakLevel, forKey: .maxTruePeakLevel)
-            try? container.encodeIfPresent(maxMomentaryLoudness, forKey: .maxMomentaryLoudness)
-            try? container.encodeIfPresent(maxShortTermLoudness, forKey: .maxShortTermLoudness)
+            try? container.encodeIfPresent(loudnessDescription, forKey: .loudnessDescription)
         }
     }
 }

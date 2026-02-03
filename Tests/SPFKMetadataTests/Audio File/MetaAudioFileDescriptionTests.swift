@@ -45,4 +45,20 @@ class MetaAudioFileDescriptionTests: BinTestCase {
             Log.debug(estimatedDataRate)
         }
     }
+    
+    @Test func parseBEXT() async throws {
+        let url = TestBundleResources.shared.cowbell_bext_wav
+        let maf = try await MetaAudioFileDescription(parsing: url)
+
+        let bext = try #require(maf.bextDescription)
+        
+        Log.debug(bext)
+        
+        let max = Int16.max
+        
+        Log.debug(max)
+        
+        // let invalid =
+        
+    }
 }

@@ -13,10 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WaveFileC : NSObject
 
-@property (nullable, nonatomic) TagAudioPropertiesC *audioProperties;
+@property (nullable, nonatomic) TagAudioPropertiesC *audioPropertiesC;
 @property (nonatomic) NSMutableDictionary *infoDictionary;
 @property (nonatomic) NSMutableDictionary *id3Dictionary;
-@property (nullable, nonatomic) BEXTDescriptionC *bextDescription;
+@property (nullable, nonatomic) BEXTDescriptionC *bextDescriptionC;
 @property (nullable, nonatomic) NSString *iXML;
 @property (nullable, nonatomic) TagPicture *tagPicture;
 @property (nonatomic, strong, nonnull) NSArray *markers;

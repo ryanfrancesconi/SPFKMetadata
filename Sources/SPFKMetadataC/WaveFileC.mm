@@ -26,6 +26,8 @@ using namespace TagLib;
     self = [super init];
     _id3Dictionary = [[NSMutableDictionary alloc] init];
     _infoDictionary = [[NSMutableDictionary alloc] init];
+    _bextDescriptionC = NULL;
+
     return self;
 }
 
@@ -35,6 +37,8 @@ using namespace TagLib;
     _path = path;
     _id3Dictionary = [[NSMutableDictionary alloc] init];
     _infoDictionary = [[NSMutableDictionary alloc] init];
+    _bextDescriptionC = NULL;
+
     return self;
 }
 
@@ -58,20 +62,18 @@ using namespace TagLib;
     auto audioProperties = fileRef.audioProperties();
 
     if (audioProperties != nullptr) {
-        _audioProperties = [[TagAudioPropertiesC alloc] init];
-        _audioProperties.sampleRate = (double)audioProperties->sampleRate();
-        _audioProperties.duration = (double)audioProperties->lengthInMilliseconds() / 1000;
-        _audioProperties.bitRate = audioProperties->bitrate();
-        _audioProperties.channelCount = audioProperties->channels();
+        _audioPropertiesC = [[TagAudioPropertiesC alloc] init];
+        _audioPropertiesC.sampleRate = (double)audioProperties->sampleRate();
+        _audioPropertiesC.duration = (double)audioProperties->lengthInMilliseconds() / 1000;
+        _audioPropertiesC.bitRate = audioProperties->bitrate();
+        _audioPropertiesC.channelCount = audioProperties->channels();
     }
 
     NSURL *url = [NSURL URLWithString:_path];
     _markers = [AudioMarkerUtil getMarkers:url];
 
     if (waveFile->hasBEXTTag()) {
-        _bextDescription = [[BEXTDescriptionC alloc] initWithPath:_path];
-    } else {
-        _bextDescription = [[BEXTDescriptionC alloc] init];
+        _bextDescriptionC = [[BEXTDescriptionC alloc] initWithPath:_path];
     }
 
     if (waveFile->hasiXMLTag()) {
@@ -133,13 +135,16 @@ using namespace TagLib;
         }
     }
 
+    // save via taglib
     return waveFile->save();
 }
 
 - (void)saveExtras {
     // write bext first as it will only write the bext chunk and audio data
-    if (![BEXTDescriptionC write:_bextDescription path:_path]) {
-        cout << "BEXTDescriptionC write failed" << endl;
+    if (_bextDescriptionC) {
+        if (![BEXTDescriptionC write:_bextDescriptionC path:_path]) {
+            cout << "BEXTDescriptionC write failed" << endl;
+        }
     }
 
     // write image data

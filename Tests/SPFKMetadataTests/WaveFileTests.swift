@@ -13,6 +13,8 @@ class WaveFileTests: BinTestCase {
         let url = TestBundleResources.shared.wav_bext_v2
         let file = WaveFileC(path: url.path)
         #expect(file.load())
+        #expect(file.bextDescriptionC != nil)
+        #expect(file.bextDescription != nil)
 
         let dictionary = file.infoDictionary
         Log.debug(dictionary)
@@ -57,7 +59,7 @@ class WaveFileTests: BinTestCase {
             Log.debug("iXML:", file.iXML)
             Log.debug("infoDictionary:", file.infoDictionary)
             Log.debug("id3Dictionary:", file.id3Dictionary)
-            Log.debug("bextDescription?.sequenceDescription:", file.bextDescription?.sequenceDescription)
+            Log.debug("bextDescription?.sequenceDescription:", file.bextDescriptionC?.sequenceDescription)
             Log.debug("markers:", file.markers.count, "marker(s)")
         }
 
@@ -71,7 +73,7 @@ class WaveFileTests: BinTestCase {
         file[id3: .remixer] = "an id3 remixer"
 
         file.iXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><BWFXML><IXML_VERSION>1.4</IXML_VERSION><PROJECT>a new project</PROJECT></BWFXML>"
-        file.bextDescription?.sequenceDescription = "a new bext description"
+        file.bextDescriptionC?.sequenceDescription = "a new bext description"
         file.markers.append(
             AudioMarker(name: "new marker", time: 0, sampleRate: 44100, markerID: 0)
         )

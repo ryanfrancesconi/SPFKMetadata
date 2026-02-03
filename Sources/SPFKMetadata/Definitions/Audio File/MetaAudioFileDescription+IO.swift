@@ -35,16 +35,17 @@ extension MetaAudioFileDescription {
             throw NSError(description: "Failed to load wave file at \(url.path)")
         }
 
-        if let audioProperties = waveFile.audioProperties {
+        if let audioProperties = waveFile.audioPropertiesC {
             tagProperties.audioProperties = AudioFormatProperties(cObject: audioProperties)
         }
 
         if let xml = waveFile.iXML {
-            // validate and respace xml
-            iXMLMetadata = (try? AEXMLDocument(xml: xml).xml) ?? xml
+            // validate and respace xml if it's valid
+            iXMLMetadata = (try? AEXMLDocument(xml: xml).xml)
+                ?? xml //  otherwise just load the string as is
         }
 
-        bextDescription = waveFile.bext ?? BEXTDescription()
+        bextDescription = waveFile.bextDescription?.validated()
 
         if let audioMarkers = waveFile.markers as? [AudioMarker] {
             markerCollection = AudioMarkerDescriptionCollection(audioMarkers: audioMarkers)
@@ -106,7 +107,7 @@ extension MetaAudioFileDescription {
 
 extension MetaAudioFileDescription {
     public mutating func save(imageNeedsSave: Bool = false) throws {
-        Log.debug("Saving", url)
+        // Log.debug("Saving", url)
 
         if fileType == .wav {
             try saveWave()
@@ -114,8 +115,6 @@ extension MetaAudioFileDescription {
         } else {
             try saveOther(imageNeedsSave: imageNeedsSave)
         }
-
-        // could write XMP here
 
         let finderTags = urlProperties.finderTags
         try url.set(finderTags: finderTags)
@@ -127,29 +126,26 @@ extension MetaAudioFileDescription {
     private mutating func saveOther(imageNeedsSave: Bool = false) throws {
         try tagProperties.save(to: url)
 
-        if imageNeedsSave {
-            try saveImage(to: url)
+        if imageNeedsSave, let pictureRef = imageDescription.pictureRef {
+            try save(pictureRef: pictureRef)
         }
     }
 
-    public mutating func saveImage(to url: URL) throws {
-        guard let pictureRef = imageDescription.pictureRef else {
-            throw NSError(description: "pictureRef is nil")
-        }
-
+    public func save(pictureRef: TagPictureRef) throws {
         guard TagPicture.write(pictureRef, path: url.path) else {
             throw NSError(description: "Failed to update image")
         }
     }
 
-    /// In the case of waves all chunks are written out so all properties must be updated.
+    /// In the case of Wave, all chunks are written out if present (so all properties must be updated)
     /// This is due to the BEXT chunk handler in libsndfile only supporting writing a new file
-    /// rather than updating a header. This is a point to improve in the future.
+    /// rather than updating a header. This is a point to improve in the future if the bext write
+    /// is integrated into the taglib save().
     private mutating func saveWave() throws {
         let waveFile = WaveFileC(path: url.path)
 
-        // extras
-        waveFile.bextDescription = bextDescription?.validateAndConvert()
+        // extra chunks
+        waveFile.bextDescription = bextDescription
         waveFile.iXML = iXMLMetadata
         waveFile.markers = audioMarkers
 
@@ -181,8 +177,8 @@ extension MetaAudioFileDescription {
             }
         }
 
-        Log.debug("id3Dictionary", waveFile.id3Dictionary)
-        Log.debug("infoDictionary", waveFile.infoDictionary)
+        // Log.debug("id3Dictionary", waveFile.id3Dictionary)
+        // Log.debug("infoDictionary", waveFile.infoDictionary)
 
         guard waveFile.save() else {
             throw NSError(description: "Failed to save \(url.path)")

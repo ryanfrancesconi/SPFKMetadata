@@ -54,11 +54,14 @@ class BEXTTests: BinTestCase {
         #expect(desc.originatorReference == "RF666SPONGEFORK66000100510720836")
         #expect(desc.originationDate == "1984:01:01")
         #expect(desc.originationTime == "00:01:00")
-        #expect(desc.loudnessValue == -22.28)
-        #expect(desc.loudnessRange == -14)
-        #expect(desc.maxTruePeakLevel == -8.75)
-        #expect(desc.maxMomentaryLoudness == -18.42)
-        #expect(desc.maxShortTermLoudness == -16)
+
+        let loudnessDescription = desc.loudnessDescription
+        #expect(loudnessDescription.loudnessValue == -22.280000686645508)
+        #expect(loudnessDescription.loudnessRange == -14)
+        #expect(loudnessDescription.maxTruePeakLevel == -8.75)
+        #expect(loudnessDescription.maxMomentaryLoudness == -18.420000076293945)
+        #expect(loudnessDescription.maxShortTermLoudness == -16)
+
         #expect(desc.timeReference == 158_760_000)
         #expect(desc.timeReferenceInSeconds == 3600.0)
     }
@@ -78,11 +81,13 @@ class BEXTTests: BinTestCase {
         desc.originatorReference = "RF666SPONGEFORK66000100510720836"
         desc.originationDate = "1984:01:01"
         desc.originationTime = "00:01:00"
-        desc.loudnessValue = -22.28
-        desc.loudnessRange = -14
-        desc.maxTruePeakLevel = -8.75
-        desc.maxMomentaryLoudness = -18.42
-        desc.maxShortTermLoudness = -16
+
+        desc.loudnessDescription.loudnessValue = -22.28
+        desc.loudnessDescription.loudnessRange = -14
+        desc.loudnessDescription.maxTruePeakLevel = -8.75
+        desc.loudnessDescription.maxMomentaryLoudness = -18.42
+        desc.loudnessDescription.maxShortTermLoudness = -16
+
         desc.timeReferenceLow = 158_760_000
         desc.timeReferenceHigh = 0
 
@@ -99,14 +104,14 @@ class BEXTTests: BinTestCase {
         desc.umid = "XXXXXX"
         desc.originator = "Ryan Francesconi"
         desc.originatorReference = "ITRAIDA88396FG347125324098748726"
-        desc.originationDate = "2011:01:1" // under
+        desc.originationDate = "2011:01:1" // under, will zero pad
         desc.originationTime = "01:01:01__Garbage" // truncate
         desc.codingHistory = "A=PCM,F=48000,W=16,M=mono,T=original"
-        desc.loudnessValue = -20.123456 // truncate
-        desc.loudnessRange = -21
-        desc.maxTruePeakLevel = -22
-        desc.maxShortTermLoudness = -1
-        desc.maxMomentaryLoudness = -2
+        desc.loudnessDescription.loudnessValue = -20.123456 // truncate
+        desc.loudnessDescription.loudnessRange = -21
+        desc.loudnessDescription.maxTruePeakLevel = -22
+        desc.loudnessDescription.maxShortTermLoudness = -1
+        desc.loudnessDescription.maxMomentaryLoudness = -2
         desc.timeReferenceLow = 175_728_049
         desc.timeReferenceHigh = 0
         desc.sampleRate = 48000
@@ -130,11 +135,13 @@ class BEXTTests: BinTestCase {
 
         #expect(updated.timeReference == 175_728_049)
         #expect(updated.timeReferenceInSeconds == 3661.0010208333333)
-        #expect(updated.loudnessValue == -20.12)
-        #expect(updated.loudnessRange == -21)
-        #expect(updated.maxTruePeakLevel == -22)
-        #expect(updated.maxShortTermLoudness == -1)
-        #expect(updated.maxMomentaryLoudness == -2)
+
+        let loudnessDescription = updated.loudnessDescription
+        #expect(loudnessDescription.loudnessValue == -20.1200008392334)
+        #expect(loudnessDescription.loudnessRange == -21)
+        #expect(loudnessDescription.maxTruePeakLevel == -22)
+        #expect(loudnessDescription.maxShortTermLoudness == -1)
+        #expect(loudnessDescription.maxMomentaryLoudness == -2)
     }
 
     @Test func writeBEXT3() async throws {

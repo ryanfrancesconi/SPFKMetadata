@@ -3,6 +3,7 @@
 import AudioToolbox
 import Foundation
 import OrderedCollections
+import SPFKAudioBase
 import SPFKMetadataC
 
 /// BEXT Wave Chunk - BroadcastExtension. This is a wrapper to BEXTDescriptionC for swift
@@ -32,21 +33,6 @@ public struct BEXTDescription: Hashable, Sendable {
     /// T=<a free ASCII-text string for in house use. This string should contain no commas (ASCII 2Chex).
     /// Examples of the contents: ID-No; codec type; A/D type>
     public var codingHistory: String?
-
-    /// Integrated Loudness Value of the file in LUFS dB. (Note: Added in version 2.)
-    public var loudnessValue: Float?
-
-    /// Loudness Range of the file in LU. (Note: Added in version 2.)
-    public var loudnessRange: Float?
-
-    /// Maximum True Peak Value of the file (dBTP). (Note: Added in version 2.)
-    public var maxTruePeakLevel: Float?
-
-    /// highest value of the Momentary Loudness Level of the file in LUFS dB. (Note: Added in version 2.)
-    public var maxMomentaryLoudness: Float?
-
-    /// highest value of the Short-term Loudness Level of the file in LUFS dB. (Note: Added in version 2.)
-    public var maxShortTermLoudness: Float?
 
     /// The name of the originator / producer of the audio file
     public var originator: String?
@@ -92,11 +78,17 @@ public struct BEXTDescription: Hashable, Sendable {
         return (UInt64(timeReferenceHigh) << 32) | UInt64(timeReferenceLow)
     }
 
-    /// Convenience time reference is seconds, requires sampleRate to be set
+    /// Convenience time reference in seconds, requires sampleRate to be set.
+    /// Sample rate isn't part of the BEXT values.
     public var timeReferenceInSeconds: TimeInterval? {
-        guard let timeReference, let sampleRate, sampleRate > 0 else { return nil }
+        guard let timeReference,
+              let sampleRate,
+              sampleRate > 0 else { return nil }
         return TimeInterval(timeReference) / sampleRate
     }
+
+    /// (Note: Added in version 2.)
+    public var loudnessDescription: LoudnessDescription = .init()
 
     public var sampleRate: Double?
 
@@ -127,22 +119,70 @@ public struct BEXTDescription: Hashable, Sendable {
         }
 
         if version >= 2 {
-            // 0x7fff shall be used to designate an unused value
+            // 0x7fff might be used to designate an unused value
             // valid range: -99.99 .. 99.99
-            let invalid: Float = 0x7FFF / 100
+            // invalid = 0x7FFF / 100 // 327.67
 
-            loudnessValue = info.loudnessValue == invalid ? nil : info.loudnessValue
-            loudnessRange = info.loudnessRange == invalid ? nil : info.loudnessRange
-            maxTruePeakLevel = info.maxTruePeakLevel == invalid ? nil : info.maxTruePeakLevel
-            maxMomentaryLoudness = info.maxMomentaryLoudness == invalid ? nil : info.maxMomentaryLoudness
-            maxShortTermLoudness = info.maxShortTermLoudness == invalid ? nil : info.maxShortTermLoudness
+            loudnessDescription = .init(
+                loudnessValue: info.loudnessValue,
+                loudnessRange: info.loudnessRange,
+                maxTruePeakLevel: info.maxTruePeakLevel,
+                maxMomentaryLoudness: info.maxMomentaryLoudness,
+                maxShortTermLoudness: info.maxShortTermLoudness
+            )
         }
+    }
+
+    public func validated() -> BEXTDescription {
+        var bext = self
+
+        if let value = bext.umid, value.first == "0", value.allElementsAreEqual {
+            bext.umid = ""
+        }
+
+        if let value = bext.originationDate, value.first == "0", value.allElementsAreEqual {
+            bext.originationDate = ""
+        }
+
+        if let value = bext.originationTime, value.first == "0", value.allElementsAreEqual {
+            bext.originationTime = ""
+        }
+
+        if let value = timeReferenceLow, value == 0 {
+            bext.timeReferenceLow = nil
+        }
+
+        if let value = timeReferenceHigh, value == 0 {
+            bext.timeReferenceHigh = nil
+        }
+
+        if let value = bext.loudnessDescription.loudnessValue, value > 99 {
+            bext.loudnessDescription.loudnessValue = nil
+        }
+
+        if let value = bext.loudnessDescription.loudnessRange, value > 99 {
+            bext.loudnessDescription.loudnessRange = nil
+        }
+
+        if let value = bext.loudnessDescription.maxTruePeakLevel, value > 99 {
+            bext.loudnessDescription.maxTruePeakLevel = nil
+        }
+
+        if let value = bext.loudnessDescription.maxMomentaryLoudness, value > 99 {
+            bext.loudnessDescription.maxMomentaryLoudness = nil
+        }
+
+        if let value = bext.loudnessDescription.maxShortTermLoudness, value > 99 {
+            bext.loudnessDescription.maxShortTermLoudness = nil
+        }
+
+        return bext
     }
 }
 
 extension BEXTDescription {
     /// Returns the objc representation for C portability
-    public func validateAndConvert() -> BEXTDescriptionC {
+    public var bextDescriptionC: BEXTDescriptionC {
         let info = BEXTDescriptionC()
 
         func updateVersion(_ requiredVersion: Int16) {
@@ -162,27 +202,27 @@ extension BEXTDescription {
             info.umid = umid
         }
 
-        if let loudnessValue {
+        if let loudnessValue = loudnessDescription.loudnessValue {
             updateVersion(2)
             info.loudnessValue = loudnessValue
         }
 
-        if let loudnessRange {
+        if let loudnessRange = loudnessDescription.loudnessRange {
             updateVersion(2)
             info.loudnessRange = loudnessRange
         }
 
-        if let maxTruePeakLevel {
+        if let maxTruePeakLevel = loudnessDescription.maxTruePeakLevel {
             updateVersion(2)
             info.maxTruePeakLevel = maxTruePeakLevel
         }
 
-        if let maxMomentaryLoudness {
+        if let maxMomentaryLoudness = loudnessDescription.maxMomentaryLoudness {
             updateVersion(2)
             info.maxMomentaryLoudness = maxMomentaryLoudness
         }
 
-        if let maxShortTermLoudness {
+        if let maxShortTermLoudness = loudnessDescription.maxShortTermLoudness {
             updateVersion(2)
             info.maxShortTermLoudness = maxShortTermLoudness
         }
@@ -222,7 +262,7 @@ extension BEXTDescription {
 extension BEXTDescription {
     /// Writes this BEXTDescription to file. The data will be validated before writing.
     public static func write(bextDescription: BEXTDescription, to url: URL) throws {
-        let cObject = bextDescription.validateAndConvert()
+        let cObject = bextDescription.bextDescriptionC
 
         guard BEXTDescriptionC.write(cObject, path: url.path) else {
             throw NSError(description: "Failed to write BEXT chunk to \(url.path)")

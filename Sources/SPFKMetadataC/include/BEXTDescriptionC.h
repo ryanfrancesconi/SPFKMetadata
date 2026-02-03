@@ -7,12 +7,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BEXTDescriptionC : NSObject
 
 /// BWF Version 0, 1, or 2
-@property (atomic) short version;
+@property (nonatomic) short version;
 
-@property (atomic) NSString *sequenceDescription;
+/// ASCII string (maximum 256 characters) containing a free description of the sequence.
+/// To help applications which display only a short description, it is recommended that a
+/// resume of the description is contained in the first 64 characters and the
+/// last 192 characters are used for details.
+@property (nonatomic) NSString *sequenceDescription;
 
 /// UMID (Unique Material Identifier) to standard SMPTE. (Note: Added in version 1.)
-@property (atomic) NSString *umid;
+@property (nonatomic) NSString *umid;
 
 /// A <CodingHistory> field is provided in the BWF format to allow the exchange of information on previous signal processing,
 /// IE: A=PCM,F=48000,W=16,M=stereo|mono,T=original
@@ -26,43 +30,43 @@ NS_ASSUME_NONNULL_BEGIN
 /// Examples of the contents: ID-No; codec type; A/D type>
 ///
 /// see: https://tech.ebu.ch/docs/r/r098.pdf
-@property (atomic) NSString *codingHistory;
+@property (nonatomic) NSString *codingHistory;
 
 /// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
-@property (atomic) float loudnessValue;
+@property (nonatomic) double loudnessValue;
 
 /// Loudness Range of the file in LU. (Note: Added in version 2.)
-@property (atomic) float loudnessRange;
+@property (nonatomic) double loudnessRange;
 
 /// Maximum True Peak Value of the file in dBTP. (Note: Added in version 2.)
-@property (atomic) float maxTruePeakLevel;
+@property (nonatomic) float maxTruePeakLevel;
 
 /// Highest value of the Momentary Loudness Level of the file in LUFS. (Note: Added in version 2.)
-@property (atomic) float maxMomentaryLoudness;
+@property (nonatomic) double maxMomentaryLoudness;
 
 /// Highest value of the Short-term Loudness Level of the file in LUFS. (Note: Added in version 2.)
-@property (atomic) float maxShortTermLoudness;
+@property (nonatomic) double maxShortTermLoudness;
 
 /// The name of the originator / producer of the audio file
-@property (atomic) NSString *originator;
+@property (nonatomic) NSString *originator;
 
 /// Unambiguous reference allocated by the originating organization
-@property (atomic) NSString *originatorReference;
+@property (nonatomic) NSString *originatorReference;
 
 /// yyyy-mm-dd
-@property (atomic) NSString *originationDate;
+@property (nonatomic) NSString *originationDate;
 
 /// hh:mm:ss
-@property (atomic) NSString *originationTime;
+@property (nonatomic) NSString *originationTime;
 
 /// Time reference in samples
 /// These fields shall contain the time-code of the sequence. It is a 64-bit value which contains the first sample count since midnight.
 /// First sample count since midnight, low word (UInt32)
-@property (atomic) uint32_t timeReferenceLow;
+@property (nonatomic) uint32_t timeReferenceLow;
 
 /// Time reference in samples
 /// First sample count since midnight, high word (UInt32)
-@property (atomic) uint32_t timeReferenceHigh;
+@property (nonatomic) uint32_t timeReferenceHigh;
 
 /// Combined 64bit time value of low and high words
 @property (readonly) uint64_t timeReference;

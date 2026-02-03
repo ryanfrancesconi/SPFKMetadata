@@ -110,11 +110,11 @@ extension BEXTDescription {
         .timeReference:         timeReferenceString,
         .umid:                  umid,
         .description:           sequenceDescription,
-        .loudnessValue:         loudnessValue?.string,
-        .loudnessRange:         loudnessRange?.string,
-        .maxTruePeakLevel:      maxTruePeakLevel?.string,
-        .maxMomentaryLoudness:  maxMomentaryLoudness?.string,
-        .maxShortTermLoudness:  maxShortTermLoudness?.string,
+        .loudnessValue:         loudnessDescription.loudnessValue?.string,
+        .loudnessRange:         loudnessDescription.loudnessRange?.string,
+        .maxTruePeakLevel:      loudnessDescription.maxTruePeakLevel?.string,
+        .maxMomentaryLoudness:  loudnessDescription.maxMomentaryLoudness?.string,
+        .maxShortTermLoudness:  loudnessDescription.maxShortTermLoudness?.string,
         .version:               version > 0 ? version.string : "",
         .codingHistory:         codingHistory,
     ] }
@@ -122,13 +122,13 @@ extension BEXTDescription {
     public mutating func update(key: Key, value: Any) {
         switch key {
         case .originator:
-            originator = value as? String ?? ""
+            originator = value as? String
         case .originatorReference:
-            originatorReference = value as? String ?? ""
+            originatorReference = value as? String
         case .originationDate:
-            originationDate = value as? String ?? ""
+            originationDate = value as? String
         case .originationTime:
-            originationTime = value as? String ?? ""
+            originationTime = value as? String
         case .timeReferenceSamples:
             timeReferenceLow = value as? UInt64
         case .timeReference:
@@ -137,19 +137,19 @@ extension BEXTDescription {
         case .umid:
             umid = value as? String ?? ""
         case .description:
-            sequenceDescription = value as? String ?? ""
+            sequenceDescription = value as? String
         case .loudnessValue:
-            loudnessValue = value as? Float
+            loudnessDescription.loudnessValue = value as? Float64
         case .loudnessRange:
-            loudnessRange = value as? Float
+            loudnessDescription.loudnessRange = value as? Float64
         case .maxTruePeakLevel:
-            maxTruePeakLevel = value as? Float
+            loudnessDescription.maxTruePeakLevel = value as? Float32
         case .maxMomentaryLoudness:
-            maxMomentaryLoudness = value as? Float
+            loudnessDescription.maxMomentaryLoudness = value as? Float64
         case .maxShortTermLoudness:
-            maxShortTermLoudness = value as? Float
+            loudnessDescription.maxShortTermLoudness = value as? Float64
         case .version:
-            version = value as? Int16 ?? 0
+            version = value as? Int16 ?? 2
         case .codingHistory:
             codingHistory = value as? String
         }
