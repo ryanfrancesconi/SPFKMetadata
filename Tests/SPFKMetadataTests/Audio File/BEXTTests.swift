@@ -56,7 +56,7 @@ class BEXTTests: BinTestCase {
         #expect(desc.originationTime == "00:01:00")
 
         let loudnessDescription = desc.loudnessDescription
-        #expect(loudnessDescription.loudnessValue == -22.280000686645508)
+        #expect(loudnessDescription.loudnessIntegrated == -22.280000686645508)
         #expect(loudnessDescription.loudnessRange == -14)
         #expect(loudnessDescription.maxTruePeakLevel == -8.75)
         #expect(loudnessDescription.maxMomentaryLoudness == -18.420000076293945)
@@ -82,7 +82,7 @@ class BEXTTests: BinTestCase {
         desc.originationDate = "1984:01:01"
         desc.originationTime = "00:01:00"
 
-        desc.loudnessDescription.loudnessValue = -22.28
+        desc.loudnessDescription.loudnessIntegrated = -22.28
         desc.loudnessDescription.loudnessRange = -14
         desc.loudnessDescription.maxTruePeakLevel = -8.75
         desc.loudnessDescription.maxMomentaryLoudness = -18.42
@@ -107,7 +107,7 @@ class BEXTTests: BinTestCase {
         desc.originationDate = "2011:01:1" // under, will zero pad
         desc.originationTime = "01:01:01__Garbage" // truncate
         desc.codingHistory = "A=PCM,F=48000,W=16,M=mono,T=original"
-        desc.loudnessDescription.loudnessValue = -20.123456 // truncate
+        desc.loudnessDescription.loudnessIntegrated = -20.123456 // truncate
         desc.loudnessDescription.loudnessRange = -21
         desc.loudnessDescription.maxTruePeakLevel = -22
         desc.loudnessDescription.maxShortTermLoudness = -1
@@ -137,7 +137,7 @@ class BEXTTests: BinTestCase {
         #expect(updated.timeReferenceInSeconds == 3661.0010208333333)
 
         let loudnessDescription = updated.loudnessDescription
-        #expect(loudnessDescription.loudnessValue == -20.1200008392334)
+        #expect(loudnessDescription.loudnessIntegrated == -20.1200008392334)
         #expect(loudnessDescription.loudnessRange == -21)
         #expect(loudnessDescription.maxTruePeakLevel == -22)
         #expect(loudnessDescription.maxShortTermLoudness == -1)

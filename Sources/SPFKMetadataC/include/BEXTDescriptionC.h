@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSString *codingHistory;
 
 /// Integrated Loudness Value of the file in LUFS. (Note: Added in version 2.)
-@property (nonatomic) double loudnessValue;
+@property (nonatomic) double loudnessIntegrated;
 
 /// Loudness Range of the file in LU. (Note: Added in version 2.)
 @property (nonatomic) double loudnessRange;

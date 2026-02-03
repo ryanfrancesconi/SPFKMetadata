@@ -119,17 +119,13 @@ public struct BEXTDescription: Hashable, Sendable {
         }
 
         if version >= 2 {
-            // 0x7fff might be used to designate an unused value
-            // valid range: -99.99 .. 99.99
-            // invalid = 0x7FFF / 100 // 327.67
-
             loudnessDescription = .init(
-                loudnessValue: info.loudnessValue,
+                loudnessValue: info.loudnessIntegrated,
                 loudnessRange: info.loudnessRange,
                 maxTruePeakLevel: info.maxTruePeakLevel,
                 maxMomentaryLoudness: info.maxMomentaryLoudness,
                 maxShortTermLoudness: info.maxShortTermLoudness
-            )
+            ).validated()
         }
     }
 
@@ -156,25 +152,7 @@ public struct BEXTDescription: Hashable, Sendable {
             bext.timeReferenceHigh = nil
         }
 
-        if let value = bext.loudnessDescription.loudnessValue, value > 99 {
-            bext.loudnessDescription.loudnessValue = nil
-        }
-
-        if let value = bext.loudnessDescription.loudnessRange, value > 99 {
-            bext.loudnessDescription.loudnessRange = nil
-        }
-
-        if let value = bext.loudnessDescription.maxTruePeakLevel, value > 99 {
-            bext.loudnessDescription.maxTruePeakLevel = nil
-        }
-
-        if let value = bext.loudnessDescription.maxMomentaryLoudness, value > 99 {
-            bext.loudnessDescription.maxMomentaryLoudness = nil
-        }
-
-        if let value = bext.loudnessDescription.maxShortTermLoudness, value > 99 {
-            bext.loudnessDescription.maxShortTermLoudness = nil
-        }
+        bext.loudnessDescription = bext.loudnessDescription.validated()
 
         return bext
     }
@@ -202,9 +180,9 @@ extension BEXTDescription {
             info.umid = umid
         }
 
-        if let loudnessValue = loudnessDescription.loudnessValue {
+        if let loudnessIntegrated = loudnessDescription.loudnessIntegrated {
             updateVersion(2)
-            info.loudnessValue = loudnessValue
+            info.loudnessIntegrated = loudnessIntegrated
         }
 
         if let loudnessRange = loudnessDescription.loudnessRange {

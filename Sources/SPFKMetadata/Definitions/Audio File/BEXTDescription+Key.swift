@@ -15,7 +15,7 @@ extension BEXTDescription {
         case timeReference
         case umid
         case description
-        case loudnessValue
+        case loudnessIntegrated
         case loudnessRange
         case maxTruePeakLevel
         case maxMomentaryLoudness
@@ -38,7 +38,7 @@ extension BEXTDescription {
             case .timeReference:            "Time Reference"
             case .umid:                     "UMID"
             case .description:              "Description"
-            case .loudnessValue:            TagKey.loudnessIntegrated.displayName
+            case .loudnessIntegrated:       TagKey.loudnessIntegrated.displayName
             case .loudnessRange:            TagKey.loudnessRange.displayName
             case .maxTruePeakLevel:         TagKey.loudnessTruePeak.displayName
             case .maxMomentaryLoudness:     TagKey.loudnessMaxMomentary.displayName
@@ -66,7 +66,7 @@ extension BEXTDescription {
                 "Unique Material Identifier"
             case .description:
                 "ASCII string (maximum 256 characters) containing a free description of the sequence. To help applications which display only a short description, it is recommended that a resume of the description is contained in the first 64 characters and the last 192 characters are used for details."
-            case .loudnessValue:
+            case .loudnessIntegrated:
                 TagKey.loudnessIntegrated.readableDescription ?? ""
             case .loudnessRange:
                 TagKey.loudnessRange.readableDescription ?? ""
@@ -110,7 +110,7 @@ extension BEXTDescription {
         .timeReference:         timeReferenceString,
         .umid:                  umid,
         .description:           sequenceDescription,
-        .loudnessValue:         loudnessDescription.loudnessValue?.string,
+        .loudnessIntegrated:    loudnessDescription.loudnessIntegrated?.string,
         .loudnessRange:         loudnessDescription.loudnessRange?.string,
         .maxTruePeakLevel:      loudnessDescription.maxTruePeakLevel?.string,
         .maxMomentaryLoudness:  loudnessDescription.maxMomentaryLoudness?.string,
@@ -138,8 +138,8 @@ extension BEXTDescription {
             umid = value as? String ?? ""
         case .description:
             sequenceDescription = value as? String
-        case .loudnessValue:
-            loudnessDescription.loudnessValue = value as? Float64
+        case .loudnessIntegrated:
+            loudnessDescription.loudnessIntegrated = value as? Float64
         case .loudnessRange:
             loudnessDescription.loudnessRange = value as? Float64
         case .maxTruePeakLevel:

@@ -38,7 +38,7 @@ using namespace std;
     if (_version >= 2) {
         // A 16-bit signed integer, equal to round(100x the Integrated Loudness
         // Value of the file in LUFS).
-        _loudnessValue = ((float)bext.loudness_value) / 100;
+        _loudnessIntegrated = ((float)bext.loudness_value) / 100;
 
         // A 16-bit signed integer, equal to round(100x the Loudness Range of
         // the file in LU).
@@ -156,7 +156,7 @@ using namespace std;
     }
 
     if (bext.version >= 2) {
-        bext.loudness_value = (int16_t)(info.loudnessValue * 100);
+        bext.loudness_value = (int16_t)(info.loudnessIntegrated * 100);
         bext.loudness_range = (int16_t)(info.loudnessRange * 100);
         bext.max_true_peak_level = (int16_t)(info.maxTruePeakLevel * 100);
         bext.max_momentary_loudness = (int16_t)(info.maxMomentaryLoudness * 100);
