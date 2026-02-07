@@ -68,11 +68,11 @@ extension TagPropertiesContainerModel {
         customTags[key]
     }
 
-    public mutating func set(tag key: TagKey, value: String) {
+    public mutating func set(tag key: TagKey, value: String?) {
         tags[key] = value
     }
 
-    public mutating func set(customTag key: String, value: String) {
+    public mutating func set(customTag key: String, value: String?) {
         customTags[key] = value
     }
 

@@ -11,8 +11,18 @@ extension MetaAudioFileDescription {
             url.bestImageRepresentation?.cgImage
     }
 
-    public var tempo: Double? {
-        tagProperties.tags[.bpm]?.double
+    public var tempo: Bpm? {
+        get {
+            guard let rawValue = tagProperties.tags[.bpm]?.double else {
+                return nil
+            }
+
+            return try? Bpm(rawValue)
+        }
+
+        set {
+            tagProperties.tags[.bpm] = newValue?.stringValue
+        }
     }
 
     /// From TagProperties metadata not BEXT
