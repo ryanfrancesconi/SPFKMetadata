@@ -5,9 +5,9 @@ import Foundation
 // swiftformat:disable consecutiveSpaces
 
 extension TagKey {
-    /// Wave INFO frames as mapped by TagLib.
-    /// TagLib defines this mapping in its infotag.cpp and
-    /// these are the INFO tags it will write by default.
+    /// Wave INFO frames as mapped to TagKey.
+    ///
+    /// Partial mapping of most common tags.
     public var infoFrame: InfoFrameKey? {
         switch self {
         case .album:            .product
@@ -25,15 +25,19 @@ extension TagKey {
         case .encodingTime:     .dateTimeOriginal
         case .genre:            .genre
         case .isrc:             .source
+        case .keywords:         .keywords
         case .label:            .publisher
         case .language:         .language
+        case .length:           .length
         case .lyricist:         .writtenBy
         case .media:            .medium
         case .performer:        .starring
         case .releaseCountry:   .country
         case .remixer:          .editedBy
+        case .startTimecode:    .startTimecode
+        case .endTimecode:      .endTimecode
         case .title:            .title
-        case .trackNumber:      .trackNumber3
+        case .trackNumber:      .trackNumber1
         default:
             nil
         }

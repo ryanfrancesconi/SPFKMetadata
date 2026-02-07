@@ -18,7 +18,7 @@ extension MetaAudioFileDescription {
     /// From TagProperties metadata not BEXT
     public var loudnessDescription: LoudnessDescription {
         LoudnessDescription(
-            loudnessValue: tagProperties[.loudnessIntegrated]?.double,
+            loudnessIntegrated: tagProperties[.loudnessIntegrated]?.double,
             loudnessRange: tagProperties[.loudnessRange]?.double,
             maxTruePeakLevel: tagProperties[.loudnessTruePeak]?.float,
             maxMomentaryLoudness: tagProperties[.loudnessMaxMomentary]?.double,

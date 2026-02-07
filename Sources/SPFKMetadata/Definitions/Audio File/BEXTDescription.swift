@@ -120,7 +120,7 @@ public struct BEXTDescription: Hashable, Sendable {
 
         if version >= 2 {
             loudnessDescription = .init(
-                loudnessValue: info.loudnessIntegrated,
+                loudnessIntegrated: info.loudnessIntegrated,
                 loudnessRange: info.loudnessRange,
                 maxTruePeakLevel: info.maxTruePeakLevel,
                 maxMomentaryLoudness: info.maxMomentaryLoudness,

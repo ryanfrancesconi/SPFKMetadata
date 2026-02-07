@@ -110,7 +110,6 @@ extension TagSet {
     private static let utilityTags: [TagKey] = [
         .artistWebpage,
         .audioSourceWebpage,
-        .date,
         .fileWebpage,
         .isrc,
         .paymentWebpage,

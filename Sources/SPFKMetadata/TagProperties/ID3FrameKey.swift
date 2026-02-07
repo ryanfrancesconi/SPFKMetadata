@@ -39,6 +39,7 @@ public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable {
     case genre
     case grouping               // Apple proprietary frame
     case initialKey
+    case involvedPeopleList
     case isrc
     case label
     case language
@@ -114,6 +115,7 @@ public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable {
         case .genre:                "TCON"
         case .grouping:             "GRP1"
         case .initialKey:           "TKEY"
+        case .involvedPeopleList:   "TIPL"
         case .isrc:                 "TSRC"
         case .label:                "TPUB"
         case .language:             "TLAN"
@@ -156,40 +158,6 @@ public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable {
         case .userDefined:          "TXXX"
         }
     }
-
-//    public var taglibKey: String {
-//        rawValue.uppercased()
-//    }
-//
-//    public var displayName: String {
-//        rawValue.spacedTitleCased
-//    }
-//
-//    public init?(value: String) {
-//        for item in Self.allCases where item.value == value {
-//            self = item
-//            return
-//        }
-//
-//        return nil
-//    }
-//
-//    public init?(displayName: String) {
-//        for item in Self.allCases where item.displayName == displayName {
-//            self = item
-//            return
-//        }
-//
-//        return nil
-//    }
-//
-//    public init?(taglibKey: String) {
-//        for item in Self.allCases where item.taglibKey == taglibKey {
-//            self = item
-//            return
-//        }
-//        return nil
-//    }
 }
 
 // swiftformat:enable consecutiveSpaces

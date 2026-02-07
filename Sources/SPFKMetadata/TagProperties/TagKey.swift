@@ -5,7 +5,8 @@ import Foundation
 import SPFKBase
 
 /// TagKey is a predomiantly ID3 based label system which mostly follows TagLib's conventions.
-/// RIFF INFO tags are also merged into this collection where they differ from ID3.
+/// RIFF INFO tags are also merged into this collection where they differ from ID3. This does
+/// have duplicated values with `ID3FrameKey`.
 ///
 /// `TagProperties` has a customKeys dictionary for any keys found that aren't documented here.
 public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
@@ -37,12 +38,14 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case encodedBy
     case encoding
     case encodingTime
-    case fileWebpage            // URL Frame
+    case endTimecode            // TXXX RIFF INFO
     case fileType
+    case fileWebpage            // URL Frame
     case genre
     case grouping
     case initialKey
     case instrumentation        // TXXX non standard id3
+    case involvedPeopleList
     case isrc
     case keywords               // TXXX RIFF INFO non standard id3
     case label
@@ -77,6 +80,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case releaseCountry         // RIFF INFO
     case releaseDate
     case remixer                // Could also be ARRANGER
+    case startTimecode          // TXXX RIFF INFO
     case subtitle
     case taggingDate
     case title

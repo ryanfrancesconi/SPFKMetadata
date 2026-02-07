@@ -11,7 +11,7 @@ public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
         lhs.rawValue < rhs.rawValue
     }
 
-    case archivalLocation
+    case archivalLocation // Archival Location. Indicates where the subject of the file is archived
     case artist
     case baseURL
     case bpm // non standard frame
@@ -37,14 +37,14 @@ public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
     case firstLanguage
     case fourthLanguage
     case genre
-    case keywords
+    case keywords // Keywords. Provides a list of keywords that refer to the file or subject of the file. Separate multiple keywords with a semicolon and a blank. For example, "Seattle; aerial view; scenery".
     case language
     case language2
     case length
-    case lightness
+    case lightness // Lightness. Describes the changes in lightness settings on the digitizer required to produce the file. Note that the format of this information depends on hardware used.
     case location
     case logoURL
-    case medium
+    case medium // Medium. Describes the original subject of the file, such as "computer image", "drawing", "lithograph", and so forth.
     case moreInfoBannerImage
     case moreInfoBannerURL
     case moreInfoText
@@ -69,7 +69,7 @@ public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
     case sharpness
     case sixthLanguage
     case software
-    case source
+    case source // Source. Identifies the name of the person or organization who supplied the original subject of the file. For example, "Trey Research".
     case sourceForm
     case starring
     case starring2
@@ -80,11 +80,9 @@ public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
     case technician
     case thirdLanguage
     case timeCode
-    case title
-    case title2
+    case title // Name. Stores the title of the subject of the file, such as "Seattle From Above".
     case trackNumber1
     case trackNumber2
-    case trackNumber3
     case url
     case vegasVersionMajor
     case vegasVersionMinor
@@ -163,12 +161,10 @@ public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
         case .tapeName:             "TAPE"
         case .technician:           "ITCH"
         case .thirdLanguage:        "IAS3"
-        case .timeCode:             "ISMP"
+        case .timeCode:             "ISMP" // SMPTE time code of digitization start point expressed as a NULL terminated text string "HH:MM:SS.FF". If performing MCI capture in AVICAP, this chunk will be automatically set based on the MCI start time.
         case .title:                "INAM"
-        case .title2:               "TITL"
-        case .trackNumber1:         "ITRK"
+        case .trackNumber1:         "ITRK" // ITRK acts as a metadata tag specifically for the track number, with IFRM often used for the total number of tracks (e.g., in 6/10 format).
         case .trackNumber2:         "TRCK"
-        case .trackNumber3:         "IPRT"
         case .url:                  "TURL"
         case .vegasVersionMajor:    "VMAJ"
         case .vegasVersionMinor:    "VMIN"
