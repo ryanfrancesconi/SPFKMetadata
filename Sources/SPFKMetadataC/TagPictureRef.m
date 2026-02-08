@@ -25,7 +25,7 @@
     return self;
 }
 
-- (nullable id)initWithURL:(NSURL *)url
+- (nullable instancetype)initWithURL:(NSURL *)url
         pictureDescription:(NSString *)pictureDescription
                pictureType:(NSString *)pictureType
 {

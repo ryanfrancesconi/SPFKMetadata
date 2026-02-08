@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Creates a `TagPicture` from either a JPEG or PNG `URL`.
 /// No other file types are supported.
-- (nullable id)initWithURL:(NSURL *)url
+- (nullable instancetype)initWithURL:(NSURL *)url
         pictureDescription:(NSString *)pictureDescription
                pictureType:(NSString *)pictureType;
 

@@ -76,8 +76,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly) double sampleRate;
 
-- (id)init;
-- (nullable id)initWithPath:(nonnull NSString *)path;
+- (instancetype)init;
+- (nullable instancetype)initWithPath:(nonnull NSString *)path;
 
 /// Set the Broadcast Extension Chunk for WAV (and related) files.
 + (bool)write:(BEXTDescriptionC *)info

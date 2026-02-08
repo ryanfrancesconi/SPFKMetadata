@@ -19,7 +19,7 @@
 using namespace std;
 using namespace TagLib;
 
-- (id)initWithPath:(nonnull NSString *)path {
+- (instancetype)initWithPath:(nonnull NSString *)path {
     self = [super init];
 
     _path = path;

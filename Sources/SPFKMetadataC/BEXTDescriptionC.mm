@@ -14,12 +14,12 @@ using namespace std;
 
 #define BUFFER_LEN 1024
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     return self;
 }
 
-- (nullable id)initWithPath:(nonnull NSString *)path {
+- (nullable instancetype)initWithPath:(nonnull NSString *)path {
     SF_BROADCAST_INFO bext = {};
     SF_INFO sfinfo = {};
     SNDFILE *infile = sf_open(path.UTF8String, SFM_READ, &sfinfo);

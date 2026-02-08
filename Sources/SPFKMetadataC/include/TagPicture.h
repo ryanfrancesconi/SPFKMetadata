@@ -10,8 +10,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic) TagPictureRef *pictureRef;
 
-- (nullable id)initWithPath:(nonnull NSString *)path;
-- (nullable id)initWithPicture:(nonnull TagPictureRef *)pictureRef;
+- (nullable instancetype)initWithPath:(nonnull NSString *)path;
+- (nullable instancetype)initWithPicture:(nonnull TagPictureRef *)pictureRef;
 
 /// Set the picture data
 + (bool)write:(TagPictureRef *)picture

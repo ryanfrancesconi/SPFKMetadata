@@ -30,13 +30,13 @@ const auto mimeTypeKey = String("mimeType");
 const auto descriptionKey = String("description");
 const auto pictureTypeKey = String("pictureType");
 
-- (nullable id)initWithPicture:(nonnull TagPictureRef *)pictureRef {
+- (nullable instancetype)initWithPicture:(nonnull TagPictureRef *)pictureRef {
     self = [super init];
     _pictureRef = pictureRef;
     return self;
 }
 
-- (nullable id)initWithPath:(nonnull NSString *)path {
+- (nullable instancetype)initWithPath:(nonnull NSString *)path {
     FileRef fileRef(path.UTF8String);
 
     if (fileRef.isNull()) {

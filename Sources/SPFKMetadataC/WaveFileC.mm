@@ -22,7 +22,7 @@
 using namespace std;
 using namespace TagLib;
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     _id3Dictionary = [[NSMutableDictionary alloc] init];
     _infoDictionary = [[NSMutableDictionary alloc] init];
@@ -31,7 +31,7 @@ using namespace TagLib;
     return self;
 }
 
-- (id)initWithPath:(nonnull NSString *)path {
+- (instancetype)initWithPath:(nonnull NSString *)path {
     self = [super init];
 
     _path = path;

@@ -23,11 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nonnull) NSString *path;
 
-- (id)init;
+- (instancetype)init;
 
 /// Parse all objects from the passed in path
 /// - Parameter path: the file to parse
-- (id)initWithPath:(nonnull NSString *)path;
+- (instancetype)initWithPath:(nonnull NSString *)path;
 - (bool)load;
 - (bool)save;
 
