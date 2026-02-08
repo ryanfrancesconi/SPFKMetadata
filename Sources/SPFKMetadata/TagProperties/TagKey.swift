@@ -125,7 +125,6 @@ extension TagKey {
         case .copyrightURL:         "Copyright URL"
         case .podcastURL:           "Podcast URL"
         case .isrc:                 "ISRC"
-        case .bpm:                  "BPM"
         case .loudnessIntegrated:   "Loudness Integrated (LUFS)"
         case .loudnessRange:        "Loudness Range (LRA)"
         case .loudnessTruePeak:     "Loudness True Peak (dBTP)"

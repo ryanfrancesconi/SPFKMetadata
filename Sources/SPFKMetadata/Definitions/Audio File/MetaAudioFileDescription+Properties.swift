@@ -17,7 +17,7 @@ extension MetaAudioFileDescription {
                 return nil
             }
 
-            return try? Bpm(rawValue)
+            return Bpm(rawValue)
         }
 
         set {
