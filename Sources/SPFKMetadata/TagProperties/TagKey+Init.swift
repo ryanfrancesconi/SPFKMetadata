@@ -30,7 +30,7 @@ extension TagKey {
     }
 
     public init?(infoFrame: InfoFrameKey) {
-        for item in Self.allCases where item.infoFrame == infoFrame {
+        for item in Self.allCases where item.infoFrame == infoFrame || item.infoAlternates.contains(infoFrame) {
             self = item
             return
         }

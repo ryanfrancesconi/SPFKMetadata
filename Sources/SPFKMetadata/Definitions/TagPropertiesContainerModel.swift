@@ -144,11 +144,11 @@ extension TagPropertiesContainerModel {
     public mutating func set(infoFrame key: InfoFrameKey, value: String) {
         let value = value.removing(.controlCharacters).trimmed
 
-        guard let frame = TagKey(infoFrame: key) else {
-            customTags[key.taglibKey] = value
+        if let frame = TagKey(infoFrame: key) {
+            tags[frame] = value
             return
         }
 
-        tags[frame] = value
+        customTags[key.taglibKey] = value
     }
 }

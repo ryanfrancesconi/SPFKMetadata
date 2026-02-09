@@ -5,7 +5,7 @@ import SPFKMetadataC
 
 // swiftformat:disable consecutiveSpaces
 
-/// A fairly complete list of Wave INFO tags. Not all are currently written.
+/// A fairly complete list of Wave INFO tags. Not all are currently written. Unmapped tags will be added to TagData.customTags
 public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
     public static func < (lhs: InfoFrameKey, rhs: InfoFrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
@@ -83,6 +83,7 @@ public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
     case title // Name. Stores the title of the subject of the file, such as "Seattle From Above".
     case trackNumber1
     case trackNumber2
+    case trackNumber3 // IPRT, sometimes occurs, E.g, 9/13
     case url
     case vegasVersionMajor
     case vegasVersionMinor
@@ -165,6 +166,7 @@ public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
         case .title:                "INAM"
         case .trackNumber1:         "ITRK" // ITRK acts as a metadata tag specifically for the track number, with IFRM often used for the total number of tracks (e.g., in 6/10 format).
         case .trackNumber2:         "TRCK"
+        case .trackNumber3:         "IPRT"
         case .url:                  "TURL"
         case .vegasVersionMajor:    "VMAJ"
         case .vegasVersionMinor:    "VMIN"

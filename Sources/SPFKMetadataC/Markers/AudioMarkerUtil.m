@@ -18,7 +18,7 @@
 
     if (noErr !=
         AudioFileOpenURL(cfurl, kAudioFileReadPermission, 0, &fileID)) {
-        NSLog(@"Failed to open url %@", url);
+        NSLog(@"AudioMarkerUtil: Failed to open url %@", url);
         CFRelease(cfurl);
         return NULL;
     }
@@ -30,7 +30,7 @@
     if (noErr != AudioFileGetPropertyInfo(fileID, kAudioFilePropertyMarkerList,
                                           &propertySize, &writable)) {
         AudioFileClose(fileID);
-        NSLog(@"Failed to get AudioFileID for %@", url);
+        NSLog(@"AudioMarkerUtil: Failed to get AudioFileID for %@", url);
         return NULL;
     }
 
@@ -45,7 +45,9 @@
     if (noErr != AudioFileGetProperty(fileID, kAudioFilePropertyMarkerList,
                                       &propertySize, markerList)) {
         AudioFileClose(fileID);
-        NSLog(@"Failed to get kAudioFilePropertyMarkerList for %@", url);
+        NSLog(@"AudioMarkerUtil: Failed to get kAudioFilePropertyMarkerList "
+              @"for %@",
+              url);
         return NULL;
     }
 
@@ -62,7 +64,9 @@
 
     if (noErr != AudioFileGetProperty(fileID, kAudioFilePropertyDataFormat,
                                       &dataFormatSize, &format)) {
-        NSLog(@"Failed to get kAudioFilePropertyDataFormat for %@", url);
+        NSLog(@"AudioMarkerUtil: Failed to get kAudioFilePropertyDataFormat "
+              @"for %@",
+              url);
         return NULL;
     }
 
@@ -106,7 +110,7 @@
 
     if (noErr !=
         AudioFileOpenURL(cfurl, kAudioFileReadWritePermission, 0, &fileID)) {
-        NSLog(@"Failed to open url %@", url);
+        NSLog(@"AudioMarkerUtil: Failed to open url %@", url);
         CFRelease(cfurl);
         return false;
     }
@@ -144,7 +148,9 @@
 
     if (noErr != AudioFileSetProperty(fileID, kAudioFilePropertyMarkerList,
                                       propertySize, markerList)) {
-        NSLog(@"Failed to set kAudioFilePropertyMarkerList for %@", url);
+        NSLog(@"AudioMarkerUtil: Failed to set kAudioFilePropertyMarkerList "
+              @"for %@",
+              url);
     }
 
     free(markerList);
@@ -161,7 +167,7 @@
 
     if (noErr !=
         AudioFileOpenURL(cfurl, kAudioFileReadWritePermission, 0, &fileID)) {
-        NSLog(@"Failed to open url %@", url);
+        NSLog(@"AudioMarkerUtil: Failed to open url %@", url);
         CFRelease(cfurl);
         return false;
     }

@@ -42,6 +42,28 @@ extension TagKey {
             nil
         }
     }
+
+    public var infoAlternates: [InfoFrameKey] {
+        switch self {
+        case .trackNumber:
+            [.trackNumber2, .trackNumber3]
+
+        case .language:
+            [.language2,
+             .firstLanguage,
+             .secondLanguage,
+             .thirdLanguage,
+             .fourthLanguage,
+             .fifthLanguage,
+             .sixthLanguage,
+             .seventhLanguage,
+             .eighthLanguage,
+             .ninthLanguage]
+
+        default:
+            []
+        }
+    }
 }
 
 // swiftformat:enable consecutiveSpaces

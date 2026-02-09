@@ -12,7 +12,10 @@ extension MetaAudioFileDescription {
         self.url = url
         urlProperties = URLProperties(url: url)
         fileType = AudioFileType(url: url)
-        audioFormat = try AudioFormatProperties(audioFile: AVAudioFile(forReading: url))
+
+        let audioFile = try AVAudioFile(forReading: url)
+
+        audioFormat = AudioFormatProperties(audioFile: audioFile)
 
         if fileType == .wav {
             try loadWave()
