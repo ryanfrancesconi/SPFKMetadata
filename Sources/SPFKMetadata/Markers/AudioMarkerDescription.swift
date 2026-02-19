@@ -111,7 +111,7 @@ extension AudioMarkerDescription: CustomStringConvertible, CustomDebugStringConv
         let start = startTime.truncated(decimalPlaces: 3)
 
         var color = ""
-        if let value = hexColor?.hexString {
+        if let value = hexColor?.stringValue {
             color = ", Color: \(value)"
         }
 
@@ -131,6 +131,6 @@ extension AudioMarkerDescription: CustomStringConvertible, CustomDebugStringConv
     public var debugDescription: String {
         "AudioMarkerDescription(name: \(name ?? "nil"), startTime: \(startTime), "
             + "endTime: \(endTime?.string ?? "nil"), sampleRate: \(sampleRate?.string ?? "nil"), "
-            + "markerID: \(markerID?.string ?? "nil"), hexColor: \(hexColor?.hexString ?? "nil")"
+            + "markerID: \(markerID?.string ?? "nil"), hexColor: \(hexColor?.stringValue ?? "nil")"
     }
 }
