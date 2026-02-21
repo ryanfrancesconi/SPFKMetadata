@@ -10,7 +10,7 @@ import Testing
 @Suite(.serialized)
 class BEXTTests: BinTestCase {
     @Test func initBEXTDescriptionC() async throws {
-        let bextc = BEXTDescriptionC(path: TestBundleResources.shared.tabla_wav.path())
+        let bextc = BEXTDescriptionC(path: TestBundleResources.shared.tabla_wav.path)
 
         Log.debug(bextc?.maxTruePeakLevel)
     }

@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "spfk-metadata",
     defaultLocalization: "en",
-    platforms: [.macOS(.v12)], // .iOS(.v15) // pending changes
+    platforms: [.macOS(.v12), .iOS(.v15)],
     products: [
         .library(
             name: "SPFKMetadata",
