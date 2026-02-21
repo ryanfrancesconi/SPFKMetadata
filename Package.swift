@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "spfk-metadata",
     defaultLocalization: "en",
-    platforms: [.macOS(.v12), .iOS(.v15)],
+    platforms: [.macOS(.v12)], // .iOS(.v15) // pending changes
     products: [
         .library(
             name: "SPFKMetadata",
@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/ryanfrancesconi/CXXTagLib", from: "2.1.3"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-audio-base", from: "0.0.4"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-testing", from: "0.0.4"),
-        .package(url: "https://github.com/ryanfrancesconi/spfk-utils", from: "0.0.4"),
+        .package(url: "https://github.com/ryanfrancesconi/spfk-utils", from: "0.0.5"),
         .package(url: "https://github.com/sbooth/sndfile-binary-xcframework", from: "0.1.2"),
         .package(url: "https://github.com/sbooth/ogg-binary-xcframework", from: "0.1.3"),
         .package(url: "https://github.com/sbooth/flac-binary-xcframework", from: "0.2.0"),
