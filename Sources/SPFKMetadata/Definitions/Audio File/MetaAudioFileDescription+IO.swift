@@ -9,13 +9,12 @@ import SPFKUtils
 
 extension MetaAudioFileDescription {
     public init(parsing url: URL) async throws {
+        let audioFile = try AVAudioFile(forReading: url)
+        audioFormat = AudioFormatProperties(audioFile: audioFile)
+
         self.url = url
         urlProperties = URLProperties(url: url)
         fileType = AudioFileType(url: url)
-
-        let audioFile = try AVAudioFile(forReading: url)
-
-        audioFormat = AudioFormatProperties(audioFile: audioFile)
 
         if fileType == .wav {
             try loadWave()
